@@ -15,7 +15,7 @@ datasource db {
 }
 
 model Transaction {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(uuid()) @map("_id")
   userId      String
   date        String   // ISO-8601 DateTime string for SQLite strftime compatibility
   amount      Float
@@ -23,8 +23,6 @@ model Transaction {
   description String?
   type        String   @default("expense") // "expense" or "income"
 
-  // Link to RecurringTransaction (optional)
-  recurringTransactionId String?
   recurringTransaction   RecurringTransaction? @relation(fields: [recurringTransactionId], references: [id])
 
   createdAt   DateTime @default(now())
@@ -35,7 +33,7 @@ model Transaction {
 }
 
 model RecurringTransaction {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(uuid()) @map("_id")
   userId      String
   amount      Float
   category    String
@@ -68,7 +66,7 @@ model RecurringTransaction {
 }
 
 model Conversation {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid()) @map("_id")
   userId    String    // WhatsApp JID
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -78,7 +76,7 @@ model Conversation {
 }
 
 model Message {
-  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  id             String       @id @default(uuid()) @map("_id")
   conversationId String
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   role           String       // 'user' or 'model'
