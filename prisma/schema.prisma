@@ -10,26 +10,32 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Transaction {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   userId      String
   date        String   // ISO-8601 DateTime string for SQLite strftime compatibility
   amount      Float
   category    String
   description String?
   type        String   @default("expense") // "expense" or "income"
+
+  // Link to RecurringTransaction (optional)
+  recurringTransactionId String?
+  recurringTransaction   RecurringTransaction? @relation(fields: [recurringTransactionId], references: [id])
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
-  
+
   @@index([userId])
+  @@index([recurringTransactionId])
 }
 
 model RecurringTransaction {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   userId      String
   amount      Float
   category    String
@@ -53,13 +59,16 @@ model RecurringTransaction {
   // Metadata
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
+  // Optional: back relation for convenience
+  transactions Transaction[]
+
   @@index([userId])
   @@index([nextDue])
 }
 
 model Conversation {
-  id        Int       @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   userId    String    // WhatsApp JID
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -69,8 +78,8 @@ model Conversation {
 }
 
 model Message {
-  id             Int          @id @default(autoincrement())
-  conversationId Int
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  conversationId String
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   role           String       // 'user' or 'model'
   content        String       // JSON stringified content
