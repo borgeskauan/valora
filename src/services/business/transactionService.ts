@@ -180,7 +180,7 @@ export class TransactionService {
    * @returns ServiceResult with updated transaction
    */
   async updateTransaction(
-    id: number,
+    id: string,
     updates: TransactionUpdateData,
     existingTransaction: TransactionData
   ): Promise<TransactionResult> {
@@ -299,7 +299,7 @@ export class TransactionService {
    * @returns ServiceResult with updated transaction or error
    */
   async editTransactionById(
-    id: number,
+    id: string,
     updates: TransactionUpdateData
   ): Promise<TransactionResult> {
     // Get userId from injected context (same pattern as editLastTransaction)
@@ -332,7 +332,7 @@ export class TransactionService {
    * @returns ServiceResult with count of deleted transactions
    */
   async deleteTransactions(
-    ids: number[]
+    ids: string[]
   ): Promise<ServiceResult<{ deletedCount: number }>> {
     // Validate IDs array
     if (!ids || ids.length === 0) {

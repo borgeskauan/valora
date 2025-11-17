@@ -68,7 +68,7 @@ export class TransactionQueryService {
    * @param userId - User ID for ownership validation
    * @returns ServiceResult with transaction data or error
    */
-  async getTransactionById(id: number, userId: string): Promise<TransactionResult> {
+  async getTransactionById(id: string, userId: string): Promise<TransactionResult> {
     try {
       const transaction = await this.prisma.transaction.findFirst({
         where: {
@@ -166,7 +166,7 @@ export class TransactionQueryService {
    * @param userId - User ID for ownership validation
    * @returns ServiceResult with recurring transaction data or error
    */
-  async getRecurringTransactionById(id: number, userId: string): Promise<RecurringTransactionResult> {
+  async getRecurringTransactionById(id: string, userId: string): Promise<RecurringTransactionResult> {
     try {
       const recurringTransaction = await this.prisma.recurringTransaction.findFirst({
         where: {

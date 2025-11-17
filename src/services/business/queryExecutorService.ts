@@ -70,20 +70,15 @@ export class QueryExecutorService {
 
     // Execute the query
     try {
-      const rawResults = await this.prisma.$queryRawUnsafe(finalSql);
-      const resultsArray = Array.isArray(rawResults) ? rawResults : [rawResults];
-
-      console.log(`[QueryExecutor] Query executed successfully. Rows: ${resultsArray.length}`);
-
-      return success(
-        {
-          data: resultsArray as QueryResultData[],
-          rowCount: resultsArray.length,
-          sqlExecuted: finalSql
-        },
-        `Query executed: ${queryDescription}`
+      // MongoDB doesn't support raw SQL queries - this needs to be reimplemented
+      // const rawResults = await this.prisma.$queryRawUnsafe(finalSql);
+      console.log(`[QueryExecutor] MongoDB does not support raw SQL queries. Query execution disabled.`);
+      
+      return failure(
+        'Query execution not supported',
+        'UNSUPPORTED_OPERATION',
+        'Raw SQL queries are not supported with MongoDB. This functionality needs to be reimplemented.'
       );
-
     } catch (error: any) {
       console.error('[QueryExecutor] Query execution error:', error);
       return failure(

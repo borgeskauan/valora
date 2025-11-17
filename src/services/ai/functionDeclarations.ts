@@ -180,7 +180,7 @@ export const editTransactionByIdDeclaration = {
     description: `Edit a specific transaction by its ID. Returns a structured result with 'success' field. On success, includes updated transaction data and confirmation message. On failure, includes error details.`,
     properties: {
       id: {
-        type: Type.NUMBER,
+        type: Type.STRING,
         description: "The ID of the transaction to edit (obtained from queryTransactions results)",
       },
       updates: {
@@ -203,7 +203,7 @@ export const editRecurringTransactionByIdDeclaration = {
     description: `Edit a specific recurring transaction by its ID. Returns a structured result with 'success' field. On success, includes updated recurring transaction data (with recalculated nextDue if frequency changed) and confirmation message. On failure, includes error details.`,
     properties: {
       id: {
-        type: Type.NUMBER,
+        type: Type.STRING,
         description: "The ID of the recurring transaction to edit (obtained from queryTransactions results on RecurringTransaction table)",
       },
       updates: {
@@ -251,7 +251,7 @@ export const deleteTransactionsDeclaration = {
         type: Type.ARRAY,
         description: "Array of transaction IDs to delete (obtained from queryTransactions results on Transaction table). Can be single ID [123] or multiple [123, 456, 789]",
         items: {
-          type: Type.NUMBER,
+          type: Type.STRING,
           description: "Transaction ID"
         }
       }
@@ -273,7 +273,7 @@ export const deleteRecurringTransactionsDeclaration = {
         type: Type.ARRAY,
         description: "Array of recurring transaction IDs to delete (obtained from queryTransactions results on RecurringTransaction table). Can be single ID [12] or multiple [12, 34, 56]",
         items: {
-          type: Type.NUMBER,
+          type: Type.STRING,
           description: "Recurring transaction ID"
         }
       }

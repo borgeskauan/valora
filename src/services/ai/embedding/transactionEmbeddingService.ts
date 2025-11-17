@@ -147,8 +147,8 @@ export class TransactionEmbeddingService {
    * Parse embedding hits and extract transaction IDs grouped by kind
    */
   private parseEmbeddingHits(hits: any[]) {
-    const onetimeIds: number[] = [];
-    const recurringIds: number[] = [];
+    const onetimeIds: string[] = [];
+    const recurringIds: string[] = [];
     const scoreMap = new Map<string, number>();
 
     for (const hit of hits) {
@@ -158,11 +158,11 @@ export class TransactionEmbeddingService {
       scoreMap.set(metadata.transactionId, hit.score ?? 0);
 
       if (metadata.transactionId.startsWith('T-')) {
-        const id = parseInt(metadata.transactionId.substring(2));
-        if (!isNaN(id)) onetimeIds.push(id);
+        const id = metadata.transactionId.substring(2);
+        if (id) onetimeIds.push(id);
       } else if (metadata.transactionId.startsWith('RT-')) {
-        const id = parseInt(metadata.transactionId.substring(3));
-        if (!isNaN(id)) recurringIds.push(id);
+        const id = metadata.transactionId.substring(3);
+        if (id) recurringIds.push(id);
       }
     }
 
@@ -172,7 +172,7 @@ export class TransactionEmbeddingService {
   /**
    * Fetch transactions from database by IDs
    */
-  private async fetchTransactionsByIds(onetimeIds: number[], recurringIds: number[], userId: string) {
+  private async fetchTransactionsByIds(onetimeIds: string[], recurringIds: string[], userId: string) {
     console.log(`[TransactionEmbedding] Fetching transactions from DB for user ${userId}: ${onetimeIds.length} one-time, ${recurringIds.length} recurring`);
 
     const [onetimeTransactions, recurringTransactions] = await Promise.all([
@@ -251,7 +251,7 @@ export class TransactionEmbeddingService {
   /**
    * Build prefixed transaction ID
    */
-  private buildPrefixedId(id: number, kind: string): string {
+  private buildPrefixedId(id: string, kind: string): string {
     return kind === 'recurring' ? `RT-${id}` : `T-${id}`;
   }
 

@@ -14,7 +14,7 @@ export interface Transaction {
  * Data structure for transaction returned in service results
  */
 export interface TransactionData {
-  id: number;
+  id: string;
   amount: number;
   category: string;
   description: string | null;
@@ -57,7 +57,7 @@ export interface RecurringTransactionInput {
  * Data structure for recurring transaction returned in service results
  */
 export interface RecurringTransactionData {
-  id: number;
+  id: string;
   amount: number;
   category: string;
   description: string | null;

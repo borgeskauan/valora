@@ -5,7 +5,7 @@ import { TransactionData } from './models';
  * Input for embedding a transaction
  */
 export interface TransactionEmbeddingInput {
-  id: number;
+  id: string;
   description: string | null;
   type: TransactionType;
   kind: 'onetime' | 'recurring';

@@ -69,7 +69,7 @@ export class FunctionDeclarationService {
     // Edit transaction by ID (async)
     [
       "editTransactionById",
-      async (params: { id: number, updates: TransactionUpdateData }) => {
+      async (params: { id: string, updates: TransactionUpdateData }) => {
         console.log("Executing editTransactionById with params:", params);
         return await this.transactionService.editTransactionById(params.id, params.updates);
       }
@@ -77,7 +77,7 @@ export class FunctionDeclarationService {
     // Edit recurring transaction by ID (async)
     [
       "editRecurringTransactionById",
-      async (params: { id: number, updates: RecurringTransactionUpdateData }) => {
+      async (params: { id: string, updates: RecurringTransactionUpdateData }) => {
         console.log("Executing editRecurringTransactionById with params:", params);
         return await this.recurringTransactionService.editRecurringTransactionById(params.id, params.updates);
       }
@@ -85,7 +85,7 @@ export class FunctionDeclarationService {
     // Delete transactions (async)
     [
       "deleteTransactions",
-      async (params: { ids: number[] }) => {
+      async (params: { ids: string[] }) => {
         console.log("Executing deleteTransactions with params:", params);
         return await this.transactionService.deleteTransactions(params.ids);
       }
@@ -93,7 +93,7 @@ export class FunctionDeclarationService {
     // Delete recurring transactions (async)
     [
       "deleteRecurringTransactions",
-      async (params: { ids: number[] }) => {
+      async (params: { ids: string[] }) => {
         console.log("Executing deleteRecurringTransactions with params:", params);
         return await this.recurringTransactionService.deleteRecurringTransactions(params.ids);
       }

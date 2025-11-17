@@ -305,7 +305,7 @@ export class RecurringTransactionService {
    * @returns ServiceResult with updated recurring transaction
    */
   async updateRecurringTransaction(
-    id: number,
+    id: string,
     updates: RecurringTransactionUpdateData,
     existingData: RecurringTransactionData
   ): Promise<RecurringTransactionResult> {
@@ -416,7 +416,7 @@ export class RecurringTransactionService {
    * @returns ServiceResult with updated recurring transaction or error
    */
   async editRecurringTransactionById(
-    id: number,
+    id: string,
     updates: RecurringTransactionUpdateData
   ): Promise<RecurringTransactionResult> {
     // Get userId from injected context (same pattern as editLastRecurringTransaction)
@@ -449,7 +449,7 @@ export class RecurringTransactionService {
    * @returns ServiceResult with count of deactivated recurring transactions
    */
   async deleteRecurringTransactions(
-    ids: number[]
+    ids: string[]
   ): Promise<ServiceResult<{ deactivatedCount: number }>> {
     // Validate IDs array
     if (!ids || ids.length === 0) {
