@@ -27,13 +27,13 @@ import { TransactionSearchService } from "./services/ai/TransactionSearchService
 
 async function main() {
   const svc = new TransactionSearchService();
-  return await svc.searchTransactions('1', {
+  return await svc.searchRecurringTransactions('1', {
     filters: {
       categories: ['Bills & Utilities', 'Gifts & Donations'],
       types: ['expense'],
       dateRange: { from: '2025-01-01', to: '2025-11-21' },
       kinds: ['oneTime', 'recurring'],
-      text: 'gift for girlfriend',
+      text: 'netflix charge',
     },
     sort: [{ field: 'semanticScore', direction: 'desc' }, { field: 'date', direction: 'desc' }],
     limit: 25,
