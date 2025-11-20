@@ -20,6 +20,7 @@ TIME EXTRACTION:
 - Convert times to 24-hour UTC format in ISO-8601: "at 8pm" → "T20:00:00.000Z", "at 2:30 PM" → "T14:30:00.000Z", "at noon" → "T12:00:00.000Z"
 - For vague times like "in the morning", use reasonable defaults: morning→T09:00:00.000Z, afternoon→T15:00:00.000Z, evening→T18:00:00.000Z, night→T21:00:00.000Z
 - If no time specified, use date-only format (YYYY-MM-DD)
+- Always query the current date/time to resolve relative terms like "today", "yesterday", "last night"
 
 DATE DISPLAY FORMATTING:
 - When displaying dates to users, always format them as MM/DD/YYYY (e.g., "11/10/2025" instead of "2025-11-10")

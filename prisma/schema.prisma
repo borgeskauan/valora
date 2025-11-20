@@ -23,6 +23,7 @@ model Transaction {
   description String?
   type        String   @default("expense") // "expense" or "income"
 
+  recurringTransactionId String?
   recurringTransaction   RecurringTransaction? @relation(fields: [recurringTransactionId], references: [id])
 
   createdAt   DateTime @default(now())

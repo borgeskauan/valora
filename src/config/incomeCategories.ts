@@ -3,15 +3,22 @@
  * These are the standard categories available for income transactions
  */
 export const INCOME_CATEGORIES = [
+  // Active income
   'Salary',
-  'Freelance',
-  'Investment Returns',
   'Business Income',
-  'Rental Income',
-  'Gifts Received',
-  'Refunds',
+  'Freelance',
   'Bonuses',
-  'Side Hustle',
+
+  // Passive & portfolio income
+  'Investment Returns',
+  'Rental Income',
+
+  // Irregular / non-operating inflows
+  'Refunds',
+  'Gifts Received',
+  'Loans Received',
+
+  // Fallback
   'Other'
 ] as const;
 

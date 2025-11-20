@@ -98,7 +98,8 @@ export class TransactionEmbeddingService {
    * Search transactions by natural language description
    */
   async searchTransactionsByDescription(
-    query: string
+    query: string,
+    k = 20
   ): Promise<ServiceResult<TransactionSearchResult[]>> {
     // Get userId from context
     const userId = this.getUserId();
@@ -114,7 +115,7 @@ export class TransactionEmbeddingService {
     console.log(`[TransactionEmbedding] Searching transactions for user ${userId} with query: "${query}" (threshold=${this.threshold})`);
 
     try {
-      const hits = await embeddingStore.query(query, 20);
+      const hits = await embeddingStore.query(query, k);
       console.log(`[TransactionEmbedding] Vector search returned ${hits.length} hits from Qdrant`);
 
       // Filter by threshold
@@ -128,6 +129,8 @@ export class TransactionEmbeddingService {
       const results = this.buildSearchResults(transactions, scoreMap);
 
       console.log(`[TransactionEmbedding] Search completed: ${results.length} transactions matched for user ${userId}`);
+
+      console.log(`[TransactionEmbedding] Results: ${JSON.stringify(results, null, 2)}`);
 
       return success(
         results,
@@ -174,6 +177,11 @@ export class TransactionEmbeddingService {
    */
   private async fetchTransactionsByIds(onetimeIds: string[], recurringIds: string[], userId: string) {
     console.log(`[TransactionEmbedding] Fetching transactions from DB for user ${userId}: ${onetimeIds.length} one-time, ${recurringIds.length} recurring`);
+    console.log(`[TransactionEmbedding] One-time IDs: ${onetimeIds.join(', ')}`);
+    console.log(`[TransactionEmbedding] Recurring IDs: ${recurringIds.join(', ')}`);
+
+    const r = await this.prisma.recurringTransaction.findMany();
+    console.log(`[TransactionEmbedding] Total recurring transactions in DB: ${r.length}`);
 
     const [onetimeTransactions, recurringTransactions] = await Promise.all([
       onetimeIds.length > 0

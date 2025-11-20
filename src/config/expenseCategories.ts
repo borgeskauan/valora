@@ -3,22 +3,37 @@
  * These are the standard categories available for expense transactions
  */
 export const EXPENSE_CATEGORIES = [
-  'Food & Dining',
-  'Transportation',
-  'Shopping',
-  'Entertainment',
-  'Bills & Utilities',
-  'Health & Fitness',
-  'Personal Care',
-  'Travel',
-  'Education',
-  'Groceries',
+  // Essentials
   'Housing',
+  'Groceries',
+  'Transportation',
+  'Bills',
   'Insurance',
+  'Taxes & Fees',
+  'Health',
+
+  // Financial
   'Savings & Investments',
+
+  // Food & Leisure
+  'Food & Dining',
+  'Entertainment',
+  'Streaming',
+  'Subscriptions',
+  'Travel',
+
+  // Personal & Lifestyle
+  'Fitness',
+  'Personal Care',
+  'Shopping',
+  'Pets',
+  'Education',
   'Gifts & Donations',
+
+  // Fallback
   'Other'
 ] as const;
+
 
 /**
  * Category type derived from the expense categories
