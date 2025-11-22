@@ -8,7 +8,7 @@ import { TransactionEmbeddingService } from './ai/embedding/transactionEmbedding
 import { TransactionSearchService } from './business/search/TransactionSearchService';
 import { MongoConnectionManager } from './infrastructure/database/MongoConnectionManager';
 import { TransactionQueryService } from './infrastructure/database/TransactionQueryService';
-import { TransactionLookupService } from './business/transactionQueryService';
+import { TransactionLookupService } from './business/TransactionLookupService';
 
 export class DependencyService {
   private static instance: DependencyService;
