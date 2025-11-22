@@ -102,7 +102,6 @@ export class FunctionDeclarationService {
       async (params: { query: string, limit?: number }) => {
         console.log("Executing searchTransactions with params:", params);
         return await this.searchService.queryTransactions({
-          userId: '1',
           textQuery: params.query,
           limit: params.limit || 10
         });
@@ -114,7 +113,6 @@ export class FunctionDeclarationService {
       async (params: { query: string, limit?: number }) => {
         console.log("Executing searchRecurringTransactions with params:", params);
         return await this.searchService.queryRecurringTransactions({
-          userId: '1',
           textQuery: params.query,
           limit: params.limit || 10
         });

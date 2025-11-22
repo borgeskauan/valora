@@ -7,6 +7,8 @@ import { RecurringTransactionService } from './business/recurringTransactionServ
 import { TransactionEmbeddingService } from './ai/embedding/transactionEmbeddingService';
 import { UserContextProvider } from '../lib/UserContextProvider';
 import { AiSearchService } from './ai/search/AiSearchService';
+import { MongoClientManager } from './ai/search/mql/MongoClientManager';
+import { MqlSearchService } from './ai/search/mql/MqlSearchService';
 
 export class DependencyService {
   private static instance: DependencyService;
@@ -14,7 +16,7 @@ export class DependencyService {
   private initialized: boolean = false;
 
   private constructor() {
-    this.initialize();
+    // Don't auto-initialize - must be done explicitly via initialize()
   }
 
   static getInstance(): DependencyService {
@@ -24,7 +26,7 @@ export class DependencyService {
     return DependencyService.instance;
   }
 
-  initialize(): void {
+  async initialize(): Promise<void> {
     if (this.initialized) {
       console.warn('DependencyService already initialized');
       return;
@@ -36,11 +38,24 @@ export class DependencyService {
         throw new Error('GEMINI_API_KEY environment variable is required');
       }
 
+      // Infrastructure layer
+      const mongoManager = MongoClientManager.fromEnv();
+      const [transactionCollection, recurringCollection] = await Promise.all([
+        mongoManager.getTransactionCollection(),
+        mongoManager.getRecurringTransactionCollection()
+      ]);
+
+      // Data access layer
+      const mqlSearchService = new MqlSearchService(transactionCollection, recurringCollection);
+
+      // Business services
       const userContext = new UserContextProvider();
       const transactionEmbeddingService = new TransactionEmbeddingService(userContext);
       const transactionService = new TransactionService(userContext, transactionEmbeddingService);
       const recurringTransactionService = new RecurringTransactionService(userContext, transactionEmbeddingService);
-      const searchService = new AiSearchService(, transactionEmbeddingService);
+      
+      // Orchestration layer
+      const searchService = new AiSearchService(userContext, mqlSearchService, transactionEmbeddingService);
 
       const functionDeclarationService = new FunctionDeclarationService(
         transactionService,
@@ -58,6 +73,9 @@ export class DependencyService {
       const aiMessageService = new AIMessageService(geminiService, functionDeclarationService);
 
       // Register services
+      this.services.set('MongoClientManager', mongoManager);
+      this.services.set('MqlSearchService', mqlSearchService);
+      this.services.set('AiSearchService', searchService);
       this.services.set('GeminiService', geminiService);
       this.services.set('AIMessageService', aiMessageService);
       this.services.set('functionDeclarationService', functionDeclarationService);
@@ -95,5 +113,5 @@ export class DependencyService {
   }
 }
 
-// Convenience export for easy access
-export const dependencyService = DependencyService.getInstance();
+// Note: DependencyService must be initialized asynchronously
+// See src/index.ts for initialization pattern

@@ -2,11 +2,13 @@ import { failure, success } from "../../../types/ServiceResult";
 import { TransactionSearchRequestWithText, TransactionSearchResultSR, RecurringSearchRequestWithText, RecurringSearchResultSR, RecurringSearchData } from "./embeddingSearchTypes";
 import { MqlFilter, MqlSearchService } from "./mql/MqlSearchService";
 import { TransactionDescriptionSearchService } from "./SemanticSearchService";
+import { UserContextProvider } from "../../../lib/UserContextProvider";
 
 const SEMANTIC_TOP_K = 200;
 
 export class AiSearchService {
   constructor(
+    private readonly userContext: UserContextProvider,
     private readonly mql: MqlSearchService,
     private readonly txSemantic: TransactionDescriptionSearchService
   ) {}
@@ -18,7 +20,8 @@ export class AiSearchService {
   async queryTransactions(
     request: TransactionSearchRequestWithText
   ): Promise<TransactionSearchResultSR> {
-    const { userId, textQuery, ...rest } = request;
+    const { textQuery, ...rest } = request;
+    const userId = this.userContext.getUserId();
 
     let mergedFilter: MqlFilter = rest.filter ?? {};
 
@@ -54,8 +57,7 @@ export class AiSearchService {
     }
 
     // Delegate to MQL service (already returns ServiceResult)
-    return this.mql.queryTransactions({
-      userId,
+    return this.mql.queryTransactions(userId, {
       filter: mergedFilter,
       sort: rest.sort,
       limit: rest.limit,
@@ -66,7 +68,8 @@ export class AiSearchService {
   async queryRecurringTransactions(
     request: RecurringSearchRequestWithText
   ): Promise<RecurringSearchResultSR> {
-    const { userId, textQuery, ...rest } = request;
+    const { textQuery, ...rest } = request;
+    const userId = this.userContext.getUserId();
 
     let mergedFilter: MqlFilter = rest.filter ?? {};
 
@@ -101,8 +104,7 @@ export class AiSearchService {
       };
     }
 
-    return this.mql.queryRecurringTransactions({
-      userId,
+    return this.mql.queryRecurringTransactions(userId, {
       filter: mergedFilter,
       sort: rest.sort,
       limit: rest.limit,

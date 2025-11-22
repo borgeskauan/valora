@@ -11,7 +11,6 @@ export type MqlFilter = Record<string, any>;
 export type MqlSort = Record<string, 1 | -1>;
 
 export interface MqlFindRequest {
-  userId: string;
   filter?: MqlFilter;
   sort?: MqlSort;
   limit?: number;
@@ -36,10 +35,11 @@ export class MqlSearchService {
    * Query the Transaction collection with a simple .find(...) style query.
    */
   async queryTransactions(
+    userId: string,
     request: MqlFindRequest
   ): Promise<ServiceResult<MqlFindResponse<TransactionDoc>>> {
     try {
-      const { userId, filter = {}, sort, limit, offset } = request;
+      const { filter = {}, sort, limit, offset } = request;
 
       // Enforce userId server-side, overriding any userId in filter.
       const finalFilter: MqlFilter = {
@@ -86,10 +86,11 @@ export class MqlSearchService {
    * Query the RecurringTransaction collection with a simple .find(...) query.
    */
   async queryRecurringTransactions(
+    userId: string,
     request: MqlFindRequest
   ): Promise<ServiceResult<MqlFindResponse<RecurringTransactionDoc>>> {
     try {
-      const { userId, filter = {}, sort, limit, offset } = request;
+      const { filter = {}, sort, limit, offset } = request;
 
       const finalFilter: MqlFilter = {
         ...filter,
