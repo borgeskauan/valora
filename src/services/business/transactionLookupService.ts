@@ -4,6 +4,7 @@ import { UserContextProvider } from '../../lib/UserContextProvider';
 import { PrismaClient } from '../../generated/prisma';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
+import { ErrorHandler } from '../../lib/ErrorHandler';
 
 /**
  * Service for looking up individual transactions and recurring transactions by ID or filters.
@@ -59,12 +60,7 @@ export class TransactionLookupService {
         'Transaction found'
       );
     } catch (error) {
-      console.error('Error fetching last transaction:', error);
-      return failure(
-        'Failed to fetch transaction',
-        'DATABASE_ERROR',
-        'An error occurred while retrieving the transaction.'
-      );
+      return ErrorHandler.handleDatabaseError(error, 'fetching the last transaction');
     }
   }
 
@@ -103,12 +99,7 @@ export class TransactionLookupService {
         'Transaction found'
       );
     } catch (error) {
-      console.error('Error fetching transaction by ID:', error);
-      return failure(
-        'Failed to fetch transaction',
-        'DATABASE_ERROR',
-        'An error occurred while retrieving the transaction.'
-      );
+      return ErrorHandler.handleDatabaseError(error, 'fetching transaction by ID');
     }
   }
 
@@ -157,12 +148,7 @@ export class TransactionLookupService {
         'Recurring transaction found'
       );
     } catch (error) {
-      console.error('Error fetching last recurring transaction:', error);
-      return failure(
-        'Failed to fetch recurring transaction',
-        'DATABASE_ERROR',
-        'An error occurred while retrieving the recurring transaction.'
-      );
+      return ErrorHandler.handleDatabaseError(error, 'fetching the last recurring transaction');
     }
   }
 
@@ -208,12 +194,7 @@ export class TransactionLookupService {
         'Recurring transaction found'
       );
     } catch (error) {
-      console.error('Error fetching recurring transaction by ID:', error);
-      return failure(
-        'Failed to fetch recurring transaction',
-        'DATABASE_ERROR',
-        'An error occurred while retrieving the recurring transaction.'
-      );
+      return ErrorHandler.handleDatabaseError(error, 'fetching recurring transaction by ID');
     }
   }
 }

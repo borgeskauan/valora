@@ -447,12 +447,22 @@ export class RecurringTransactionService {
   async deleteRecurringTransactions(
     ids: string[]
   ): Promise<ServiceResult<{ deactivatedCount: number }>> {
-    // Validate IDs array
+    // Validate IDs array is not empty
     if (!ids || ids.length === 0) {
       return failure(
         'No recurring transaction IDs provided',
         'VALIDATION_ERROR',
         'Please provide at least one recurring transaction ID to delete.'
+      );
+    }
+
+    // Validate each ID is a non-empty string
+    const invalidIds = ids.filter(id => !id || typeof id !== 'string' || id.trim().length === 0);
+    if (invalidIds.length > 0) {
+      return failure(
+        'Invalid recurring transaction IDs',
+        'VALIDATION_ERROR',
+        'All IDs must be non-empty strings'
       );
     }
 

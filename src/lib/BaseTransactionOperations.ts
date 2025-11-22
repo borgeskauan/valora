@@ -3,9 +3,10 @@ import { CategoryNormalizer, CategoryNormalizationResult } from './CategoryNorma
 import { UserContextProvider } from './UserContextProvider';
 import { MessageBuilder } from './MessageBuilder';
 import { PrismaClientManager } from './PrismaClientManager';
-import { failure, ServiceResult } from '../types/serviceResult';
+import { ServiceResult } from '../types/serviceResult';
 import { TransactionValidator } from '../validators/TransactionValidator';
 import { TransactionType } from '../config/transactionTypes';
+import { ErrorHandler } from './ErrorHandler';
 
 /**
  * Result of basic transaction data validation
@@ -198,17 +199,13 @@ export class BaseTransactionOperations {
 
   /**
    * Handle database errors with consistent error response
+   * Delegates to shared ErrorHandler utility
    * 
    * @param error - The error object
    * @param operation - Description of the operation that failed
    * @returns ServiceResult failure with DATABASE_ERROR code
    */
   handleDatabaseError<T>(error: unknown, operation: string): ServiceResult<T> {
-    console.error(`Database error in ${operation}:`, error);
-    return failure(
-      `A technical error occurred while ${operation}`,
-      'DATABASE_ERROR',
-      error instanceof Error ? error.message : 'Unknown error'
-    );
+    return ErrorHandler.handleDatabaseError(error, operation);
   }
 }
