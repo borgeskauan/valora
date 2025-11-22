@@ -16,7 +16,7 @@ export class MessageBuilder {
    * @param date - Date object or ISO string
    * @returns Formatted string: "MM/DD/YYYY" or "MM/DD/YYYY at H:MM AM/PM"
    */
-  private formatDate(date: Date | string): string {
+  private static formatDate(date: Date | string): string {
     let dateObj: Date;
     let hasTime = false;
 
@@ -60,14 +60,14 @@ export class MessageBuilder {
   /**
    * Get the transaction type label for messages
    */
-  private getTransactionTypeLabel(type: TransactionType): string {
+  private static getTransactionTypeLabel(type: TransactionType): string {
     return type === TransactionType.EXPENSE ? 'Expense' : 'Income';
   }
 
   /**
    * Get the transaction verb for messages
    */
-  private getTransactionVerb(type: TransactionType): string {
+  private static getTransactionVerb(type: TransactionType): string {
     return type === TransactionType.EXPENSE ? 'added' : 'recorded';
   }
 
@@ -78,12 +78,12 @@ export class MessageBuilder {
    * @param normalizationResult - Category normalization result
    * @returns Formatted success message
    */
-  buildTransactionCreatedMessage(
+  static buildTransactionCreatedMessage(
     transaction: PrismaTransaction,
     normalizationResult: CategoryNormalizationResult
   ): string {
-    const label = this.getTransactionTypeLabel(transaction.type as TransactionType);
-    const verb = this.getTransactionVerb(transaction.type as TransactionType);
+    const label = MessageBuilder.getTransactionTypeLabel(transaction.type as TransactionType);
+    const verb = MessageBuilder.getTransactionVerb(transaction.type as TransactionType);
 
     let message = `${label} ${verb} successfully: $${transaction.amount} in category "${transaction.category}"`;
 
@@ -95,7 +95,7 @@ export class MessageBuilder {
       message += ` - ${transaction.description}`;
     }
 
-    message += ` on ${this.formatDate(transaction.date)}`;
+    message += ` on ${MessageBuilder.formatDate(transaction.date)}`;
 
     return message;
   }
@@ -108,12 +108,12 @@ export class MessageBuilder {
    * @param normalizationResult - Category normalization result
    * @returns Formatted success message
    */
-  buildRecurringTransactionCreatedMessage(
+  static buildRecurringTransactionCreatedMessage(
     recurringTransaction: PrismaRecurringTransaction,
     recurrencePattern: RecurrencePattern,
     normalizationResult: CategoryNormalizationResult
   ): string {
-    const label = this.getTransactionTypeLabel(recurringTransaction.type as TransactionType);
+    const label = MessageBuilder.getTransactionTypeLabel(recurringTransaction.type as TransactionType);
     const frequencyDesc = recurrencePattern.getDescription();
 
     let message = `Recurring ${label.toLowerCase()} created: $${recurringTransaction.amount} for ${recurringTransaction.category}`;
@@ -126,7 +126,7 @@ export class MessageBuilder {
       message += ` - ${recurringTransaction.description}`;
     }
 
-    message += ` ${frequencyDesc}, starting ${this.formatDate(recurringTransaction.startDate)}`;
+    message += ` ${frequencyDesc}, starting ${MessageBuilder.formatDate(recurringTransaction.startDate)}`;
 
     return message;
   }
@@ -137,7 +137,7 @@ export class MessageBuilder {
    * @param normalizationResult - Category normalization result
    * @returns Warning message or undefined if not normalized
    */
-  buildCategoryNormalizationWarning(
+  static buildCategoryNormalizationWarning(
     normalizationResult: CategoryNormalizationResult
   ): string | undefined {
     if (normalizationResult.wasNormalized) {
@@ -154,12 +154,12 @@ export class MessageBuilder {
    * @param normalizationResult - Category normalization result
    * @returns Formatted success message
    */
-  buildTransactionUpdatedMessage(
+  static buildTransactionUpdatedMessage(
     originalTransaction: TransactionData,
     updatedTransaction: TransactionData,
     normalizationResult: CategoryNormalizationResult
   ): string {
-    const label = this.getTransactionTypeLabel(updatedTransaction.type);
+    const label = MessageBuilder.getTransactionTypeLabel(updatedTransaction.type);
     const changes: string[] = [];
 
     // Detect what changed

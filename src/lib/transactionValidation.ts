@@ -40,22 +40,16 @@ export interface UpdateDataResult {
  * @param category - The transaction category
  * @param type - The transaction type (expense or income)
  * @param date - The transaction date (optional, defaults to today)
- * @param validator - TransactionValidator instance
- * @param normalizer - CategoryNormalizer instance
- * @param messageBuilder - MessageBuilder instance
  * @returns Validation result with normalized data and warnings
  */
 export function validateBasicTransactionData(
   amount: number,
   category: string,
   type: TransactionType,
-  date: Date | string | undefined,
-  validator: TransactionValidator,
-  normalizer: CategoryNormalizer,
-  messageBuilder: MessageBuilder
+  date: Date | string | undefined
 ): BasicTransactionValidationResult {
   // Validate amount, type, and normalize date
-  const validationResult = validator.validateWithNormalization(amount, date, type);
+  const validationResult = TransactionValidator.validateWithNormalization(amount, date, type);
   
   if (!validationResult.isValid) {
     return {
@@ -69,10 +63,10 @@ export function validateBasicTransactionData(
   }
 
   // Normalize category based on transaction type
-  const normalizationResult = normalizer.normalize(category, type);
+  const normalizationResult = CategoryNormalizer.normalize(category, type);
   
   // Build category warnings
-  const warnings = buildCategoryWarnings(normalizationResult, messageBuilder);
+  const warnings = buildCategoryWarnings(normalizationResult);
 
   return {
     isValid: true,
@@ -87,15 +81,13 @@ export function validateBasicTransactionData(
  * Build category normalization warnings from normalization result
  * 
  * @param normalizationResult - The result from category normalization
- * @param messageBuilder - MessageBuilder instance
  * @returns Array of warning strings (empty if no warnings)
  */
 function buildCategoryWarnings(
-  normalizationResult: CategoryNormalizationResult,
-  messageBuilder: MessageBuilder
+  normalizationResult: CategoryNormalizationResult
 ): string[] {
   const warnings: string[] = [];
-  const categoryWarning = messageBuilder.buildCategoryNormalizationWarning(normalizationResult);
+  const categoryWarning = MessageBuilder.buildCategoryNormalizationWarning(normalizationResult);
   if (categoryWarning) {
     warnings.push(categoryWarning);
   }
@@ -109,9 +101,6 @@ function buildCategoryWarnings(
  * @param updates - Partial update data containing fields to change
  * @param existingData - Existing transaction data
  * @param dateField - The date field to use from existing data (e.g., 'date' or 'startDate')
- * @param validator - TransactionValidator instance
- * @param normalizer - CategoryNormalizer instance
- * @param messageBuilder - MessageBuilder instance
  * @returns Object with validation results, update data, and warnings
  */
 export function buildBasicUpdateData<TUpdates extends { 
@@ -122,10 +111,7 @@ export function buildBasicUpdateData<TUpdates extends {
 }>(
   updates: TUpdates,
   existingData: { amount: number; category: string; type: string; [key: string]: any },
-  dateField: string,
-  validator: TransactionValidator,
-  normalizer: CategoryNormalizer,
-  messageBuilder: MessageBuilder
+  dateField: string
 ): UpdateDataResult {
   const originalCategory = updates.category;
   const finalType = (updates.type || existingData.type) as TransactionType;
@@ -142,10 +128,7 @@ export function buildBasicUpdateData<TUpdates extends {
     mergedData.amount,
     mergedData.category,
     mergedData.type,
-    existingData[dateField],
-    validator,
-    normalizer,
-    messageBuilder
+    existingData[dateField]
   );
 
   if (!validationResult.isValid) {

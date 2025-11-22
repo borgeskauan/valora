@@ -5,31 +5,25 @@ import { PrismaClient } from '../../generated/prisma';
 import { MessageBuilder } from '../../lib/MessageBuilder';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
-import { TransactionQueryService } from './transactionQueryService';
+import { TransactionLookupService } from './transactionQueryService';
 import { TransactionEmbeddingService } from '../ai/embedding/transactionEmbeddingService';
-import { TransactionValidator } from '../../validators/TransactionValidator';
-import { CategoryNormalizer } from '../../lib/CategoryNormalizer';
 import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class RecurringTransactionService {
   private userId: string;
-  private validator: RecurringTransactionValidator;
   private prisma: PrismaClient;
-  private messageBuilder: MessageBuilder;
-  private queryService: TransactionQueryService;
+  private lookupService: TransactionLookupService;
   private embeddingService: TransactionEmbeddingService;
-  private transactionValidator: TransactionValidator;
-  private categoryNormalizer: CategoryNormalizer;
 
-  constructor(userId: string, embeddingService: TransactionEmbeddingService) {
+  constructor(
+    userId: string, 
+    embeddingService: TransactionEmbeddingService,
+    lookupService: TransactionLookupService
+  ) {
     this.userId = userId;
-    this.validator = new RecurringTransactionValidator();
     this.prisma = PrismaClientManager.getClient();
-    this.messageBuilder = new MessageBuilder();
-    this.queryService = new TransactionQueryService();
+    this.lookupService = lookupService;
     this.embeddingService = embeddingService;
-    this.transactionValidator = new TransactionValidator();
-    this.categoryNormalizer = new CategoryNormalizer();
   }
 
   /**
@@ -47,7 +41,7 @@ export class RecurringTransactionService {
     monthOfYear?: number | null
   ): { isValid: boolean; recurrencePattern?: any; nextDue?: string; errors?: string[] } {
     // Validate the recurrence pattern
-    const recurrenceValidation = this.validator.validate(
+    const recurrenceValidation = RecurringTransactionValidator.validate(
       amount,
       frequency as any,
       startDate,
@@ -90,10 +84,7 @@ export class RecurringTransactionService {
       data.amount,
       data.category,
       data.type,
-      data.startDate,
-      this.transactionValidator,
-      this.categoryNormalizer,
-      this.messageBuilder
+      data.startDate
     );
 
     if (!basicValidation.isValid) {
@@ -178,8 +169,8 @@ export class RecurringTransactionService {
         );
       }
 
-      // Build success message using MessageBuilder
-      const message = this.messageBuilder.buildRecurringTransactionCreatedMessage(
+      // Build success message using MessageBuilder static method
+      const message = MessageBuilder.buildRecurringTransactionCreatedMessage(
         recurringTransaction,
         recurrencePattern,
         {
@@ -228,10 +219,7 @@ export class RecurringTransactionService {
     const basicUpdateResult = buildBasicUpdateData(
       updates,
       existingData,
-      'startDate',
-      this.transactionValidator,
-      this.categoryNormalizer,
-      this.messageBuilder
+      'startDate'
     );
 
     if (!basicUpdateResult.isValid) {
@@ -404,7 +392,7 @@ export class RecurringTransactionService {
     const userId = this.userId;
     
     // Look up the specified recurring transaction
-    const lastRecurringTxResult = await this.queryService.getLastRecurringTransactionByUser(userId, transactionType);
+    const lastRecurringTxResult = await this.lookupService.getLastRecurringTransactionByUser(userId, transactionType);
     
     if (!lastRecurringTxResult.success) {
       return lastRecurringTxResult;
@@ -436,7 +424,7 @@ export class RecurringTransactionService {
     }
 
     // Query for recurring transaction by ID with ownership validation
-    const recurringTxResult = await this.queryService.getRecurringTransactionById(id, userId);
+    const recurringTxResult = await this.lookupService.getRecurringTransactionById(id, userId);
     
     if (!recurringTxResult.success) {
       return recurringTxResult;

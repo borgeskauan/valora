@@ -4,7 +4,7 @@ import { PrismaClient } from '../../generated/prisma';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
 
-export class TransactionQueryService {
+export class TransactionLookupService {
   private prisma: PrismaClient;
 
   constructor() {

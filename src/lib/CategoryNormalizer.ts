@@ -25,15 +25,15 @@ export class CategoryNormalizer {
    * @param type - The transaction type (expense or income)
    * @returns Normalization result with the final category and metadata
    */
-  normalize(category: string, type: TransactionType): CategoryNormalizationResult {
-    if (this.isValid(category, type)) {
+  static normalize(category: string, type: TransactionType): CategoryNormalizationResult {
+    if (CategoryNormalizer.isValid(category, type)) {
       return {
         category,
         wasNormalized: false,
       };
     }
 
-    const closestCategory = this.findClosestCategory(category, type);
+    const closestCategory = CategoryNormalizer.findClosestCategory(category, type);
     console.log(`Category "${category}" not found for ${type}. Using closest match: "${closestCategory}"`);
     
     return {
@@ -50,7 +50,7 @@ export class CategoryNormalizer {
    * @param type - The transaction type (expense or income)
    * @returns true if valid, false otherwise
    */
-  private isValid(category: string, type: TransactionType): boolean {
+  private static isValid(category: string, type: TransactionType): boolean {
     if (type === TransactionType.EXPENSE) {
       return isValidExpenseCategory(category);
     } else {
@@ -66,7 +66,7 @@ export class CategoryNormalizer {
    * @param type - The transaction type (expense or income)
    * @returns The closest matching category
    */
-  private findClosestCategory(input: string, type: TransactionType): string {
+  private static findClosestCategory(input: string, type: TransactionType): string {
     return 'Other';
   }
 }

@@ -13,6 +13,7 @@ export class FunctionDeclarationService {
   private readonly transactionService: TransactionService;
   private readonly recurringTransactionService: RecurringTransactionService;
   private readonly searchService: TransactionSearchService;
+  private readonly userId: string = '1'; // TODO: Get from authentication context
 
   private readonly functionMapping = new Map<string, Function>([
     // Date/Time functions
@@ -101,7 +102,7 @@ export class FunctionDeclarationService {
       "searchTransactions",
       async (params: { query: string, limit?: number }) => {
         console.log("Executing searchTransactions with params:", params);
-        return await this.searchService.searchTransactions({
+        return await this.searchService.searchTransactions(this.userId, {
           textQuery: params.query,
           limit: params.limit || 10
         });
@@ -112,7 +113,7 @@ export class FunctionDeclarationService {
       "searchRecurringTransactions",
       async (params: { query: string, limit?: number }) => {
         console.log("Executing searchRecurringTransactions with params:", params);
-        return await this.searchService.searchRecurringTransactions({
+        return await this.searchService.searchRecurringTransactions(this.userId, {
           textQuery: params.query,
           limit: params.limit || 10
         });

@@ -19,7 +19,7 @@ export class TransactionValidator {
    * @param amount - The transaction amount to validate
    * @returns Validation result
    */
-  validateAmount(amount: number): ValidationResult {
+  static validateAmount(amount: number): ValidationResult {
     const errors: string[] = [];
 
     if (typeof amount !== 'number' || isNaN(amount)) {
@@ -40,7 +40,7 @@ export class TransactionValidator {
    * @param date - The transaction date to validate
    * @returns Validation result
    */
-  validateDate(date: Date | string): ValidationResult {
+  static validateDate(date: Date | string): ValidationResult {
     const errors: string[] = [];
 
     const dateObj = date instanceof Date ? date : new Date(date);
@@ -61,7 +61,7 @@ export class TransactionValidator {
    * @param type - The transaction type to validate
    * @returns Validation result
    */
-  validateType(type: string): ValidationResult {
+  static validateType(type: string): ValidationResult {
     const errors: string[] = [];
 
     if (!isValidTransactionType(type)) {
@@ -81,7 +81,7 @@ export class TransactionValidator {
    * @param date - The date to normalize (Date, string, or undefined)
    * @returns Date object (defaults to today if undefined)
    */
-  normalizeDate(date?: Date | string): string {
+  static normalizeDate(date?: Date | string): string {
     if (!date) {
       console.log('Date not provided, defaulting to today');
       return new Date().toISOString(); // Full ISO-8601: 2025-11-08T17:30:00.000Z
@@ -110,19 +110,19 @@ export class TransactionValidator {
    * @param type - The transaction type
    * @returns Combined validation result with normalized date
    */
-  validateWithNormalization(
+  static validateWithNormalization(
     amount: number, 
     date: Date | string | undefined,
     type: TransactionType
   ): ValidationResult & { normalizedDate: string } {
-    const amountResult = this.validateAmount(amount);
-    const typeResult = this.validateType(type);
+    const amountResult = TransactionValidator.validateAmount(amount);
+    const typeResult = TransactionValidator.validateType(type);
     
     // Normalize date (defaults to today if undefined)
-    const normalizedDate = this.normalizeDate(date);
+    const normalizedDate = TransactionValidator.normalizeDate(date);
     
     // Validate normalized date
-    const dateResult = this.validateDate(normalizedDate);
+    const dateResult = TransactionValidator.validateDate(normalizedDate);
 
     return {
       isValid: amountResult.isValid && dateResult.isValid && typeResult.isValid,

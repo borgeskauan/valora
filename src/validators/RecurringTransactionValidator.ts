@@ -7,24 +7,18 @@ import { TransactionType } from '../config/transactionTypes';
  * Extends base transaction validation with recurrence-specific validation
  */
 export class RecurringTransactionValidator {
-  private transactionValidator: TransactionValidator;
-
-  constructor() {
-    this.transactionValidator = new TransactionValidator();
-  }
-
   /**
    * Validate recurring transaction amount (delegates to TransactionValidator)
    */
-  validateAmount(amount: number): ValidationResult {
-    return this.transactionValidator.validateAmount(amount);
+  static validateAmount(amount: number): ValidationResult {
+    return TransactionValidator.validateAmount(amount);
   }
 
   /**
    * Validate transaction type (delegates to TransactionValidator)
    */
-  validateType(type: TransactionType): ValidationResult {
-    return this.transactionValidator.validateType(type);
+  static validateType(type: TransactionType): ValidationResult {
+    return TransactionValidator.validateType(type);
   }
 
   /**
@@ -39,7 +33,7 @@ export class RecurringTransactionValidator {
    * @returns RecurrencePattern if valid
    * @throws Error if validation fails
    */
-  createRecurrencePattern(
+  static createRecurrencePattern(
     frequency: string,
     startDate: Date | string,
     interval?: number,
@@ -70,7 +64,7 @@ export class RecurringTransactionValidator {
    * @param monthOfYear - Month of year for yearly (accepts null and converts to undefined)
    * @returns Validation result with RecurrencePattern if valid
    */
-  validate(
+  static validate(
     amount: number,
     frequency: string,
     startDate: Date | string,
@@ -87,11 +81,11 @@ export class RecurringTransactionValidator {
     const errors: string[] = [];
 
     // Validate amount
-    const amountResult = this.validateAmount(amount);
+    const amountResult = RecurringTransactionValidator.validateAmount(amount);
     errors.push(...amountResult.errors);
 
     // Validate type
-    const typeResult = this.validateType(type);
+    const typeResult = RecurringTransactionValidator.validateType(type);
     errors.push(...typeResult.errors);
 
     // Convert null to undefined for recurrence pattern creation
@@ -103,7 +97,7 @@ export class RecurringTransactionValidator {
     // Validate and create recurrence pattern
     let recurrencePattern: RecurrencePattern | undefined;
     try {
-      recurrencePattern = this.createRecurrencePattern(
+      recurrencePattern = RecurringTransactionValidator.createRecurrencePattern(
         frequency,
         startDate,
         normalizedInterval,
@@ -129,7 +123,7 @@ export class RecurringTransactionValidator {
    * @param startDate - The start date to normalize
    * @returns Normalized Date object
    */
-  normalizeStartDate(startDate?: Date | string): string {
-    return this.transactionValidator.normalizeDate(startDate);
+  static normalizeStartDate(startDate?: Date | string): string {
+    return TransactionValidator.normalizeDate(startDate);
   }
 }

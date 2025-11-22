@@ -8,6 +8,7 @@ import { TransactionEmbeddingService } from './ai/embedding/transactionEmbedding
 import { TransactionSearchService } from './business/search/TransactionSearchService';
 import { MongoConnectionManager } from './infrastructure/database/MongoConnectionManager';
 import { TransactionQueryService } from './infrastructure/database/TransactionQueryService';
+import { TransactionLookupService } from './business/transactionQueryService';
 
 export class DependencyService {
   private static instance: DependencyService;
@@ -46,13 +47,14 @@ export class DependencyService {
 
       // Data access layer
       const transactionQueryService = new TransactionQueryService(transactionCollection, recurringCollection);
+      const transactionLookupService = new TransactionLookupService();
 
       // Business services - using default userId '1' for now
       // TODO: This should come from authentication/session context in the future
       const userId = '1';
       const transactionEmbeddingService = new TransactionEmbeddingService();
-      const transactionService = new TransactionService(userId, transactionEmbeddingService);
-      const recurringTransactionService = new RecurringTransactionService(userId, transactionEmbeddingService);
+      const transactionService = new TransactionService(userId, transactionEmbeddingService, transactionLookupService);
+      const recurringTransactionService = new RecurringTransactionService(userId, transactionEmbeddingService, transactionLookupService);
       
       // Orchestration layer
       const transactionSearchService = new TransactionSearchService(transactionQueryService, transactionEmbeddingService);

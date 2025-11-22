@@ -4,29 +4,25 @@ import { PrismaClient } from '../../generated/prisma';
 import { MessageBuilder } from '../../lib/MessageBuilder';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
-import { TransactionQueryService } from './transactionQueryService';
+import { TransactionLookupService } from './transactionQueryService';
 import { TransactionEmbeddingService } from '../ai/embedding/transactionEmbeddingService';
-import { TransactionValidator } from '../../validators/TransactionValidator';
-import { CategoryNormalizer } from '../../lib/CategoryNormalizer';
 import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class TransactionService {
   private userId: string;
   private prisma: PrismaClient;
-  private messageBuilder: MessageBuilder;
-  private queryService: TransactionQueryService;
+  private lookupService: TransactionLookupService;
   private embeddingService: TransactionEmbeddingService;
-  private validator: TransactionValidator;
-  private categoryNormalizer: CategoryNormalizer;
 
-  constructor(userId: string, embeddingService: TransactionEmbeddingService) {
+  constructor(
+    userId: string, 
+    embeddingService: TransactionEmbeddingService,
+    lookupService: TransactionLookupService
+  ) {
     this.userId = userId;
     this.prisma = PrismaClientManager.getClient();
-    this.messageBuilder = new MessageBuilder();
-    this.queryService = new TransactionQueryService();
+    this.lookupService = lookupService;
     this.embeddingService = embeddingService;
-    this.validator = new TransactionValidator();
-    this.categoryNormalizer = new CategoryNormalizer();
   }
 
   /**
@@ -44,10 +40,7 @@ export class TransactionService {
       transactionData.amount,
       transactionData.category,
       transactionData.type,
-      transactionData.date,
-      this.validator,
-      this.categoryNormalizer,
-      this.messageBuilder
+      transactionData.date
     );
     
     if (!validationResult.isValid) {
@@ -98,8 +91,8 @@ export class TransactionService {
         );
       }
       
-      // Build success message using MessageBuilder
-      const message = this.messageBuilder.buildTransactionCreatedMessage(
+      // Build success message using MessageBuilder static method
+      const message = MessageBuilder.buildTransactionCreatedMessage(
         transaction,
         { 
           category: validationResult.normalizedCategory, 
@@ -138,10 +131,7 @@ export class TransactionService {
     const basicUpdateResult = buildBasicUpdateData(
       updates,
       existingTransaction,
-      'date',
-      this.validator,
-      this.categoryNormalizer,
-      this.messageBuilder
+      'date'
     );
 
     if (!basicUpdateResult.isValid) {
@@ -162,10 +152,7 @@ export class TransactionService {
         updates.amount || existingTransaction.amount,
         updates.category || existingTransaction.category,
         (updates.type || existingTransaction.type) as TransactionType,
-        updates.date,
-        this.validator,
-        this.categoryNormalizer,
-        this.messageBuilder
+        updates.date
       );
 
       if (!dateValidation.isValid) {
@@ -241,7 +228,7 @@ export class TransactionService {
       }
 
       // Build success message
-      const message = this.messageBuilder.buildTransactionUpdatedMessage(
+      const message = MessageBuilder.buildTransactionUpdatedMessage(
         existingTransaction,
         {
           id: updatedTransaction.id,
@@ -287,7 +274,7 @@ export class TransactionService {
     transactionType?: TransactionType
   ): Promise<TransactionResult> {
     // Query for last transaction using this.userId
-    const lastTxResult = await this.queryService.getLastTransactionByUser(this.userId, transactionType);
+    const lastTxResult = await this.lookupService.getLastTransactionByUser(this.userId, transactionType);
     
     if (!lastTxResult.success) {
       return lastTxResult;
@@ -308,7 +295,7 @@ export class TransactionService {
     updates: TransactionUpdateData
   ): Promise<TransactionResult> {
     // Query for transaction by ID with ownership validation using this.userId
-    const transactionResult = await this.queryService.getTransactionById(id, this.userId);
+    const transactionResult = await this.lookupService.getTransactionById(id, this.userId);
     
     if (!transactionResult.success) {
       return transactionResult;
