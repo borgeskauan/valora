@@ -1,6 +1,6 @@
 import { Transaction, RecurringTransactionInput, TransactionUpdateData, RecurringTransactionUpdateData } from "../../types/models";
-import { TransactionService } from "../business/transactionService";
-import { RecurringTransactionService } from "../business/recurringTransactionService";
+import { TransactionService } from "../business/TransactionService";
+import { RecurringTransactionService } from "../business/RecurringTransactionService";
 import { TransactionType } from "../../config/transactionTypes";
 import { FUNCTION_DECLARATIONS } from "./functionDeclarations";
 import { TransactionSearchService } from "../business/search/TransactionSearchService";

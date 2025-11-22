@@ -135,14 +135,3 @@ export class FreeformTransactionSearchService {
     }
   }
 }
-
-export async function createTransactionQueryService(): Promise<FreeformTransactionSearchService> {
-  const manager = MongoConnectionManager.fromEnv();
-
-  const [transactions, recurringTransactions] = await Promise.all([
-    manager.getTransactionCollection(),
-    manager.getRecurringTransactionCollection(),
-  ]);
-
-  return new FreeformTransactionSearchService(transactions, recurringTransactions);
-}

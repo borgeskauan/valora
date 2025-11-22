@@ -6,7 +6,7 @@ import { MessageBuilder } from '../../lib/MessageBuilder';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
 import { TransactionLookupService } from './TransactionLookupService';
-import { TransactionEmbeddingService } from '../ai/embedding/transactionEmbeddingService';
+import { TransactionEmbeddingService } from '../ai/embedding/TransactionEmbeddingService';
 import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class RecurringTransactionService {

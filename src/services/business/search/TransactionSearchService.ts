@@ -1,7 +1,7 @@
 import { failure, success } from "../../../types/serviceResult";
 import { TransactionSearchRequestWithText, TransactionSearchResultSR, RecurringSearchRequestWithText, RecurringSearchResultSR, RecurringSearchData } from "./searchTypes";
 import { MqlFilter, FreeformTransactionSearchService } from "../../infrastructure/database/FreeformTransactionSearchService";
-import { TransactionEmbeddingService } from "../../ai/embedding/transactionEmbeddingService";
+import { TransactionEmbeddingService } from "../../ai/embedding/TransactionEmbeddingService";
 
 const SEMANTIC_TOP_K = 200;
 
