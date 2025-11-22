@@ -271,7 +271,7 @@ export class TransactionService {
         validationWarnings.length > 0 ? validationWarnings : undefined
       );
     } catch (error) {
-      return this.baseOps.handleDatabaseError(error, 'updating the transaction');
+      return handleDatabaseError(error, 'updating the transaction');
     }
   }
 
@@ -286,21 +286,8 @@ export class TransactionService {
     updates: TransactionUpdateData,
     transactionType?: TransactionType
   ): Promise<TransactionResult> {
-    // Get userId from injected context (same pattern as injectUserId)
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
-    
-    if (!userId) {
-      return failure(
-        'User context not available',
-        'MISSING_CONTEXT',
-        'Unable to identify user for transaction lookup'
-      );
-    }
-
-    // Query for last transaction
-    const lastTxResult = await this.queryService.getLastTransactionByUser(userId, transactionType);
+    // Query for last transaction using this.userId
+    const lastTxResult = await this.queryService.getLastTransactionByUser(this.userId, transactionType);
     
     if (!lastTxResult.success) {
       return lastTxResult;
@@ -320,21 +307,8 @@ export class TransactionService {
     id: string,
     updates: TransactionUpdateData
   ): Promise<TransactionResult> {
-    // Get userId from injected context (same pattern as editLastTransaction)
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
-    
-    if (!userId) {
-      return failure(
-        'User context not available',
-        'MISSING_CONTEXT',
-        'Unable to identify user for transaction lookup'
-      );
-    }
-
-    // Query for transaction by ID with ownership validation
-    const transactionResult = await this.queryService.getTransactionById(id, userId);
+    // Query for transaction by ID with ownership validation using this.userId
+    const transactionResult = await this.queryService.getTransactionById(id, this.userId);
     
     if (!transactionResult.success) {
       return transactionResult;
@@ -361,25 +335,12 @@ export class TransactionService {
       );
     }
 
-    // Get userId from injected context
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
-    
-    if (!userId) {
-      return failure(
-        'User context not available',
-        'MISSING_CONTEXT',
-        'Unable to identify user for transaction deletion'
-      );
-    }
-
     try {
       // Step 1: Fetch all transactions matching IDs and userId
       const transactions = await this.prisma.transaction.findMany({
         where: {
           id: { in: ids },
-          userId
+          userId: this.userId
         },
         select: { id: true }
       });
@@ -401,11 +362,11 @@ export class TransactionService {
       const result = await this.prisma.transaction.deleteMany({
         where: {
           id: { in: ids },
-          userId // Extra safety
+          userId: this.userId // Extra safety
         }
       });
 
-      console.log(`Deleted ${result.count} transaction(s) for user ${userId}`);
+      console.log(`Deleted ${result.count} transaction(s) for user ${this.userId}`);
 
       // Build success message
       const message = result.count === 1 
@@ -417,7 +378,7 @@ export class TransactionService {
         message
       );
     } catch (error) {
-      return this.baseOps.handleDatabaseError(error, 'deleting transaction(s)');
+      return handleDatabaseError(error, 'deleting transaction(s)');
     }
   }
 }
