@@ -76,10 +76,10 @@ export class WhatsAppController {
     try {
       const { userId } = req.params;
 
-      if (!userId) {
+      if (!userId || userId.trim() === '') {
         res.status(400).json({
           error: 'Bad request',
-          message: 'userId parameter is required'
+          message: 'userId parameter is required and cannot be empty'
         });
         return;
       }
@@ -105,6 +105,8 @@ export class WhatsAppController {
 
   /**
    * Health check endpoint
+   * Returns basic service availability status
+   * Note: This performs a simple existence check rather than functional validation
    */
   async handleHealthCheck(_req: Request, res: Response): Promise<void> {
     try {
