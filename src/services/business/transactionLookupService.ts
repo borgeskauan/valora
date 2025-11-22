@@ -1,7 +1,7 @@
 import { TransactionData, TransactionResult, RecurringTransactionData, RecurringTransactionResult } from '../../types/models';
 import { success, failure } from '../../types/serviceResult';
 import { UserContextProvider } from '../../lib/UserContextProvider';
-import { PrismaClient } from '../../generated/prisma';
+import { PrismaClient, Prisma } from '../../generated/prisma';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
 import { ErrorHandler } from '../../lib/ErrorHandler';
@@ -29,7 +29,7 @@ export class TransactionLookupService {
    */
   async getLastTransactionByUser(userId: string, type?: TransactionType): Promise<TransactionResult> {
     try {
-      const whereClause: any = { userId };
+      const whereClause: Prisma.TransactionWhereInput = { userId };
       if (type) {
         whereClause.type = type;
       }
@@ -111,7 +111,7 @@ export class TransactionLookupService {
    */
   async getLastRecurringTransactionByUser(userId: string, type?: TransactionType): Promise<RecurringTransactionResult> {
     try {
-      const whereClause: any = { userId, isActive: true };
+      const whereClause: Prisma.RecurringTransactionWhereInput = { userId, isActive: true };
       if (type) {
         whereClause.type = type;
       }

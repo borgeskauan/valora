@@ -340,8 +340,7 @@ export class TransactionService {
     }
 
     // Validate each ID is a non-empty string
-    const invalidIds = ids.filter(id => !id || typeof id !== 'string' || id.trim().length === 0);
-    if (invalidIds.length > 0) {
+    if (ids.some(id => !id || typeof id !== 'string' || id.trim().length === 0)) {
       return failure(
         'Invalid transaction IDs',
         'VALIDATION_ERROR',
