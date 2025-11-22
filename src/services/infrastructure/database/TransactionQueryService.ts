@@ -34,7 +34,7 @@ export class TransactionQueryService {
   /**
    * Query the Transaction collection with a simple .find(...) style query.
    */
-  async queryTransactions(
+  async searchTransactions(
     userId: string,
     request: MqlFindRequest
   ): Promise<ServiceResult<MqlFindResponse<TransactionDoc>>> {
@@ -85,7 +85,7 @@ export class TransactionQueryService {
   /**
    * Query the RecurringTransaction collection with a simple .find(...) query.
    */
-  async queryRecurringTransactions(
+  async searchRecurringTransactions(
     userId: string,
     request: MqlFindRequest
   ): Promise<ServiceResult<MqlFindResponse<RecurringTransactionDoc>>> {

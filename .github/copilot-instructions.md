@@ -1,7 +1,7 @@
 # Expense Tracker Bot - AI Agent Instructions
 
 ## Project Overview
-WhatsApp-based financial tracking bot using Google Gemini AI for natural language processing. Users send transaction messages via WhatsApp; Gemini extracts structured data and calls functions to store transactions (expenses or income) in SQLite.
+WhatsApp-based financial tracking bot using Google Gemini AI for natural language processing. Users send transaction messages via WhatsApp; Gemini extracts structured data and calls functions to store transactions (expenses or income) in MongoDB.
 
 ## Architecture Pattern: AI Function Calling Pipeline
 
@@ -76,11 +76,12 @@ generator client {
 ```
 Import as: `import { PrismaClient } from '../generated/prisma'`
 
-**Database**: SQLite at `prisma/dev.db`
+**Database**: MongoDB (connection via DATABASE_URL environment variable)
 
 **Migrations**: 
-- `npx prisma migrate dev --name <description>` for new migrations
-- Schema changes: Update `prisma/schema.prisma` → run migrate → regenerate client
+- MongoDB with Prisma uses `db push` for schema synchronization: `npx prisma db push`
+- Schema changes: Update `prisma/schema.prisma` → run `npx prisma db push` → regenerate client
+- Note: MongoDB with Prisma doesn't use traditional migrations; it syncs schema directly
 
 ## Function Declarations for Gemini
 
@@ -139,12 +140,16 @@ npm run dev  # Starts nodemon with ts-node (hot reload)
 ```
 Requires `.env`:
 ```
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="mongodb://localhost:27017/expense-tracker"
 GEMINI_API_KEY="your-key"
 GEMINI_MODEL="gemini-2.0-flash"
 SYSTEM_INSTRUCTION="You are a financial tracking assistant. Help users track expenses and income..."
 WHATSAPP_API_URL="http://localhost:3000"
 ```
+
+**MongoDB Setup**: Ensure MongoDB is running locally or use a cloud instance (MongoDB Atlas). The DATABASE_URL format:
+- Local: `mongodb://localhost:27017/expense-tracker`
+- Atlas: `mongodb+srv://username:password@cluster.mongodb.net/expense-tracker`
 
 ### Building & Production
 ```bash

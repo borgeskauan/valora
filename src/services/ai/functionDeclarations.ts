@@ -181,7 +181,7 @@ export const editTransactionByIdDeclaration = {
     properties: {
       id: {
         type: Type.STRING,
-        description: "The ID of the transaction to edit (obtained from queryTransactions results)",
+        description: "The ID of the transaction to edit (obtained from searchTransactions results)",
       },
       updates: {
         type: Type.OBJECT,
@@ -204,7 +204,7 @@ export const editRecurringTransactionByIdDeclaration = {
     properties: {
       id: {
         type: Type.STRING,
-        description: "The ID of the recurring transaction to edit (obtained from queryTransactions results on RecurringTransaction table)",
+        description: "The ID of the recurring transaction to edit (obtained from searchTransactions results on RecurringTransaction table)",
       },
       updates: {
         type: Type.OBJECT,
@@ -227,7 +227,7 @@ export const deleteTransactionsDeclaration = {
     properties: {
       ids: {
         type: Type.ARRAY,
-        description: "Array of transaction IDs to delete (obtained from queryTransactions results on Transaction table). Can be single ID [123] or multiple [123, 456, 789]",
+        description: "Array of transaction IDs to delete (obtained from searchTransactions results on Transaction table). Can be single ID [123] or multiple [123, 456, 789]",
         items: {
           type: Type.STRING,
           description: "Transaction ID"
@@ -249,7 +249,7 @@ export const deleteRecurringTransactionsDeclaration = {
     properties: {
       ids: {
         type: Type.ARRAY,
-        description: "Array of recurring transaction IDs to delete (obtained from queryTransactions results on RecurringTransaction table). Can be single ID [12] or multiple [12, 34, 56]",
+        description: "Array of recurring transaction IDs to delete (obtained from searchTransactions results on RecurringTransaction table). Can be single ID [12] or multiple [12, 34, 56]",
         items: {
           type: Type.STRING,
           description: "Recurring transaction ID"
@@ -260,8 +260,8 @@ export const deleteRecurringTransactionsDeclaration = {
   }
 };
 
-export const queryTransactionsDeclaration = {
-  name: "queryTransactions",
+export const searchTransactionsDeclaration = {
+  name: "searchTransactions",
   parameters: {
     type: Type.OBJECT,
     description:
@@ -294,8 +294,8 @@ export const queryTransactionsDeclaration = {
   },
 };
 
-export const queryRecurringTransactionsDeclaration = {
-  name: "queryRecurringTransactions",
+export const searchRecurringTransactionsDeclaration = {
+  name: "searchRecurringTransactions",
   parameters: {
     type: Type.OBJECT,
     description:
@@ -341,6 +341,6 @@ export const FUNCTION_DECLARATIONS = [
   editRecurringTransactionByIdDeclaration,
   deleteTransactionsDeclaration,
   deleteRecurringTransactionsDeclaration,
-  queryTransactionsDeclaration,
-  queryRecurringTransactionsDeclaration
+  searchTransactionsDeclaration,
+  searchRecurringTransactionsDeclaration
 ];

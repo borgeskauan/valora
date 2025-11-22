@@ -17,7 +17,7 @@ export class TransactionSearchService {
    * Transaction search combining semantic and structured queries.
    * Combines optional textQuery (semantic) + MQL filter in a single call.
    */
-  async queryTransactions(
+  async searchTransactions(
     request: TransactionSearchRequestWithText
   ): Promise<TransactionSearchResultSR> {
     const { textQuery, ...rest } = request;
@@ -57,7 +57,7 @@ export class TransactionSearchService {
     }
 
     // Delegate to query service (already returns ServiceResult)
-    return this.queryService.queryTransactions(userId, {
+    return this.queryService.searchTransactions(userId, {
       filter: mergedFilter,
       sort: rest.sort,
       limit: rest.limit,
@@ -65,7 +65,7 @@ export class TransactionSearchService {
     });
   }
 
-  async queryRecurringTransactions(
+  async searchRecurringTransactions(
     request: RecurringSearchRequestWithText
   ): Promise<RecurringSearchResultSR> {
     const { textQuery, ...rest } = request;
@@ -104,7 +104,7 @@ export class TransactionSearchService {
       };
     }
 
-    return this.queryService.queryRecurringTransactions(userId, {
+    return this.queryService.searchRecurringTransactions(userId, {
       filter: mergedFilter,
       sort: rest.sort,
       limit: rest.limit,

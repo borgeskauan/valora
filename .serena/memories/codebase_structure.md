@@ -1,7 +1,7 @@
 # Expense Tracker Bot - Codebase Structure
 
 ## Project Overview
-WhatsApp-based financial tracking bot using Google Gemini AI (gemini-2.0-flash) for natural language processing. Users send transaction messages via WhatsApp; Gemini extracts structured data and calls functions to store transactions (expenses or income) in SQLite.
+WhatsApp-based financial tracking bot using Google Gemini AI (gemini-2.0-flash) for natural language processing. Users send transaction messages via WhatsApp; Gemini extracts structured data and calls functions to store transactions (expenses or income) in MongoDB.
 
 ## Architecture Pattern: AI Function Calling Pipeline
 
@@ -114,7 +114,7 @@ return failure("Validation failed", "VALIDATION_ERROR", "Amount must be positive
 - Services return `failure()` for validation errors instead of throwing
 - AI receives structured error information for user-friendly messages
 
-## Database (Prisma + SQLite)
+## Database (Prisma + MongoDB)
 
 ### Custom Output Path
 ```prisma
@@ -124,7 +124,10 @@ generator client {
 ```
 Import: `import { PrismaClient } from '../generated/prisma'`
 
-### Database: SQLite at `prisma/dev.db`
+### Database: MongoDB
+- Connection: `mongodb://localhost:27017/expense-tracker` (local)
+- Cloud: MongoDB Atlas `mongodb+srv://username:password@cluster.mongodb.net/expense-tracker`
+- Configured in `prisma/schema.prisma`: `datasource db { provider = "mongodb" }`
 
 ### Models
 - **Transaction**: One-time transactions (hard delete)
@@ -132,9 +135,10 @@ Import: `import { PrismaClient } from '../generated/prisma'`
 - Both have `type` field ('expense' | 'income')
 - Both have `category` field (validated against type-specific categories)
 
-### Migrations
-- `npx prisma migrate dev --name <description>` for new migrations
-- Schema changes: Update `prisma/schema.prisma` → run migrate → regenerate client
+### Schema Synchronization
+- MongoDB with Prisma uses `db push` instead of migrations: `npx prisma db push`
+- Schema changes: Update `prisma/schema.prisma` → run `npx prisma db push` → regenerate client
+- Note: MongoDB with Prisma doesn't use traditional migrations; it syncs schema directly
 
 ## Configuration Files
 
