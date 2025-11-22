@@ -1,7 +1,7 @@
 import { failure, success } from "../../../types/ServiceResult";
 import { TransactionSearchRequestWithText, TransactionSearchResultSR, RecurringSearchRequestWithText, RecurringSearchResultSR, RecurringSearchData } from "./embeddingSearchTypes";
 import { MqlFilter, MqlSearchService } from "./mql/MqlSearchService";
-import { TransactionDescriptionSearchService } from "./SemanticSearchService";
+import { TransactionEmbeddingService } from "../embedding/transactionEmbeddingService";
 import { UserContextProvider } from "../../../lib/UserContextProvider";
 
 const SEMANTIC_TOP_K = 200;
@@ -10,7 +10,7 @@ export class AiSearchService {
   constructor(
     private readonly userContext: UserContextProvider,
     private readonly mql: MqlSearchService,
-    private readonly txSemantic: TransactionDescriptionSearchService
+    private readonly semanticSearchService: TransactionEmbeddingService
   ) {}
 
   /**
@@ -27,7 +27,7 @@ export class AiSearchService {
 
     if (textQuery && textQuery.trim().length > 0) {
       const semanticRes =
-        await this.txSemantic.searchTransactionsByDescription(
+        await this.semanticSearchService.searchTransactionsByDescription(
           textQuery,
           SEMANTIC_TOP_K
         );
@@ -75,7 +75,7 @@ export class AiSearchService {
 
     if (textQuery && textQuery.trim().length > 0) {
       const semanticRes =
-        await this.txSemantic.searchTransactionsByDescription(
+        await this.semanticSearchService.searchTransactionsByDescription(
           textQuery,
           SEMANTIC_TOP_K
         );
