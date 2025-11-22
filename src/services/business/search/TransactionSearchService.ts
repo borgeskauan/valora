@@ -1,4 +1,4 @@
-import { failure, success } from "../../../types/ServiceResult";
+import { failure, success } from "../../../types/serviceResult";
 import { TransactionSearchRequestWithText, TransactionSearchResultSR, RecurringSearchRequestWithText, RecurringSearchResultSR, RecurringSearchData } from "./searchTypes";
 import { MqlFilter, TransactionQueryService } from "../../infrastructure/database/TransactionQueryService";
 import { TransactionEmbeddingService } from "../../ai/embedding/transactionEmbeddingService";

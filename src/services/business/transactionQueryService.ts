@@ -1,5 +1,5 @@
 import { TransactionData, TransactionResult, RecurringTransactionData, RecurringTransactionResult } from '../../types/models';
-import { success, failure } from '../../types/ServiceResult';
+import { success, failure } from '../../types/serviceResult';
 import { UserContextProvider } from '../../lib/UserContextProvider';
 import { PrismaClient } from '../../generated/prisma';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';

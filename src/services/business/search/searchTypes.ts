@@ -1,4 +1,4 @@
-import { ServiceResult } from "../../../types/ServiceResult";
+import { ServiceResult } from "../../../types/serviceResult";
 import { MqlFindRequest, MqlFindResponse } from "../../infrastructure/database/TransactionQueryService";
 import { TransactionDoc, RecurringTransactionDoc } from "../../infrastructure/database/schemas";
 

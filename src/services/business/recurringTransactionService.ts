@@ -1,5 +1,5 @@
 import { RecurringTransactionInput, RecurringTransactionResult, RecurringTransactionData, RecurringTransactionUpdateData } from '../../types/models';
-import { success, failure, ServiceResult } from '../../types/ServiceResult';
+import { success, failure, ServiceResult } from '../../types/serviceResult';
 import { UserContextProvider } from '../../lib/UserContextProvider';
 import { RecurringTransactionValidator } from '../../validators/RecurringTransactionValidator';
 import { BaseTransactionOperations } from '../../lib/BaseTransactionOperations';

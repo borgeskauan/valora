@@ -1,4 +1,4 @@
-import { ServiceResult } from './ServiceResult';
+import { ServiceResult } from './serviceResult';
 import { TransactionType } from '../config/transactionTypes';
 
 export interface Transaction {

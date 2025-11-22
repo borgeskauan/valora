@@ -1,4 +1,4 @@
-import { ServiceResult, success, failure } from '../../../types/ServiceResult';
+import { ServiceResult, success, failure } from '../../../types/serviceResult';
 import {
   TransactionEmbeddingInput,
   TransactionEmbeddingMetadata,
@@ -9,7 +9,7 @@ import { TransactionType } from '../../../config/transactionTypes';
 import { PrismaClient } from '../../../generated/prisma';
 import { PrismaClientManager } from '../../../lib/PrismaClientManager';
 import { UserContextProvider } from '../../../lib/UserContextProvider';
-import { config } from '../../../config';
+import { config } from '../../../config/config';
 import embeddingStore from './embeddingStore';
 
 export class TransactionEmbeddingService {

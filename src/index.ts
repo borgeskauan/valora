@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { DependencyService } from './services/dependencyService';
-import { createRoutes } from './routes';
-import { config } from './config';
+import { createWhatsAppRoutes } from './routes/whatsapp';
+import { config } from './config/config';
 
 async function main() {
   // Initialize dependency service (async)
@@ -17,7 +17,7 @@ async function main() {
   app.use(express.json());
 
   // Routes
-  app.use('/', createRoutes(dependencyService.aiMessageService));
+  app.use('/whatsapp', createWhatsAppRoutes(dependencyService.aiMessageService));
 
   // Start server
   const PORT = config.port;

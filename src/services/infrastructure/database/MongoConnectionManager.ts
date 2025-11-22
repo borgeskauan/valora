@@ -4,7 +4,7 @@ import {
   TransactionDoc,
   RecurringTransactionDoc,
 } from "./schemas";
-import { config } from "../../../config";
+import { config } from "../../../config/config";
 
 export interface MongoConnectionManagerOptions {
   uri: string;

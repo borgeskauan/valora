@@ -3,7 +3,7 @@ import { CategoryNormalizer, CategoryNormalizationResult } from './CategoryNorma
 import { UserContextProvider } from './UserContextProvider';
 import { MessageBuilder } from './MessageBuilder';
 import { PrismaClientManager } from './PrismaClientManager';
-import { failure, ServiceResult } from '../types/ServiceResult';
+import { failure, ServiceResult } from '../types/serviceResult';
 import { TransactionValidator } from '../validators/TransactionValidator';
 import { TransactionType } from '../config/transactionTypes';
 

@@ -1,4 +1,4 @@
-import { config } from '../../config';
+import { config } from '../../config/config';
 import { markdownToWhatsapp } from '../../lib/WhatsAppPostProcessor';
 
 export interface SendMessageRequest {

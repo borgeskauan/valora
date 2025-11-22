@@ -1,6 +1,6 @@
 import { GeminiConversationalService } from './ai/conversational/geminiService';
 import { AIMessageService } from './ai/conversational/aiMessageService';
-import { config } from '../config';
+import { config } from '../config/config';
 import { FunctionDeclarationService } from './ai/functionDeclarationService';
 import { TransactionService } from './business/transactionService';
 import { RecurringTransactionService } from './business/recurringTransactionService';
