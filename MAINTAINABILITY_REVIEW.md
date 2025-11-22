@@ -21,11 +21,8 @@ The following issues have been **RESOLVED**:
 
 ### 🔴 Remaining Issues
 
-- **Dead/Unused Code**: TransactionSearchService (150+ lines never called)
-- **Questionable Value**: Embedding system overhead without semantic search consumer
 - **Minor Duplication**: Update logic between Transaction and RecurringTransaction services
-
-**Estimated Impact**: Removing remaining dead code could further reduce codebase by ~20%.
+- **Optional Improvements**: Logging and error handling enhancements
 
 ---
 
@@ -209,121 +206,7 @@ All affected services updated, dependency injection simplified.
 
 ---
 
-## 1. CRITICAL: Unused TransactionSearchService
-
-### Location
-- `src/services/business/search/TransactionSearchService.ts` (113 lines)
-- `src/services/business/search/searchTypes.ts` (40+ lines)
-
-### Description
-`TransactionSearchService` is fully implemented with semantic search capabilities but:
-- Registered in `DependencyService.initialize()`
-- Injected into `FunctionDeclarationService` constructor
-- **NEVER ACTUALLY CALLED** in any function declaration or elsewhere
-
-```typescript
-// In FunctionDeclarationService constructor
-constructor(
-    transactionService: TransactionService,
-    recurringTransactionService: RecurringTransactionService,
-    searchService: TransactionSearchService  // ← Injected but unused
-) {
-    this.searchService = searchService;  // ← Set but never referenced
-}
-```
-
-### Why This Is a Problem
-1. **Dead Code**: 150+ lines of code that never execute
-2. **Performance**: Service initialization overhead for no benefit
-3. **Maintenance**: Code that needs to be maintained but provides no value
-4. **Dependencies**: Ties in embedding service unnecessarily
-5. **Confusion**: Future developers might think it's used
-
-### Recommendation
-```diff
-# Delete dead code
-- src/services/business/search/TransactionSearchService.ts
-- src/services/business/search/searchTypes.ts
-
-# Update DependencyService
-- Remove TransactionSearchService initialization
-- Remove from services map
-
-# Update FunctionDeclarationService
-- Remove searchService parameter from constructor
-- Remove this.searchService property
-```
-
-**Alternative**: If semantic search was planned, add a function declaration for it. But currently it's 100% unused.
-
----
-
-## 2. HIGH: Questionable Embedding System
-
-### Location
-- `src/services/ai/embedding/transactionEmbeddingService.ts`
-- `src/services/ai/embedding/embedder.ts`
-- `src/services/ai/embedding/embeddingStore.ts`
-- `src/services/ai/embedding/qdrant.ts`
-
-### Description
-Transaction embedding system is implemented and **IS called** in both services:
-- `TransactionService.addTransaction()` - creates embeddings
-- `TransactionService.updateTransaction()` - updates embeddings
-- Same for `RecurringTransactionService`
-
-However:
-- **Embeddings are never queried** (the search service that would query them is unused)
-- Adds complexity to every transaction operation
-- Requires Qdrant vector database running
-- Failures in embedding cause transaction operations to fail
-
-```typescript
-// In TransactionService.addTransaction()
-const embeddingResult = await this.embeddingService.embedTransaction({...});
-
-if (!embeddingResult.success) {
-  return failure(
-    'Failed to create transaction embedding',
-    'EMBEDDING_ERROR',
-    embeddingResult.message
-  );
-}
-```
-
-### Why This Is a Problem
-1. **Overhead**: Every transaction CRUD operation does embedding work for no current benefit
-2. **Failure Risk**: Embedding failures can break transaction creation
-3. **Infrastructure**: Requires Qdrant database to be running
-4. **Complexity**: 300+ lines of embedding code with no consumer
-5. **Future Liability**: If search is never implemented, this is wasted work
-
-### Recommendation
-
-**Option A - Remove Embedding System** (if not using semantic search):
-```diff
-- Delete src/services/ai/embedding/ directory
-- Remove @qdrant/js-client-rest dependency
-- Remove embedding calls from TransactionService
-- Remove embedding calls from RecurringTransactionService
-- Simplify service constructors (no embeddingService param)
-```
-
-**Option B - Make Embedding Optional** (if planning future search):
-```typescript
-// Don't fail transaction if embedding fails
-const embeddingResult = await this.embeddingService.embedTransaction({...});
-if (!embeddingResult.success) {
-  console.warn('Failed to create embedding:', embeddingResult.message);
-  // Continue anyway - don't return failure
-}
-```
-
-**Recommendation**: Choose Option A unless semantic search is on roadmap. Currently, embedding system adds ~40% overhead to each transaction operation with zero benefit.
-
----
-
-## 3. MEDIUM: Duplication Between TransactionService and RecurringTransactionService
+## 1. MEDIUM: Duplication Between TransactionService and RecurringTransactionService
 
 ### Location
 - `src/services/business/transactionService.ts` (404 lines)
@@ -401,7 +284,7 @@ Given that the differences (recurrence validation, delete strategy) are signific
 
 ---
 
-## 4. LOW: buildTransactionUpdateData Duplication (Partially Addressed)
+## 2. LOW: buildTransactionUpdateData Duplication (Partially Addressed)
 
 ### Location
 - `src/services/business/transactionService.ts` - `buildTransactionUpdateData()` (49 lines)
@@ -486,13 +369,10 @@ private buildTransactionUpdateData(updates, existing) {
 3. ~~**Remove UserContextProvider**~~ - Replaced with simple string parameter
 4. ~~**Clean up service constructors**~~ - Removed unnecessary userId parameters
 
-### CRITICAL (Do Next)
-1. **Remove unused TransactionSearchService** - Delete 150+ lines of code that never executes
-2. **Evaluate embedding system** - Consider removing if not using semantic search (saves overhead)
-
 ### LOW (Optional Polish)
-3. **Review remaining update logic duplication** - Partially addressed with pure functions
-4. **Consider logging improvements** - Replace console.error with proper logger
+1. **Review remaining update logic duplication** - Partially addressed with pure functions
+2. **Consider logging improvements** - Replace console.error with proper logger
+3. **Error handling enhancements** - Add more specific error types where beneficial
 
 ---
 
@@ -506,9 +386,8 @@ private buildTransactionUpdateData(updates, existing) {
 - **Architecture Improved**: Composition → Pure functional utilities
 
 ### Remaining Opportunities
-- **Estimated Dead Code**: ~150 lines (TransactionSearchService)
-- **Questionable Value**: ~300 lines (Embedding system if not using semantic search)
-- **Dependencies**: @qdrant/js-client-rest (if removing embeddings)
+- Minor update logic duplication between services
+- Logging improvements (replace console.error with structured logging)
 
 ### Before vs After
 - **Before Refactoring**: Over-engineered composition pattern, multiple wrapper classes
@@ -519,26 +398,11 @@ private buildTransactionUpdateData(updates, existing) {
 
 ## Next Steps
 
-### Immediate Priorities
-1. **Decision on TransactionSearchService**: Delete it or implement function declaration to use it
-2. **Evaluate embedding system**: If semantic search not planned, consider making embeddings optional or removing
-
 ### Optional Improvements
-3. **Add unit tests** for new pure functions in `transactionValidation.ts`
-4. **Update any existing tests** that may reference deleted classes
-5. **Consider logging improvements** - Replace `console.error` with structured logging
-
----
-
-## Questions for Stakeholders
-
-1. **Is semantic search planned?** 
-   - If YES: Implement TransactionSearchService function declaration
-   - If NO: Consider removing embedding system (300+ lines, Qdrant dependency)
-   
-2. **Is TransactionSearchService needed?**
-   - If YES: Add function declaration to expose it to Gemini AI
-   - If NO: Delete the service and related types
+1. **Add unit tests** for new pure functions in `transactionValidation.ts`
+2. **Update any existing tests** that may reference deleted classes
+3. **Consider logging improvements** - Replace `console.error` with structured logging
+4. **Review error handling** - Add more specific error types where beneficial
 
 ---
 
@@ -554,13 +418,9 @@ private buildTransactionUpdateData(updates, existing) {
 - Reduced codebase by ~280 lines while maintaining all functionality
 
 ### 🎯 Remaining Opportunities
-The codebase still shows some signs of **premature optimization**:
-- Infrastructure for features not yet used (TransactionSearchService)
-- Embedding overhead without a consumer (if semantic search not planned)
+Only **minor polish items** remain:
+- Small amount of update logic duplication between services
+- Logging improvements (replace console.error with structured logging)
+- Error handling enhancements
 
-**Recommended approach**: 
-1. Make decision on semantic search/TransactionSearchService (delete if not needed)
-2. Evaluate if embedding overhead is justified
-3. Consider the improvements complete if search features are planned for future
-
-The codebase is now **significantly more maintainable** with clear, testable pure functions and simplified service architecture. Further improvements depend on product direction regarding semantic search features.
+**Current Status**: The codebase is now **highly maintainable** with clear, testable pure functions, simplified service architecture, and stateless services where appropriate. All major refactoring work is complete.
