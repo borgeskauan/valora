@@ -6,9 +6,9 @@ import { TransactionService } from './business/transactionService';
 import { RecurringTransactionService } from './business/recurringTransactionService';
 import { TransactionEmbeddingService } from './ai/embedding/transactionEmbeddingService';
 import { UserContextProvider } from '../lib/UserContextProvider';
-import { AiSearchService } from './ai/search/AiSearchService';
-import { MongoClientManager } from './ai/search/mql/MongoClientManager';
-import { MqlSearchService } from './ai/search/mql/MqlSearchService';
+import { TransactionSearchService } from './business/search/TransactionSearchService';
+import { MongoConnectionManager } from './infrastructure/database/MongoConnectionManager';
+import { TransactionQueryService } from './infrastructure/database/TransactionQueryService';
 
 export class DependencyService {
   private static instance: DependencyService;
@@ -39,14 +39,14 @@ export class DependencyService {
       }
 
       // Infrastructure layer
-      const mongoManager = MongoClientManager.fromEnv();
+      const mongoConnectionManager = MongoConnectionManager.fromEnv();
       const [transactionCollection, recurringCollection] = await Promise.all([
-        mongoManager.getTransactionCollection(),
-        mongoManager.getRecurringTransactionCollection()
+        mongoConnectionManager.getTransactionCollection(),
+        mongoConnectionManager.getRecurringTransactionCollection()
       ]);
 
       // Data access layer
-      const mqlSearchService = new MqlSearchService(transactionCollection, recurringCollection);
+      const transactionQueryService = new TransactionQueryService(transactionCollection, recurringCollection);
 
       // Business services
       const userContext = new UserContextProvider();
@@ -55,12 +55,12 @@ export class DependencyService {
       const recurringTransactionService = new RecurringTransactionService(userContext, transactionEmbeddingService);
       
       // Orchestration layer
-      const searchService = new AiSearchService(userContext, mqlSearchService, transactionEmbeddingService);
+      const transactionSearchService = new TransactionSearchService(userContext, transactionQueryService, transactionEmbeddingService);
 
       const functionDeclarationService = new FunctionDeclarationService(
         transactionService,
         recurringTransactionService,
-        searchService
+        transactionSearchService
       );
 
       // Create services with configuration from the config module
@@ -73,9 +73,9 @@ export class DependencyService {
       const aiMessageService = new AIMessageService(geminiService, functionDeclarationService);
 
       // Register services
-      this.services.set('MongoClientManager', mongoManager);
-      this.services.set('MqlSearchService', mqlSearchService);
-      this.services.set('AiSearchService', searchService);
+      this.services.set('MongoConnectionManager', mongoConnectionManager);
+      this.services.set('TransactionQueryService', transactionQueryService);
+      this.services.set('TransactionSearchService', transactionSearchService);
       this.services.set('GeminiService', geminiService);
       this.services.set('AIMessageService', aiMessageService);
       this.services.set('functionDeclarationService', functionDeclarationService);

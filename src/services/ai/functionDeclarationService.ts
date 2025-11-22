@@ -3,7 +3,7 @@ import { TransactionService } from "../business/transactionService";
 import { RecurringTransactionService } from "../business/recurringTransactionService";
 import { TransactionType } from "../../config/transactionTypes";
 import { FUNCTION_DECLARATIONS } from "./functionDeclarations";
-import { AiSearchService } from "./search/AiSearchService";
+import { TransactionSearchService } from "../business/search/TransactionSearchService";
 
 /**
  * Service for executing AI function calls
@@ -12,7 +12,7 @@ import { AiSearchService } from "./search/AiSearchService";
 export class FunctionDeclarationService {
   private readonly transactionService: TransactionService;
   private readonly recurringTransactionService: RecurringTransactionService;
-  private readonly searchService: AiSearchService;
+  private readonly searchService: TransactionSearchService;
 
   private readonly functionMapping = new Map<string, Function>([
     // Date/Time functions
@@ -123,7 +123,7 @@ export class FunctionDeclarationService {
   constructor(
     transactionService: TransactionService, 
     recurringTransactionService: RecurringTransactionService,
-    searchService: AiSearchService
+    searchService: TransactionSearchService
   ) {
     this.transactionService = transactionService;
     this.recurringTransactionService = recurringTransactionService;

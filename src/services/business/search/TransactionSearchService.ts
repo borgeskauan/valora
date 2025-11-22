@@ -1,20 +1,20 @@
 import { failure, success } from "../../../types/ServiceResult";
-import { TransactionEmbeddingService } from "../embedding/transactionEmbeddingService";
+import { TransactionSearchRequestWithText, TransactionSearchResultSR, RecurringSearchRequestWithText, RecurringSearchResultSR, RecurringSearchData } from "./searchTypes";
+import { MqlFilter, TransactionQueryService } from "../../infrastructure/database/TransactionQueryService";
+import { TransactionEmbeddingService } from "../../ai/embedding/transactionEmbeddingService";
 import { UserContextProvider } from "../../../lib/UserContextProvider";
-import { TransactionSearchRequestWithText, TransactionSearchResultSR, RecurringSearchRequestWithText, RecurringSearchResultSR, RecurringSearchData } from "../../business/search/searchTypes";
-import { MqlFilter } from "../../infrastructure/database/TransactionQueryService";
 
 const SEMANTIC_TOP_K = 200;
 
-export class AiSearchService {
+export class TransactionSearchService {
   constructor(
     private readonly userContext: UserContextProvider,
-    private readonly mql: MqlSearchService,
-    private readonly semanticSearchService: TransactionEmbeddingService
+    private readonly queryService: TransactionQueryService,
+    private readonly embeddingService: TransactionEmbeddingService
   ) {}
 
   /**
-   * AI-facing transaction search.
+   * Transaction search combining semantic and structured queries.
    * Combines optional textQuery (semantic) + MQL filter in a single call.
    */
   async queryTransactions(
@@ -27,7 +27,7 @@ export class AiSearchService {
 
     if (textQuery && textQuery.trim().length > 0) {
       const semanticRes =
-        await this.semanticSearchService.searchTransactionsByDescription(
+        await this.embeddingService.searchTransactionsByDescription(
           textQuery,
           SEMANTIC_TOP_K
         );
@@ -56,8 +56,8 @@ export class AiSearchService {
       };
     }
 
-    // Delegate to MQL service (already returns ServiceResult)
-    return this.mql.queryTransactions(userId, {
+    // Delegate to query service (already returns ServiceResult)
+    return this.queryService.queryTransactions(userId, {
       filter: mergedFilter,
       sort: rest.sort,
       limit: rest.limit,
@@ -75,7 +75,7 @@ export class AiSearchService {
 
     if (textQuery && textQuery.trim().length > 0) {
       const semanticRes =
-        await this.semanticSearchService.searchTransactionsByDescription(
+        await this.embeddingService.searchTransactionsByDescription(
           textQuery,
           SEMANTIC_TOP_K
         );
@@ -104,7 +104,7 @@ export class AiSearchService {
       };
     }
 
-    return this.mql.queryRecurringTransactions(userId, {
+    return this.queryService.queryRecurringTransactions(userId, {
       filter: mergedFilter,
       sort: rest.sort,
       limit: rest.limit,

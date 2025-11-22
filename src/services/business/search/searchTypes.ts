@@ -1,6 +1,6 @@
 import { ServiceResult } from "../../../types/ServiceResult";
-import { MqlFindRequest, MqlFindResponse } from "./mql/MqlSearchService";
-import { TransactionDoc, RecurringTransactionDoc } from "./mql/schemas";
+import { MqlFindRequest, MqlFindResponse } from "../../infrastructure/database/TransactionQueryService";
+import { TransactionDoc, RecurringTransactionDoc } from "../../infrastructure/database/schemas";
 
 export interface TransactionSearchRequestWithText extends MqlFindRequest {
   /**

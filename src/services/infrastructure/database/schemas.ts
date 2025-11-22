@@ -1,5 +1,3 @@
-// mongoSchemas.ts
-
 /**
  * Matches Prisma model Transaction (Mongo collection "Transaction" by default).
  */

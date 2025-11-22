@@ -1,12 +1,12 @@
-// MongoClientManager.ts
+// MongoConnectionManager.ts
 import { MongoClient, Db, Collection } from "mongodb";
 import {
   TransactionDoc,
   RecurringTransactionDoc,
 } from "./schemas";
-import { config } from "../../../../config";
+import { config } from "../../../config";
 
-export interface MongoClientManagerOptions {
+export interface MongoConnectionManagerOptions {
   uri: string;
   /**
    * Optional explicit database name.
@@ -22,16 +22,16 @@ export interface MongoClientManagerOptions {
  * - Caches the client and Db
  * - Exposes typed collections for Transaction and RecurringTransaction
  */
-export class MongoClientManager {
+export class MongoConnectionManager {
   private client: MongoClient | null = null;
   private db: Db | null = null;
 
   private readonly uri: string;
   private readonly dbName?: string;
 
-  constructor(options: MongoClientManagerOptions) {
+  constructor(options: MongoConnectionManagerOptions) {
     if (!options.uri) {
-      throw new Error("MongoClientManager: uri is required");
+      throw new Error("MongoConnectionManager: uri is required");
     }
 
     this.uri = options.uri;
@@ -45,14 +45,14 @@ export class MongoClientManager {
    * Assumes the database name is included in the connection string,
    * e.g. mongodb+srv://user:pass@host/mydb?...
    */
-  static fromEnv(): MongoClientManager {
+  static fromEnv(): MongoConnectionManager {
     const uri = config.databaseUrl;
 
     if (!uri) {
-      throw new Error("MongoClientManager.fromEnv: DATABASE_URL is not set");
+      throw new Error("MongoConnectionManager.fromEnv: DATABASE_URL is not set");
     }
 
-    return new MongoClientManager({ uri });
+    return new MongoConnectionManager({ uri });
   }
 
   /**
@@ -67,7 +67,7 @@ export class MongoClientManager {
       this.client = new MongoClient(this.uri);
     }
 
-    // Idempotent; if already connected it’s a cheap no-op.
+    // Idempotent; if already connected it's a cheap no-op.
     await this.client.connect();
 
     return this.client;

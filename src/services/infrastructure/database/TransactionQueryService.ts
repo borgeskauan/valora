@@ -4,8 +4,8 @@ import {
   RecurringTransactionDoc,
 } from "./schemas";
 
-import { MongoClientManager } from "./MongoClientManager";
-import { failure, ServiceResult, success } from "../../../../types/ServiceResult";
+import { MongoConnectionManager } from "./MongoConnectionManager";
+import { failure, ServiceResult, success } from "../../../types/ServiceResult";
 
 export type MqlFilter = Record<string, any>;
 export type MqlSort = Record<string, 1 | -1>;
@@ -25,7 +25,7 @@ export interface MqlFindResponse<TDoc> {
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 500;
 
-export class MqlSearchService {
+export class TransactionQueryService {
   constructor(
     private readonly transactions: Collection<TransactionDoc>,
     private readonly recurringTransactions: Collection<RecurringTransactionDoc>
@@ -136,13 +136,13 @@ export class MqlSearchService {
   }
 }
 
-export async function createMqlSearchService(): Promise<MqlSearchService> {
-  const manager = MongoClientManager.fromEnv();
+export async function createTransactionQueryService(): Promise<TransactionQueryService> {
+  const manager = MongoConnectionManager.fromEnv();
 
   const [transactions, recurringTransactions] = await Promise.all([
     manager.getTransactionCollection(),
     manager.getRecurringTransactionCollection(),
   ]);
 
-  return new MqlSearchService(transactions, recurringTransactions);
+  return new TransactionQueryService(transactions, recurringTransactions);
 }
