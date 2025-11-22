@@ -23,31 +23,29 @@
 
 // export default app;
 
-import { TransactionSearchService } from "./services/ai/TransactionSearchService";
+import { createMqlSearchService } from "./services/ai/search/MqlSearchService";
 
 async function main() {
-  const svc = new TransactionSearchService();
-  return await svc.searchRecurringTransactions('1', {
-    filters: {
-      categories: ['Bills & Utilities', 'Gifts & Donations'],
-      types: ['expense'],
-      dateRange: { from: '2025-01-01', to: '2025-11-21' },
-      kinds: ['oneTime', 'recurring'],
-      text: 'netflix charge',
+  const search = await createMqlSearchService();
+
+  const from = "2025-11-01T00:00:00.000Z";
+  const to = "2026-12-01T00:00:00.000Z";
+
+  const response = await search.queryRecurringTransactions({
+    userId: '1',
+    filter: {
+      type: "expense",
+      isActive: true,
+      nextDue: {
+        $gte: from,
+        $lt: to,
+      },
     },
-    sort: [{ field: 'semanticScore', direction: 'desc' }, { field: 'date', direction: 'desc' }],
-    limit: 25,
-    aggregation: {
-      groupBy: ['month', 'category'],
-      metrics: ['count', 'sum'],
-    },
-    presentation: {
-      locale: 'en-US',
-      timezone: 'America/Los_Angeles',
-      dateStyle: 'medium',
-      currencyCode: 'USD',
-    },
+    sort: { nextDue: 1 }, // soonest first
+    limit: 50,
   });
+
+  return response;
 }
 
 main()

@@ -8,6 +8,7 @@ export const config = {
   geminiApiKey: process.env.GEMINI_API_KEY,
   geminiModel: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
   systemInstruction: SYSTEM_INSTRUCTION,
+  databaseUrl: process.env.DATABASE_URL,
   qdrantUrl: process.env.QDRANT_URL || 'http://localhost:6333',
   embeddingThreshold: parseFloat(process.env.EMBEDDING_THRESHOLD || '0.8'),
   whatsapp: {
