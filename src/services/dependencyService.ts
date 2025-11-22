@@ -7,7 +7,7 @@ import { RecurringTransactionService } from './business/recurringTransactionServ
 import { TransactionEmbeddingService } from './ai/embedding/transactionEmbeddingService';
 import { TransactionSearchService } from './business/search/TransactionSearchService';
 import { MongoConnectionManager } from './infrastructure/database/MongoConnectionManager';
-import { TransactionQueryService } from './infrastructure/database/TransactionQueryService';
+import { FreeformTransactionSearchService } from './infrastructure/database/FreeformTransactionSearchService';
 import { TransactionLookupService } from './business/TransactionLookupService';
 
 export class DependencyService {
@@ -46,7 +46,7 @@ export class DependencyService {
       ]);
 
       // Data access layer
-      const transactionQueryService = new TransactionQueryService(transactionCollection, recurringCollection);
+      const transactionQueryService = new FreeformTransactionSearchService(transactionCollection, recurringCollection);
       const transactionLookupService = new TransactionLookupService();
 
       // Business services - using default userId '1' for now

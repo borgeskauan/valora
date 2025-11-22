@@ -1,5 +1,5 @@
 import { ServiceResult } from "../../../types/serviceResult";
-import { MqlFindRequest, MqlFindResponse } from "../../infrastructure/database/TransactionQueryService";
+import { MqlFindRequest, MqlFindResponse } from "../../infrastructure/database/FreeformTransactionSearchService";
 import { TransactionDoc, RecurringTransactionDoc } from "../../infrastructure/database/schemas";
 
 export interface TransactionSearchRequestWithText extends MqlFindRequest {

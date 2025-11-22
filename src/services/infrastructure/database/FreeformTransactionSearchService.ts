@@ -25,7 +25,7 @@ export interface MqlFindResponse<TDoc> {
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 500;
 
-export class TransactionQueryService {
+export class FreeformTransactionSearchService {
   constructor(
     private readonly transactions: Collection<TransactionDoc>,
     private readonly recurringTransactions: Collection<RecurringTransactionDoc>
@@ -136,7 +136,7 @@ export class TransactionQueryService {
   }
 }
 
-export async function createTransactionQueryService(): Promise<TransactionQueryService> {
+export async function createTransactionQueryService(): Promise<FreeformTransactionSearchService> {
   const manager = MongoConnectionManager.fromEnv();
 
   const [transactions, recurringTransactions] = await Promise.all([
@@ -144,5 +144,5 @@ export async function createTransactionQueryService(): Promise<TransactionQueryS
     manager.getRecurringTransactionCollection(),
   ]);
 
-  return new TransactionQueryService(transactions, recurringTransactions);
+  return new FreeformTransactionSearchService(transactions, recurringTransactions);
 }
