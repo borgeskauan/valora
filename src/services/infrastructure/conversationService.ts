@@ -71,6 +71,28 @@ export class ConversationService {
       });
     }
   }
+
+  /**
+   * Clear conversation history for a user
+   * Deletes all messages in the conversation
+   * @param userId - WhatsApp JID
+   * @returns Number of messages deleted
+   */
+  async clearConversation(userId: string): Promise<number> {
+    const conversation = await this.prisma.conversation.findFirst({
+      where: { userId },
+    });
+
+    if (!conversation) {
+      return 0;
+    }
+
+    const result = await this.prisma.message.deleteMany({
+      where: { conversationId: conversation.id },
+    });
+
+    return result.count;
+  }
 }
 
 export const conversationService = new ConversationService();

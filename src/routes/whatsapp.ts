@@ -12,5 +12,15 @@ export function createWhatsAppRoutes(aiMessageService: AIMessageService) {
    */
   router.post('/', (req, res) => controller.handleWebhook(req, res));
 
+  /**
+   * Clear conversation history for a specific user
+   */
+  router.post('/conversation/clear/:userId', (req, res) => controller.handleClearConversation(req, res));
+
+  /**
+   * Health check endpoint
+   */
+  router.get('/health', (req, res) => controller.handleHealthCheck(req, res));
+
   return router;
 }

@@ -68,4 +68,65 @@ export class WhatsAppController {
       });
     }
   }
+
+  /**
+   * Clear conversation history for a user
+   */
+  async handleClearConversation(req: Request, res: Response): Promise<void> {
+    try {
+      const { userId } = req.params;
+
+      if (!userId) {
+        res.status(400).json({
+          error: 'Bad request',
+          message: 'userId parameter is required'
+        });
+        return;
+      }
+
+      console.log(`Clearing conversation history for user: ${userId}`);
+
+      const deletedCount = await conversationService.clearConversation(userId);
+
+      res.json({
+        success: true,
+        message: `Conversation history cleared for user ${userId}`,
+        deletedMessages: deletedCount
+      });
+
+    } catch (error) {
+      console.error('Error clearing conversation:', error);
+      res.status(500).json({
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
+
+  /**
+   * Health check endpoint
+   */
+  async handleHealthCheck(_req: Request, res: Response): Promise<void> {
+    try {
+      // Check if AI service is initialized
+      const aiServiceStatus = this.aiMessageService ? 'ok' : 'not initialized';
+
+      res.json({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        services: {
+          aiMessageService: aiServiceStatus,
+          conversationService: 'ok',
+          whatsappService: 'ok'
+        }
+      });
+    } catch (error) {
+      console.error('Health check failed:', error);
+      res.status(503).json({
+        status: 'error',
+        timestamp: new Date().toISOString(),
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
 }
