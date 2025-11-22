@@ -1,10 +1,9 @@
 import { Transaction, RecurringTransactionInput, TransactionUpdateData, RecurringTransactionUpdateData } from "../../types/models";
 import { TransactionService } from "../business/transactionService";
 import { RecurringTransactionService } from "../business/recurringTransactionService";
-import { QueryExecutorService } from "../business/queryExecutorService";
-import { TransactionEmbeddingService } from "./embedding/transactionEmbeddingService";
 import { TransactionType } from "../../config/transactionTypes";
 import { FUNCTION_DECLARATIONS } from "./functionDeclarations";
+import { AiSearchService } from "./search/AiSearchService";
 
 /**
  * Service for executing AI function calls
@@ -13,8 +12,7 @@ import { FUNCTION_DECLARATIONS } from "./functionDeclarations";
 export class FunctionDeclarationService {
   private readonly transactionService: TransactionService;
   private readonly recurringTransactionService: RecurringTransactionService;
-  private readonly queryExecutorService: QueryExecutorService;
-  private readonly embeddingService: TransactionEmbeddingService;
+  private readonly searchService: AiSearchService;
 
   private readonly functionMapping = new Map<string, Function>([
     // Date/Time functions
@@ -98,39 +96,40 @@ export class FunctionDeclarationService {
         return await this.recurringTransactionService.deleteRecurringTransactions(params.ids);
       }
     ],
-    // Query transactions for reports, editing, or deleting (async)
+    // Search transactions (async)
     [
-      "queryTransactions",
-      async (params: { queryDescription: string, sqlQuery: string }) => {
-        console.log("Executing queryTransactions with params:", params);
-        return await this.queryExecutorService.executeQuery(
-          params.sqlQuery,
-          params.queryDescription
-        );
+      "searchTransactions",
+      async (params: { query: string, limit?: number }) => {
+        console.log("Executing searchTransactions with params:", params);
+        return await this.searchService.queryTransactions({
+          userId: '1',
+          textQuery: params.query,
+          limit: params.limit || 10
+        });
       }
     ],
-    // Search transactions by semantic description (async)
+    // Search recurring transactions (async)
     [
-      "searchTransactionsByDescription",
-      async (params: { query: string }) => {
-        console.log("Executing searchTransactionsByDescription with params:", params);
-        return await this.embeddingService.searchTransactionsByDescription(
-          params.query
-        );
+      "searchRecurringTransactions",
+      async (params: { query: string, limit?: number }) => {
+        console.log("Executing searchRecurringTransactions with params:", params);
+        return await this.searchService.queryRecurringTransactions({
+          userId: '1',
+          textQuery: params.query,
+          limit: params.limit || 10
+        });
       }
-    ],
+    ]
   ]);
 
   constructor(
     transactionService: TransactionService, 
     recurringTransactionService: RecurringTransactionService,
-    queryExecutorService: QueryExecutorService,
-    embeddingService: TransactionEmbeddingService
+    searchService: AiSearchService
   ) {
     this.transactionService = transactionService;
     this.recurringTransactionService = recurringTransactionService;
-    this.queryExecutorService = queryExecutorService;
-    this.embeddingService = embeddingService;
+    this.searchService = searchService;
   }
 
   /**

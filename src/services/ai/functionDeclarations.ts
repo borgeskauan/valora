@@ -217,28 +217,6 @@ export const editRecurringTransactionByIdDeclaration = {
 };
 
 /**
- * Function declaration for querying transaction data
- */
-export const queryTransactionsDeclaration = {
-  name: "queryTransactions",
-  parameters: {
-    type: Type.OBJECT,
-    description: `Query transaction data from the database for reports, finding transactions to edit, or finding transactions to delete. Returns structured result with 'success' field. On success, includes 'data' array with query results, 'rowCount', and 'sqlExecuted'. On failure, includes validation error.`,
-    properties: {
-      sqlQuery: {
-        type: Type.STRING,
-        description: "The SQL SELECT query to execute. MUST include 'WHERE userId = {USER_ID_PLACEHOLDER}' and LIMIT clause. Include 'id' column when finding transactions for editing/deleting. Use SQLite syntax.",
-      },
-      queryDescription: {
-        type: Type.STRING,
-        description: "Brief human-readable description of what the query does - for reports, editing, or deleting (for logging and user context)",
-      },
-    },
-    required: ["sqlQuery", "queryDescription"],
-  },
-};
-
-/**
  * Function declaration for deleting one-time transactions
  */
 export const deleteTransactionsDeclaration = {
@@ -282,22 +260,72 @@ export const deleteRecurringTransactionsDeclaration = {
   }
 };
 
-/**
- * Function declaration for semantic search of transactions by description
- */
-export const searchTransactionsByDescriptionDeclaration = {
-  name: "searchTransactionsByDescription",
+export const queryTransactionsDeclaration = {
+  name: "queryTransactions",
   parameters: {
     type: Type.OBJECT,
-    description: `Search transactions using natural language description. Returns transactions ranked by semantic similarity with relevance scores.`,
+    description:
+      "Search the user's transactions using optional textQuery and a MongoDB-style filter.",
     properties: {
-      query: {
+      textQuery: {
         type: Type.STRING,
-        description: "Natural language description to search for. Be descriptive for better results."
-      }
+        description:
+          "Optional natural-language query, e.g. 'uber rides', 'netflix subscription'.",
+      },
+      filter: {
+        type: Type.OBJECT,
+        description:
+          "MongoDB filter for Transaction documents (date, amount, category, description, type, etc.).",
+      },
+      sort: {
+        type: Type.OBJECT,
+        description: "MongoDB sort, e.g. { date: -1 } for latest first.",
+      },
+      limit: {
+        type: Type.NUMBER,
+        description: "Max number of transactions to return.",
+      },
+      offset: {
+        type: Type.NUMBER,
+        description: "Number of matching transactions to skip.",
+      },
     },
-    required: ["query"]
-  }
+    required: [],
+  },
+};
+
+export const queryRecurringTransactionsDeclaration = {
+  name: "queryRecurringTransactions",
+  parameters: {
+    type: Type.OBJECT,
+    description:
+      "Search the user's recurring transactions using optional textQuery and a MongoDB-style filter.",
+    properties: {
+      textQuery: {
+        type: Type.STRING,
+        description:
+          "Optional natural-language query, e.g. 'streaming subscriptions', 'music subscription'.",
+      },
+      filter: {
+        type: Type.OBJECT,
+        description:
+          "MongoDB filter for RecurringTransaction documents (frequency, nextDue, isActive, etc.).",
+      },
+      sort: {
+        type: Type.OBJECT,
+        description: "MongoDB sort, e.g. { nextDue: 1 } for soonest first.",
+      },
+      limit: {
+        type: Type.NUMBER,
+        description: "Max number of recurring transactions to return.",
+      },
+      offset: {
+        type: Type.NUMBER,
+        description: "Number of matching recurring transactions to skip.",
+      },
+    },
+    required: [],
+  },
 };
 
 /**
@@ -311,8 +339,8 @@ export const FUNCTION_DECLARATIONS = [
   editLastRecurringTransactionDeclaration,
   editTransactionByIdDeclaration,
   editRecurringTransactionByIdDeclaration,
-  queryTransactionsDeclaration,
   deleteTransactionsDeclaration,
   deleteRecurringTransactionsDeclaration,
-  searchTransactionsByDescriptionDeclaration
+  queryTransactionsDeclaration,
+  queryRecurringTransactionsDeclaration
 ];

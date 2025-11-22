@@ -23,7 +23,10 @@
 
 // export default app;
 
-import { createMqlSearchService } from "./services/ai/search/MqlSearchService";
+import { UserContextProvider } from "./lib/UserContextProvider";
+import { TransactionEmbeddingService } from "./services/ai/embedding/transactionEmbeddingService";
+import { AiSearchService } from "./services/ai/search/AiSearchService";
+import { createMqlSearchService } from "./services/ai/search/mql/MqlSearchService";
 
 async function main() {
   const search = await createMqlSearchService();
@@ -31,8 +34,11 @@ async function main() {
   const from = "2025-11-01T00:00:00.000Z";
   const to = "2026-12-01T00:00:00.000Z";
 
-  const response = await search.queryRecurringTransactions({
+  const orchestrator = new AiSearchService(search, new TransactionEmbeddingService(new UserContextProvider()));
+
+  const response = await orchestrator.queryRecurringTransactions({
     userId: '1',
+    textQuery: "netflix",
     filter: {
       type: "expense",
       isActive: true,

@@ -4,9 +4,9 @@ import { config } from '../config';
 import { FunctionDeclarationService } from './ai/functionDeclarationService';
 import { TransactionService } from './business/transactionService';
 import { RecurringTransactionService } from './business/recurringTransactionService';
-import { QueryExecutorService } from './business/queryExecutorService';
 import { TransactionEmbeddingService } from './ai/embedding/transactionEmbeddingService';
 import { UserContextProvider } from '../lib/UserContextProvider';
+import { AiSearchService } from './ai/search/AiSearchService';
 
 export class DependencyService {
   private static instance: DependencyService;
@@ -40,13 +40,12 @@ export class DependencyService {
       const transactionEmbeddingService = new TransactionEmbeddingService(userContext);
       const transactionService = new TransactionService(userContext, transactionEmbeddingService);
       const recurringTransactionService = new RecurringTransactionService(userContext, transactionEmbeddingService);
-      const queryExecutorService = new QueryExecutorService();
+      const searchService = new AiSearchService(, transactionEmbeddingService);
 
       const functionDeclarationService = new FunctionDeclarationService(
         transactionService,
         recurringTransactionService,
-        queryExecutorService,
-        transactionEmbeddingService
+        searchService
       );
 
       // Create services with configuration from the config module

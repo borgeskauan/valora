@@ -5,7 +5,7 @@ import {
 } from "./schemas";
 
 import { MongoClientManager } from "./MongoClientManager";
-import { failure, ServiceResult, success } from "../../../types/ServiceResult";
+import { failure, ServiceResult, success } from "../../../../types/ServiceResult";
 
 export type MqlFilter = Record<string, any>;
 export type MqlSort = Record<string, 1 | -1>;
