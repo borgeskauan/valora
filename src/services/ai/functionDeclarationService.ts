@@ -96,25 +96,31 @@ export class FunctionDeclarationService {
         return await this.recurringTransactionService.deleteRecurringTransactions(params.ids);
       }
     ],
-    // Search transactions (async)
+    // Query transactions (async) - combines semantic search and MongoDB filtering
     [
-      "searchTransactions",
-      async (params: { query: string, limit?: number }) => {
-        console.log("Executing searchTransactions with params:", params);
+      "queryTransactions",
+      async (params: { textQuery?: string, filter?: any, sort?: any, limit?: number, offset?: number }) => {
+        console.log("Executing queryTransactions with params:", params);
         return await this.searchService.queryTransactions({
-          textQuery: params.query,
-          limit: params.limit || 10
+          textQuery: params.textQuery,
+          filter: params.filter,
+          sort: params.sort,
+          limit: params.limit,
+          offset: params.offset
         });
       }
     ],
-    // Search recurring transactions (async)
+    // Query recurring transactions (async) - combines semantic search and MongoDB filtering
     [
-      "searchRecurringTransactions",
-      async (params: { query: string, limit?: number }) => {
-        console.log("Executing searchRecurringTransactions with params:", params);
+      "queryRecurringTransactions",
+      async (params: { textQuery?: string, filter?: any, sort?: any, limit?: number, offset?: number }) => {
+        console.log("Executing queryRecurringTransactions with params:", params);
         return await this.searchService.queryRecurringTransactions({
-          textQuery: params.query,
-          limit: params.limit || 10
+          textQuery: params.textQuery,
+          filter: params.filter,
+          sort: params.sort,
+          limit: params.limit,
+          offset: params.offset
         });
       }
     ]

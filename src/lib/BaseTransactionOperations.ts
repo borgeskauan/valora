@@ -22,6 +22,12 @@ export interface BasicTransactionValidationResult {
 /**
  * Base utility class providing shared operations for transaction services
  * Follows composition pattern - services compose with this utility
+ * 
+ * @note UserContext management: This class currently holds a UserContext reference
+ *       for the injectUserId method. This is a design compromise for code reuse.
+ *       Ideally, userId injection should be handled by individual services using
+ *       their own UserContext instances, and this class should only provide
+ *       pure validation and formatting utilities.
  */
 export class BaseTransactionOperations {
   protected prisma: PrismaClient;
@@ -33,8 +39,6 @@ export class BaseTransactionOperations {
   constructor(userContext?: UserContextProvider) {
     this.prisma = PrismaClientManager.getClient();
     this.categoryNormalizer = new CategoryNormalizer();
-
-    // TODO: Remove this from here, keep it in the services. This means removing the injectUserId method too.
     this.userContext = userContext || new UserContextProvider();
     this.messageBuilder = new MessageBuilder();
     this.transactionValidator = new TransactionValidator();

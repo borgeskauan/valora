@@ -60,11 +60,14 @@ export class CategoryNormalizer {
 
   /**
    * Find the closest category match for the given transaction type
-   * Currently returns 'Other' for both types (can be enhanced with fuzzy matching)
    * 
    * @param input - The input category string
    * @param type - The transaction type (expense or income)
    * @returns The closest matching category
+   * 
+   * @note Current implementation returns 'Other' as a safe default.
+   *       Future enhancement: Implement fuzzy string matching (e.g., Levenshtein distance)
+   *       to find the closest actual category match for better user experience.
    */
   private findClosestCategory(input: string, type: TransactionType): string {
     return 'Other';

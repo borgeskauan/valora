@@ -5,7 +5,11 @@ import { PrismaClient } from '../../generated/prisma';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
 
-export class TransactionQueryService {
+/**
+ * Prisma-based query service for fetching individual transactions
+ * Used for CRUD operations and ownership validation
+ */
+export class PrismaTransactionQueryService {
   private prisma: PrismaClient;
   private userContext?: UserContextProvider;
 

@@ -9,10 +9,11 @@ export class UserContextProvider {
    * Create a new user context provider
    * 
    * @param userId - The user ID to use for operations. If not provided, uses default.
+   * @note Currently accepts userId as parameter. In production, this should be derived
+   *       from authentication/session management (e.g., JWT token, session store)
    */
   constructor(userId?: string) {
-    // TODO: In the future, this should come from authentication/session
-    // For now, accept userId parameter or default to '1'
+    // Default to '1' for development/testing if no userId provided
     this.userId = userId || '1';
     
     if (!userId) {

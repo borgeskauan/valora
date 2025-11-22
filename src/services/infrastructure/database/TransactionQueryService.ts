@@ -25,6 +25,11 @@ export interface MqlFindResponse<TDoc> {
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 500;
 
+/**
+ * MongoDB-based query service for transaction search operations
+ * Provides flexible filtering, sorting, and pagination using MongoDB queries
+ * Used for advanced search functionality including semantic search integration
+ */
 export class TransactionQueryService {
   constructor(
     private readonly transactions: Collection<TransactionDoc>,

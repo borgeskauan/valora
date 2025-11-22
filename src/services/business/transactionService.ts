@@ -6,21 +6,21 @@ import { PrismaClient } from '../../generated/prisma';
 import { MessageBuilder } from '../../lib/MessageBuilder';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
-import { TransactionQueryService } from './transactionQueryService';
+import { PrismaTransactionQueryService } from './transactionQueryService';
 import { TransactionEmbeddingService } from '../ai/embedding/transactionEmbeddingService';
 
 export class TransactionService {
   private baseOps: BaseTransactionOperations;
   private prisma: PrismaClient;
   private messageBuilder: MessageBuilder;
-  private queryService: TransactionQueryService;
+  private queryService: PrismaTransactionQueryService;
   private embeddingService: TransactionEmbeddingService;
 
   constructor(userContext: UserContextProvider, embeddingService: TransactionEmbeddingService) {
     this.baseOps = new BaseTransactionOperations(userContext);
     this.prisma = PrismaClientManager.getClient();
     this.messageBuilder = new MessageBuilder();
-    this.queryService = new TransactionQueryService(userContext);
+    this.queryService = new PrismaTransactionQueryService(userContext);
     this.embeddingService = embeddingService;
   }
 
