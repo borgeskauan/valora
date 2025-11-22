@@ -1,30 +1,35 @@
 import { RecurringTransactionInput, RecurringTransactionResult, RecurringTransactionData, RecurringTransactionUpdateData } from '../../types/models';
 import { success, failure, ServiceResult } from '../../types/serviceResult';
-import { UserContextProvider } from '../../lib/UserContextProvider';
 import { RecurringTransactionValidator } from '../../validators/RecurringTransactionValidator';
-import { BaseTransactionOperations } from '../../lib/BaseTransactionOperations';
 import { PrismaClient } from '../../generated/prisma';
 import { MessageBuilder } from '../../lib/MessageBuilder';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
 import { TransactionQueryService } from './transactionQueryService';
 import { TransactionEmbeddingService } from '../ai/embedding/transactionEmbeddingService';
+import { TransactionValidator } from '../../validators/TransactionValidator';
+import { CategoryNormalizer } from '../../lib/CategoryNormalizer';
+import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class RecurringTransactionService {
-  private baseOps: BaseTransactionOperations;
+  private userId: string;
   private validator: RecurringTransactionValidator;
   private prisma: PrismaClient;
   private messageBuilder: MessageBuilder;
   private queryService: TransactionQueryService;
   private embeddingService: TransactionEmbeddingService;
+  private transactionValidator: TransactionValidator;
+  private categoryNormalizer: CategoryNormalizer;
 
-  constructor(userContext: UserContextProvider, embeddingService: TransactionEmbeddingService) {
-    this.baseOps = new BaseTransactionOperations(userContext);
+  constructor(userId: string, embeddingService: TransactionEmbeddingService) {
+    this.userId = userId;
     this.validator = new RecurringTransactionValidator();
     this.prisma = PrismaClientManager.getClient();
     this.messageBuilder = new MessageBuilder();
-    this.queryService = new TransactionQueryService(userContext);
+    this.queryService = new TransactionQueryService();
     this.embeddingService = embeddingService;
+    this.transactionValidator = new TransactionValidator();
+    this.categoryNormalizer = new CategoryNormalizer();
   }
 
   /**
@@ -74,18 +79,21 @@ export class RecurringTransactionService {
    * Create a new recurring transaction
    */
   async createRecurringTransaction(data: RecurringTransactionInput): Promise<RecurringTransactionResult> {
-    // Inject user ID using base operations
-    this.baseOps.injectUserId(data);
+    // Inject user ID directly
+    data.userId = this.userId;
 
     // Store original category before normalization
     const originalCategory = data.category;
 
-    // Validate basic transaction data (amount, startDate, category, type) using shared pipeline
-    const basicValidation = this.baseOps.validateBasicTransactionData(
+    // Validate basic transaction data (amount, startDate, category, type) using pure function
+    const basicValidation = validateBasicTransactionData(
       data.amount,
       data.category,
       data.type,
-      data.startDate
+      data.startDate,
+      this.transactionValidator,
+      this.categoryNormalizer,
+      this.messageBuilder
     );
 
     if (!basicValidation.isValid) {
@@ -201,7 +209,7 @@ export class RecurringTransactionService {
         basicValidation.warnings.length > 0 ? basicValidation.warnings : undefined
       );
     } catch (error) {
-      return this.baseOps.handleDatabaseError(error, 'creating the recurring transaction');
+      return handleDatabaseError(error, 'creating the recurring transaction');
     }
   }
 
@@ -216,8 +224,15 @@ export class RecurringTransactionService {
     const updateData: any = {};
     let needsRecalculation = false;
 
-    // Use base class to handle basic fields validation (amount, category, description, type)
-    const basicUpdateResult = this.baseOps.buildBasicUpdateData(updates, existingData, 'startDate');
+    // Use pure function to handle basic fields validation (amount, category, description, type)
+    const basicUpdateResult = buildBasicUpdateData(
+      updates,
+      existingData,
+      'startDate',
+      this.transactionValidator,
+      this.categoryNormalizer,
+      this.messageBuilder
+    );
 
     if (!basicUpdateResult.isValid) {
       return {
@@ -370,7 +385,7 @@ export class RecurringTransactionService {
         validationWarnings.length > 0 ? validationWarnings : undefined
       );
     } catch (error) {
-      return this.baseOps.handleDatabaseError(error, 'updating the recurring transaction');
+      return handleDatabaseError(error, 'updating the recurring transaction');
     }
   }
 
@@ -385,20 +400,10 @@ export class RecurringTransactionService {
     updates: RecurringTransactionUpdateData,
     transactionType?: TransactionType
   ): Promise<RecurringTransactionResult> {
-    // Get userId from injected context
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
+    // Get userId directly from service
+    const userId = this.userId;
     
-    if (!userId) {
-      return failure(
-        'User context not available',
-        'MISSING_CONTEXT',
-        'Unable to identify user for recurring transaction lookup'
-      );
-    }
-
-    // Query for last recurring transaction
+    // Look up the specified recurring transaction
     const lastRecurringTxResult = await this.queryService.getLastRecurringTransactionByUser(userId, transactionType);
     
     if (!lastRecurringTxResult.success) {
@@ -419,10 +424,8 @@ export class RecurringTransactionService {
     id: string,
     updates: RecurringTransactionUpdateData
   ): Promise<RecurringTransactionResult> {
-    // Get userId from injected context (same pattern as editLastRecurringTransaction)
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
+    // Get userId directly from service
+    const userId = this.userId;
     
     if (!userId) {
       return failure(
@@ -460,19 +463,9 @@ export class RecurringTransactionService {
       );
     }
 
-    // Get userId from injected context
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
+    // Get userId directly from service
+    const userId = this.userId;
     
-    if (!userId) {
-      return failure(
-        'User context not available',
-        'MISSING_CONTEXT',
-        'Unable to identify user for recurring transaction deletion'
-      );
-    }
-
     try {
       // Step 1: Fetch all recurring transactions matching IDs, userId, and active status
       const recurringTransactions = await this.prisma.recurringTransaction.findMany({
@@ -520,7 +513,7 @@ export class RecurringTransactionService {
         message
       );
     } catch (error) {
-      return this.baseOps.handleDatabaseError(error, 'deleting recurring transaction(s)');
+      return handleDatabaseError(error, 'deleting recurring transaction(s)');
     }
   }
 }

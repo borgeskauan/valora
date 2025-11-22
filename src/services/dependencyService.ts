@@ -5,7 +5,6 @@ import { FunctionDeclarationService } from './ai/functionDeclarationService';
 import { TransactionService } from './business/transactionService';
 import { RecurringTransactionService } from './business/recurringTransactionService';
 import { TransactionEmbeddingService } from './ai/embedding/transactionEmbeddingService';
-import { UserContextProvider } from '../lib/UserContextProvider';
 import { TransactionSearchService } from './business/search/TransactionSearchService';
 import { MongoConnectionManager } from './infrastructure/database/MongoConnectionManager';
 import { TransactionQueryService } from './infrastructure/database/TransactionQueryService';
@@ -48,14 +47,15 @@ export class DependencyService {
       // Data access layer
       const transactionQueryService = new TransactionQueryService(transactionCollection, recurringCollection);
 
-      // Business services
-      const userContext = new UserContextProvider();
-      const transactionEmbeddingService = new TransactionEmbeddingService(userContext);
-      const transactionService = new TransactionService(userContext, transactionEmbeddingService);
-      const recurringTransactionService = new RecurringTransactionService(userContext, transactionEmbeddingService);
+      // Business services - using default userId '1' for now
+      // TODO: This should come from authentication/session context in the future
+      const userId = '1';
+      const transactionEmbeddingService = new TransactionEmbeddingService();
+      const transactionService = new TransactionService(userId, transactionEmbeddingService);
+      const recurringTransactionService = new RecurringTransactionService(userId, transactionEmbeddingService);
       
       // Orchestration layer
-      const transactionSearchService = new TransactionSearchService(userContext, transactionQueryService, transactionEmbeddingService);
+      const transactionSearchService = new TransactionSearchService(transactionQueryService, transactionEmbeddingService);
 
       const functionDeclarationService = new FunctionDeclarationService(
         transactionService,

@@ -1,45 +1,53 @@
 import { Transaction, TransactionResult, TransactionData, TransactionUpdateData } from '../../types/models';
 import { success, failure, ServiceResult } from '../../types/serviceResult';
-import { UserContextProvider } from '../../lib/UserContextProvider';
-import { BaseTransactionOperations } from '../../lib/BaseTransactionOperations';
 import { PrismaClient } from '../../generated/prisma';
 import { MessageBuilder } from '../../lib/MessageBuilder';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
 import { TransactionQueryService } from './transactionQueryService';
 import { TransactionEmbeddingService } from '../ai/embedding/transactionEmbeddingService';
+import { TransactionValidator } from '../../validators/TransactionValidator';
+import { CategoryNormalizer } from '../../lib/CategoryNormalizer';
+import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class TransactionService {
-  private baseOps: BaseTransactionOperations;
+  private userId: string;
   private prisma: PrismaClient;
   private messageBuilder: MessageBuilder;
   private queryService: TransactionQueryService;
   private embeddingService: TransactionEmbeddingService;
+  private validator: TransactionValidator;
+  private categoryNormalizer: CategoryNormalizer;
 
-  constructor(userContext: UserContextProvider, embeddingService: TransactionEmbeddingService) {
-    this.baseOps = new BaseTransactionOperations(userContext);
+  constructor(userId: string, embeddingService: TransactionEmbeddingService) {
+    this.userId = userId;
     this.prisma = PrismaClientManager.getClient();
     this.messageBuilder = new MessageBuilder();
-    this.queryService = new TransactionQueryService(userContext);
+    this.queryService = new TransactionQueryService();
     this.embeddingService = embeddingService;
+    this.validator = new TransactionValidator();
+    this.categoryNormalizer = new CategoryNormalizer();
   }
 
   /**
    * Add a new transaction
    */
   async addTransaction(transactionData: Transaction): Promise<TransactionResult> {
-    // Inject user ID using base operations
-    this.baseOps.injectUserId(transactionData);
+    // Inject user ID directly
+    transactionData.userId = this.userId;
     
     // Store original category before normalization
     const originalCategory = transactionData.category;
     
-    // Validate basic transaction data (amount, date, category, type) using shared pipeline
-    const validationResult = this.baseOps.validateBasicTransactionData(
+    // Validate basic transaction data (amount, date, category, type) using pure function
+    const validationResult = validateBasicTransactionData(
       transactionData.amount,
       transactionData.category,
       transactionData.type,
-      transactionData.date
+      transactionData.date,
+      this.validator,
+      this.categoryNormalizer,
+      this.messageBuilder
     );
     
     if (!validationResult.isValid) {
@@ -114,20 +122,27 @@ export class TransactionService {
         validationResult.warnings.length > 0 ? validationResult.warnings : undefined
       );
     } catch (error) {
-      return this.baseOps.handleDatabaseError(error, 'adding the transaction');
+      return handleDatabaseError(error, 'adding the transaction');
     }
   }
 
   /**
    * Build update data object by validating all changes at once
-   * Delegates to base class for shared basic validation logic
+   * Uses pure functions for validation logic
    */
   private buildTransactionUpdateData(
     updates: TransactionUpdateData,
     existingTransaction: TransactionData
   ): { result?: TransactionResult; updateData?: any; warnings: string[]; originalCategory?: string } {
-    // Use base class to handle basic fields validation and merging
-    const basicUpdateResult = this.baseOps.buildBasicUpdateData(updates, existingTransaction, 'date');
+    // Use pure function to handle basic fields validation and merging
+    const basicUpdateResult = buildBasicUpdateData(
+      updates,
+      existingTransaction,
+      'date',
+      this.validator,
+      this.categoryNormalizer,
+      this.messageBuilder
+    );
 
     if (!basicUpdateResult.isValid) {
       return {
@@ -143,11 +158,14 @@ export class TransactionService {
 
     // Handle date field (transaction-specific)
     if (updates.date !== undefined) {
-      const dateValidation = this.baseOps.validateBasicTransactionData(
+      const dateValidation = validateBasicTransactionData(
         updates.amount || existingTransaction.amount,
         updates.category || existingTransaction.category,
         (updates.type || existingTransaction.type) as TransactionType,
-        updates.date
+        updates.date,
+        this.validator,
+        this.categoryNormalizer,
+        this.messageBuilder
       );
 
       if (!dateValidation.isValid) {

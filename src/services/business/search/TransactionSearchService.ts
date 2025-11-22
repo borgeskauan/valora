@@ -2,13 +2,11 @@ import { failure, success } from "../../../types/serviceResult";
 import { TransactionSearchRequestWithText, TransactionSearchResultSR, RecurringSearchRequestWithText, RecurringSearchResultSR, RecurringSearchData } from "./searchTypes";
 import { MqlFilter, TransactionQueryService } from "../../infrastructure/database/TransactionQueryService";
 import { TransactionEmbeddingService } from "../../ai/embedding/transactionEmbeddingService";
-import { UserContextProvider } from "../../../lib/UserContextProvider";
 
 const SEMANTIC_TOP_K = 200;
 
 export class TransactionSearchService {
   constructor(
-    private readonly userContext: UserContextProvider,
     private readonly queryService: TransactionQueryService,
     private readonly embeddingService: TransactionEmbeddingService
   ) {}
@@ -18,16 +16,17 @@ export class TransactionSearchService {
    * Combines optional textQuery (semantic) + MQL filter in a single call.
    */
   async searchTransactions(
+    userId: string,
     request: TransactionSearchRequestWithText
   ): Promise<TransactionSearchResultSR> {
     const { textQuery, ...rest } = request;
-    const userId = this.userContext.getUserId();
 
     let mergedFilter: MqlFilter = rest.filter ?? {};
 
     if (textQuery && textQuery.trim().length > 0) {
       const semanticRes =
         await this.embeddingService.searchTransactionsByDescription(
+          userId,
           textQuery,
           SEMANTIC_TOP_K
         );
@@ -66,16 +65,17 @@ export class TransactionSearchService {
   }
 
   async searchRecurringTransactions(
+    userId: string,
     request: RecurringSearchRequestWithText
   ): Promise<RecurringSearchResultSR> {
     const { textQuery, ...rest } = request;
-    const userId = this.userContext.getUserId();
 
     let mergedFilter: MqlFilter = rest.filter ?? {};
 
     if (textQuery && textQuery.trim().length > 0) {
       const semanticRes =
         await this.embeddingService.searchTransactionsByDescription(
+          userId,
           textQuery,
           SEMANTIC_TOP_K
         );

@@ -8,18 +8,15 @@ import {
 import { TransactionType } from '../../../config/transactionTypes';
 import { PrismaClient } from '../../../generated/prisma';
 import { PrismaClientManager } from '../../../lib/PrismaClientManager';
-import { UserContextProvider } from '../../../lib/UserContextProvider';
 import { config } from '../../../config/config';
 import embeddingStore from './embeddingStore';
 
 export class TransactionEmbeddingService {
   private prisma: PrismaClient;
-  private userContext?: UserContextProvider;
   private threshold: number;
 
-  constructor(userContext?: UserContextProvider) {
+  constructor() {
     this.prisma = PrismaClientManager.getClient();
-    this.userContext = userContext;
     this.threshold = config.embeddingThreshold;
   }
 
@@ -98,20 +95,10 @@ export class TransactionEmbeddingService {
    * Search transactions by natural language description
    */
   async searchTransactionsByDescription(
+    userId: string,
     query: string,
     k = 20
   ): Promise<ServiceResult<TransactionSearchResult[]>> {
-    // Get userId from context
-    const userId = this.getUserId();
-    if (!userId) {
-      console.error('[TransactionEmbedding] User context not available for search');
-      return failure(
-        'User context not available',
-        'MISSING_CONTEXT',
-        'Unable to identify user for transaction search'
-      );
-    }
-
     console.log(`[TransactionEmbedding] Searching transactions for user ${userId} with query: "${query}" (threshold=${this.threshold})`);
 
     try {
@@ -300,15 +287,5 @@ export class TransactionEmbeddingService {
       transactionType: type,
       userId,
     };
-  }
-
-  /**
-   * Get userId from user context
-   */
-  private getUserId(): string {
-    if (this.userContext) {
-      return this.userContext.getUserId();
-    }
-    return '';
   }
 }

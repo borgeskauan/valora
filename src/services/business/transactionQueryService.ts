@@ -1,17 +1,14 @@
 import { TransactionData, TransactionResult, RecurringTransactionData, RecurringTransactionResult } from '../../types/models';
 import { success, failure } from '../../types/serviceResult';
-import { UserContextProvider } from '../../lib/UserContextProvider';
 import { PrismaClient } from '../../generated/prisma';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
 
 export class TransactionQueryService {
   private prisma: PrismaClient;
-  private userContext?: UserContextProvider;
 
-  constructor(userContext?: UserContextProvider) {
+  constructor() {
     this.prisma = PrismaClientManager.getClient();
-    this.userContext = userContext;
   }
 
   /**
