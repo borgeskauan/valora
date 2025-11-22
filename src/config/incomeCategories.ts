@@ -33,10 +33,3 @@ export type IncomeCategory = typeof INCOME_CATEGORIES[number];
 export function isValidIncomeCategory(category: string): boolean {
   return INCOME_CATEGORIES.includes(category as IncomeCategory);
 }
-
-/**
- * Get income category description for AI context
- */
-export function getIncomeCategoryDescription(): string {
-  return `Available income categories: ${INCOME_CATEGORIES.join(', ')}. Choose the most appropriate category based on the income source.`;
-}

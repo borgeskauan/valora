@@ -7,7 +7,7 @@ import { PrismaClient } from '../../generated/prisma';
 import { MessageBuilder } from '../../lib/MessageBuilder';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
-import { TransactionQueryService } from './transactionQueryService';
+import { TransactionLookupService } from './transactionLookupService';
 import { TransactionEmbeddingService } from '../ai/embedding/transactionEmbeddingService';
 
 export class RecurringTransactionService {
@@ -15,7 +15,7 @@ export class RecurringTransactionService {
   private validator: RecurringTransactionValidator;
   private prisma: PrismaClient;
   private messageBuilder: MessageBuilder;
-  private queryService: TransactionQueryService;
+  private lookupService: TransactionLookupService;
   private embeddingService: TransactionEmbeddingService;
 
   constructor(userContext: UserContextProvider, embeddingService: TransactionEmbeddingService) {
@@ -23,7 +23,7 @@ export class RecurringTransactionService {
     this.validator = new RecurringTransactionValidator();
     this.prisma = PrismaClientManager.getClient();
     this.messageBuilder = new MessageBuilder();
-    this.queryService = new TransactionQueryService(userContext);
+    this.lookupService = new TransactionLookupService(userContext);
     this.embeddingService = embeddingService;
   }
 
@@ -385,10 +385,8 @@ export class RecurringTransactionService {
     updates: RecurringTransactionUpdateData,
     transactionType?: TransactionType
   ): Promise<RecurringTransactionResult> {
-    // Get userId from injected context
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
+    // Get userId from context
+    const userId = this.baseOps.getUserId();
     
     if (!userId) {
       return failure(
@@ -399,7 +397,7 @@ export class RecurringTransactionService {
     }
 
     // Query for last recurring transaction
-    const lastRecurringTxResult = await this.queryService.getLastRecurringTransactionByUser(userId, transactionType);
+    const lastRecurringTxResult = await this.lookupService.getLastRecurringTransactionByUser(userId, transactionType);
     
     if (!lastRecurringTxResult.success) {
       return lastRecurringTxResult;
@@ -419,10 +417,8 @@ export class RecurringTransactionService {
     id: string,
     updates: RecurringTransactionUpdateData
   ): Promise<RecurringTransactionResult> {
-    // Get userId from injected context (same pattern as editLastRecurringTransaction)
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
+    // Get userId from context
+    const userId = this.baseOps.getUserId();
     
     if (!userId) {
       return failure(
@@ -433,7 +429,7 @@ export class RecurringTransactionService {
     }
 
     // Query for recurring transaction by ID with ownership validation
-    const recurringTxResult = await this.queryService.getRecurringTransactionById(id, userId);
+    const recurringTxResult = await this.lookupService.getRecurringTransactionById(id, userId);
     
     if (!recurringTxResult.success) {
       return recurringTxResult;
@@ -460,10 +456,8 @@ export class RecurringTransactionService {
       );
     }
 
-    // Get userId from injected context
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
+    // Get userId from context
+    const userId = this.baseOps.getUserId();
     
     if (!userId) {
       return failure(

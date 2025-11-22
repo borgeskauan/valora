@@ -6,21 +6,21 @@ import { PrismaClient } from '../../generated/prisma';
 import { MessageBuilder } from '../../lib/MessageBuilder';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
-import { TransactionQueryService } from './transactionQueryService';
+import { TransactionLookupService } from './transactionLookupService';
 import { TransactionEmbeddingService } from '../ai/embedding/transactionEmbeddingService';
 
 export class TransactionService {
   private baseOps: BaseTransactionOperations;
   private prisma: PrismaClient;
   private messageBuilder: MessageBuilder;
-  private queryService: TransactionQueryService;
+  private lookupService: TransactionLookupService;
   private embeddingService: TransactionEmbeddingService;
 
   constructor(userContext: UserContextProvider, embeddingService: TransactionEmbeddingService) {
     this.baseOps = new BaseTransactionOperations(userContext);
     this.prisma = PrismaClientManager.getClient();
     this.messageBuilder = new MessageBuilder();
-    this.queryService = new TransactionQueryService(userContext);
+    this.lookupService = new TransactionLookupService(userContext);
     this.embeddingService = embeddingService;
   }
 
@@ -268,10 +268,8 @@ export class TransactionService {
     updates: TransactionUpdateData,
     transactionType?: TransactionType
   ): Promise<TransactionResult> {
-    // Get userId from injected context (same pattern as injectUserId)
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
+    // Get userId from context
+    const userId = this.baseOps.getUserId();
     
     if (!userId) {
       return failure(
@@ -282,7 +280,7 @@ export class TransactionService {
     }
 
     // Query for last transaction
-    const lastTxResult = await this.queryService.getLastTransactionByUser(userId, transactionType);
+    const lastTxResult = await this.lookupService.getLastTransactionByUser(userId, transactionType);
     
     if (!lastTxResult.success) {
       return lastTxResult;
@@ -302,10 +300,8 @@ export class TransactionService {
     id: string,
     updates: TransactionUpdateData
   ): Promise<TransactionResult> {
-    // Get userId from injected context (same pattern as editLastTransaction)
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
+    // Get userId from context
+    const userId = this.baseOps.getUserId();
     
     if (!userId) {
       return failure(
@@ -316,7 +312,7 @@ export class TransactionService {
     }
 
     // Query for transaction by ID with ownership validation
-    const transactionResult = await this.queryService.getTransactionById(id, userId);
+    const transactionResult = await this.lookupService.getTransactionById(id, userId);
     
     if (!transactionResult.success) {
       return transactionResult;
@@ -343,10 +339,8 @@ export class TransactionService {
       );
     }
 
-    // Get userId from injected context
-    const userIdObj: { userId?: string } = {};
-    this.baseOps.injectUserId(userIdObj);
-    const userId = userIdObj.userId || '';
+    // Get userId from context
+    const userId = this.baseOps.getUserId();
     
     if (!userId) {
       return failure(

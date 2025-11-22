@@ -176,8 +176,19 @@ export class BaseTransactionOperations {
   }
 
   /**
+   * Get the current user ID from context
+   * Simpler alternative to injectUserId for read operations
+   * 
+   * @returns The current user ID
+   */
+  getUserId(): string {
+    return this.userContext.getUserId();
+  }
+
+  /**
    * Inject current user ID into data object
    * Mutates the data object
+   * Use this for write operations where userId needs to be persisted
    * 
    * @param data - The data object to inject userId into
    */

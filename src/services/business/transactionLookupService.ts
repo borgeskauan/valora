@@ -5,7 +5,13 @@ import { PrismaClient } from '../../generated/prisma';
 import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
 
-export class TransactionQueryService {
+/**
+ * Service for looking up individual transactions and recurring transactions by ID or filters.
+ * Uses Prisma ORM to query SQLite database.
+ * 
+ * Note: For complex queries with MongoDB filters, use TransactionQueryService from infrastructure layer.
+ */
+export class TransactionLookupService {
   private prisma: PrismaClient;
   private userContext?: UserContextProvider;
 

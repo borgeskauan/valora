@@ -46,10 +46,3 @@ export type ExpenseCategory = typeof EXPENSE_CATEGORIES[number];
 export function isValidExpenseCategory(category: string): boolean {
   return EXPENSE_CATEGORIES.includes(category as ExpenseCategory);
 }
-
-/**
- * Get expense category description for AI context
- */
-export function getExpenseCategoryDescription(): string {
-  return `Available expense categories: ${EXPENSE_CATEGORIES.join(', ')}. Choose the most appropriate category based on the expense type.`;
-}
