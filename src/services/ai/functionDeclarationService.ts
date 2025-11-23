@@ -96,25 +96,24 @@ export class FunctionDeclarationService {
         return await this.recurringTransactionService.deleteRecurringTransactions(userId, params.ids);
       }
     ],
-    // Search transactions (async)
+    // Aggregation functions (async)
     [
-      "searchTransactions",
-      async (userId: string, params: { query: string, limit?: number }) => {
-        console.log("Executing searchTransactions with params:", params);
-        return await this.searchService.searchTransactions(userId, {
-          textQuery: params.query,
-          limit: params.limit || 10
+      "aggregateTransactions",
+      async (userId: string, params: { pipeline: any[], textQuery?: string }) => {
+        console.log("Executing aggregateTransactions with params:", params);
+        return await this.searchService.aggregateTransactions(userId, {
+          pipeline: params.pipeline,
+          textQuery: params.textQuery
         });
       }
     ],
-    // Search recurring transactions (async)
     [
-      "searchRecurringTransactions",
-      async (userId: string, params: { query: string, limit?: number }) => {
-        console.log("Executing searchRecurringTransactions with params:", params);
-        return await this.searchService.searchRecurringTransactions(userId, {
-          textQuery: params.query,
-          limit: params.limit || 10
+      "aggregateRecurringTransactions",
+      async (userId: string, params: { pipeline: any[], textQuery?: string }) => {
+        console.log("Executing aggregateRecurringTransactions with params:", params);
+        return await this.searchService.aggregateRecurringTransactions(userId, {
+          pipeline: params.pipeline,
+          textQuery: params.textQuery
         });
       }
     ]

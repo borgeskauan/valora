@@ -1,25 +1,25 @@
 import { ServiceResult } from "../../../types/serviceResult";
-import { MqlFindRequest, MqlFindResponse } from "../../infrastructure/database/MqlTransactionSearchService";
-import { TransactionDoc, RecurringTransactionDoc } from "../../infrastructure/database/schemas";
+import { Document } from "mongodb";
 
-export interface TransactionSearchRequestWithText extends MqlFindRequest {
+export interface TransactionAggregationRequest {
   /**
-   * Optional natural-language query for semantic matching.
-   * Example: "uber rides", "coffee purchases", "netflix subscription".
+   * AI-generated MongoDB aggregation pipeline
+   * Service will prepend { $match: { userId } } for security
+   * Service will enforce sane $limit (clamp to max, add default if missing)
+   */
+  pipeline: Document[];
+  
+  /**
+   * Optional semantic pre-filter
    */
   textQuery?: string;
 }
 
-export interface RecurringSearchRequestWithText extends MqlFindRequest {
-  /**
-   * Optional natural-language query for semantic matching of subscriptions.
-   * Example: "streaming services", "music subscription".
-   */
+export interface RecurringAggregationRequest {
+  pipeline: Document[];
   textQuery?: string;
 }
 
-export type TransactionSearchData = MqlFindResponse<TransactionDoc>;
-export type RecurringSearchData = MqlFindResponse<RecurringTransactionDoc>;
-
-export type TransactionSearchResultSR = ServiceResult<TransactionSearchData>;
-export type RecurringSearchResultSR = ServiceResult<RecurringSearchData>;
+export type AggregationData = Document[];
+export type TransactionAggregationResultSR = ServiceResult<AggregationData>;
+export type RecurringAggregationResultSR = ServiceResult<AggregationData>;

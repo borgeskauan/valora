@@ -1,4 +1,4 @@
-import { Collection, FindOptions } from "mongodb";
+import { Collection, Document } from "mongodb";
 import {
   TransactionDoc,
   RecurringTransactionDoc,
@@ -6,23 +6,8 @@ import {
 
 import { failure, ServiceResult, success } from "../../../types/serviceResult";
 
-export type MqlFilter = Record<string, any>;
-export type MqlSort = Record<string, 1 | -1>;
-
-export interface MqlFindRequest {
-  filter?: MqlFilter;
-  sort?: MqlSort;
-  limit?: number;
-  offset?: number;
-}
-
-export interface MqlFindResponse<TDoc> {
-  documents: TDoc[];
-  total: number;
-}
-
-const DEFAULT_LIMIT = 50;
-const MAX_LIMIT = 500;
+const MAX_LIMIT = 1000;
+const DEFAULT_LIMIT = 100;
 
 export class MqlTransactionSearchService {
   constructor(
@@ -31,106 +16,78 @@ export class MqlTransactionSearchService {
   ) {}
 
   /**
-   * Query the Transaction collection with a simple .find(...) style query.
+   * Enforce sane limit on aggregation pipeline
+   * Clamps existing $limit stages and adds default if missing
    */
-  async searchTransactions(
+  private enforceSaneLimit(pipeline: Document[]): Document[] {
+    let hasLimit = false;
+    
+    const limitedPipeline = pipeline.map(stage => {
+      if (stage.$limit !== undefined) {
+        hasLimit = true;
+        return { $limit: Math.min(stage.$limit, MAX_LIMIT) };
+      }
+      return stage;
+    });
+    
+    if (!hasLimit) {
+      limitedPipeline.push({ $limit: DEFAULT_LIMIT });
+    }
+    
+    return limitedPipeline;
+  }
+
+  /**
+   * Run aggregation pipeline on Transaction collection
+   * AI has full control over pipeline, service only enforces userId and limits
+   */
+  async aggregateTransactions(
     userId: string,
-    request: MqlFindRequest
-  ): Promise<ServiceResult<MqlFindResponse<TransactionDoc>>> {
+    pipeline: Document[]
+  ): Promise<ServiceResult<Document[]>> {
     try {
-      const { filter = {}, sort, limit, offset } = request;
-
-      // Enforce userId server-side, overriding any userId in filter.
-      const finalFilter: MqlFilter = {
-        ...filter,
-        userId,
-      };
-
-      const effectiveLimit =
-        typeof limit === "number"
-          ? Math.min(Math.max(limit, 1), MAX_LIMIT)
-          : DEFAULT_LIMIT;
-
-      const effectiveOffset =
-        typeof offset === "number" ? Math.max(offset, 0) : 0;
-
-      const findOptions: FindOptions = {
-        sort,
-        limit: effectiveLimit,
-        skip: effectiveOffset,
-        // projection: undefined, // full docs for now
-      };
-
-      const cursor = this.transactions.find(finalFilter, findOptions);
-      const documents = await cursor.toArray();
-      const total = await this.transactions.countDocuments(finalFilter);
-
-      return success<MqlFindResponse<TransactionDoc>>(
-        { documents, total },
-        "Transactions query executed successfully"
-      );
+      // Enforce userId (security)
+      const securedPipeline = [
+        { $match: { userId } },
+        ...pipeline
+      ];
+      
+      // Enforce sane limit (resource protection)
+      const limitedPipeline = this.enforceSaneLimit(securedPipeline);
+      
+      // Execute (hands off)
+      const cursor = this.transactions.aggregate(limitedPipeline);
+      const results = await cursor.toArray();
+      
+      return success(results, "Aggregation executed successfully");
     } catch (err) {
-      const details =
-        err instanceof Error ? err.message : "Unknown error querying transactions";
-
-      return failure<MqlFindResponse<TransactionDoc>>(
-        "Failed to query transactions",
-        "DB_QUERY_ERROR",
-        details
-      );
+      const details = err instanceof Error ? err.message : "Unknown aggregation error";
+      return failure("Failed to execute aggregation", "AGGREGATION_ERROR", details);
     }
   }
 
   /**
-   * Query the RecurringTransaction collection with a simple .find(...) query.
+   * Run aggregation pipeline on RecurringTransaction collection
    */
-  async searchRecurringTransactions(
+  async aggregateRecurringTransactions(
     userId: string,
-    request: MqlFindRequest
-  ): Promise<ServiceResult<MqlFindResponse<RecurringTransactionDoc>>> {
+    pipeline: Document[]
+  ): Promise<ServiceResult<Document[]>> {
     try {
-      const { filter = {}, sort, limit, offset } = request;
-
-      const finalFilter: MqlFilter = {
-        ...filter,
-        userId,
-      };
-
-      const effectiveLimit =
-        typeof limit === "number"
-          ? Math.min(Math.max(limit, 1), MAX_LIMIT)
-          : DEFAULT_LIMIT;
-
-      const effectiveOffset =
-        typeof offset === "number" ? Math.max(offset, 0) : 0;
-
-      const findOptions: FindOptions = {
-        sort,
-        limit: effectiveLimit,
-        skip: effectiveOffset,
-      };
-
-      const cursor =
-        this.recurringTransactions.find(finalFilter, findOptions);
-      const documents = await cursor.toArray();
-      const total =
-        await this.recurringTransactions.countDocuments(finalFilter);
-
-      return success<MqlFindResponse<RecurringTransactionDoc>>(
-        { documents, total },
-        "Recurring transactions query executed successfully"
-      );
+      const securedPipeline = [
+        { $match: { userId } },
+        ...pipeline
+      ];
+      
+      const limitedPipeline = this.enforceSaneLimit(securedPipeline);
+      
+      const cursor = this.recurringTransactions.aggregate(limitedPipeline);
+      const results = await cursor.toArray();
+      
+      return success(results, "Aggregation executed successfully");
     } catch (err) {
-      const details =
-        err instanceof Error
-          ? err.message
-          : "Unknown error querying recurring transactions";
-
-      return failure<MqlFindResponse<RecurringTransactionDoc>>(
-        "Failed to query recurring transactions",
-        "DB_QUERY_ERROR",
-        details
-      );
+      const details = err instanceof Error ? err.message : "Unknown aggregation error";
+      return failure("Failed to execute aggregation", "AGGREGATION_ERROR", details);
     }
   }
 }
