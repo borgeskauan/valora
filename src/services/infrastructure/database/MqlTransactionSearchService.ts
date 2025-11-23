@@ -4,7 +4,6 @@ import {
   RecurringTransactionDoc,
 } from "./schemas";
 
-import { MongoConnectionManager } from "./MongoConnectionManager";
 import { failure, ServiceResult, success } from "../../../types/serviceResult";
 
 export type MqlFilter = Record<string, any>;
