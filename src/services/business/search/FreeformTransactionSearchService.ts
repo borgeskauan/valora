@@ -1,13 +1,13 @@
 import { failure, success } from "../../../types/serviceResult";
 import { TransactionSearchRequestWithText, TransactionSearchResultSR, RecurringSearchRequestWithText, RecurringSearchResultSR, RecurringSearchData } from "./searchTypes";
-import { MqlFilter, FreeformTransactionSearchService } from "../../infrastructure/database/FreeformTransactionSearchService";
+import { MqlFilter, MqlTransactionSearchService } from "../../infrastructure/database/MqlTransactionSearchService";
 import { TransactionEmbeddingService } from "../../ai/embedding/TransactionEmbeddingService";
 
 const SEMANTIC_TOP_K = 200;
 
-export class TransactionSearchService {
+export class FreeformTransactionSearchService {
   constructor(
-    private readonly queryService: FreeformTransactionSearchService,
+    private readonly queryService: MqlTransactionSearchService,
     private readonly embeddingService: TransactionEmbeddingService
   ) {}
 

@@ -73,7 +73,7 @@ export class QdrantService {
     }
   }
 
-  async ensureCollectionWithDescriptionIndex(): Promise<void> {
+  async ensureCollectionWithIndexes(): Promise<void> {
     await this.ensureCollection();
     await this.ensureTransactionIdIndex();
     await this.ensureUserIdIndex();
@@ -95,11 +95,12 @@ export class QdrantService {
     });
   }
 
-  async queryVector(vector: number[], limit = 5): Promise<SearchHit[]> {
+  async queryVector(vector: number[], limit = 5, filter?: Record<string, any>): Promise<SearchHit[]> {
     const res = await this.client.search(COLLECTION, {
       vector,
       limit,
       withPayload: true,
+      filter,
     } as any);
 
     const hits: SearchHit[] = (res as any[]).map((h: any) => ({

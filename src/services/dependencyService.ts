@@ -5,9 +5,9 @@ import { FunctionDeclarationService } from './ai/functionDeclarationService';
 import { TransactionService } from './business/TransactionService';
 import { RecurringTransactionService } from './business/RecurringTransactionService';
 import { TransactionEmbeddingService } from './ai/embedding/TransactionEmbeddingService';
-import { TransactionSearchService } from './business/search/TransactionSearchService';
+import { FreeformTransactionSearchService } from './business/search/FreeformTransactionSearchService';
 import { MongoConnectionManager } from './infrastructure/database/MongoConnectionManager';
-import { FreeformTransactionSearchService } from './infrastructure/database/FreeformTransactionSearchService';
+import { MqlTransactionSearchService } from './infrastructure/database/MqlTransactionSearchService';
 import { TransactionLookupService } from './business/TransactionLookupService';
 import { Embedder } from './ai/embedding/embedder';
 import { QdrantService } from './ai/embedding/qdrant';
@@ -48,7 +48,7 @@ export class DependencyService {
       ]);
 
       // Data access layer
-      const transactionQueryService = new FreeformTransactionSearchService(transactionCollection, recurringCollection);
+      const transactionQueryService = new MqlTransactionSearchService(transactionCollection, recurringCollection);
       const transactionLookupService = new TransactionLookupService();
 
       // Embedding dependencies
@@ -61,7 +61,7 @@ export class DependencyService {
       const recurringTransactionService = new RecurringTransactionService(transactionEmbeddingService, transactionLookupService);
       
       // Orchestration layer
-      const transactionSearchService = new TransactionSearchService(transactionQueryService, transactionEmbeddingService);
+      const transactionSearchService = new FreeformTransactionSearchService(transactionQueryService, transactionEmbeddingService);
 
       const functionDeclarationService = new FunctionDeclarationService(
         transactionService,

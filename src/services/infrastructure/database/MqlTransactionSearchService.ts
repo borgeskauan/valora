@@ -25,7 +25,7 @@ export interface MqlFindResponse<TDoc> {
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 500;
 
-export class FreeformTransactionSearchService {
+export class MqlTransactionSearchService {
   constructor(
     private readonly transactions: Collection<TransactionDoc>,
     private readonly recurringTransactions: Collection<RecurringTransactionDoc>

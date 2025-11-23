@@ -1,7 +1,6 @@
 import { ServiceResult, success, failure } from '../../../types/serviceResult';
 import {
   TransactionEmbeddingInput,
-  TransactionEmbeddingMetadata,
   TransactionSearchMatch,
   EmbeddingOperationResult,
 } from '../../../types/embedding';
@@ -28,7 +27,7 @@ export class TransactionEmbeddingService {
    */
   private async ensureCollectionCreated(): Promise<void> {
     if (!this.collectionEnsured) {
-      await this.qdrant.ensureCollectionWithDescriptionIndex();
+      await this.qdrant.ensureCollectionWithIndexes();
       this.collectionEnsured = true;
     }
   }
@@ -52,17 +51,17 @@ export class TransactionEmbeddingService {
       await this.ensureCollectionCreated();
 
       // Store in Qdrant
-      const qdrantId = uuidv4();
+      const embeddingId = uuidv4();
       const payload: Payload = { 
         description, 
         metadata: metadata as unknown as Record<string, unknown> 
       };
-      await this.qdrant.upsertPoint(qdrantId, vector, payload);
+      await this.qdrant.upsertPoint(embeddingId, vector, payload);
 
-      console.log(`[TransactionEmbedding] Successfully embedded ${prefixedId} with Qdrant ID: ${qdrantId}`);
+      console.log(`[TransactionEmbedding] Successfully embedded ${prefixedId} with Qdrant ID: ${embeddingId}`);
 
       return success(
-        { qdrantId, transactionId: prefixedId },
+        { embeddingId, transactionId: prefixedId },
         'Transaction embedded successfully'
       );
     } catch (error) {
@@ -108,7 +107,7 @@ export class TransactionEmbeddingService {
       console.log(`[TransactionEmbedding] Successfully updated ${prefixedId} with Qdrant ID: ${found.id}`);
 
       return success(
-        { qdrantId: found.id, transactionId: prefixedId },
+        { embeddingId: found.id, transactionId: prefixedId },
         'Transaction embedding updated successfully'
       );
     } catch (error) {
@@ -138,9 +137,17 @@ export class TransactionEmbeddingService {
       const vector = await this.embedder.embedText(query);
       await this.ensureCollectionCreated();
 
-      // Search in Qdrant
-      const hits = await this.qdrant.queryVector(vector, k);
-      console.log(`[TransactionEmbedding] Vector search returned ${hits.length} hits from Qdrant`);
+      // Build userId filter for Qdrant
+      const userFilter = {
+        must: [
+          { key: "metadata.userId", match: { value: userId } }
+        ]
+      };
+      console.log(`[TransactionEmbedding] Applying userId filter: ${userId}`);
+
+      // Search in Qdrant with user filter
+      const hits = await this.qdrant.queryVector(vector, k, userFilter);
+      console.log(`[TransactionEmbedding] Vector search returned ${hits.length} hits from Qdrant (user-filtered)`);
 
       // Filter by threshold
       const filteredHits = hits.filter(hit => (hit.score ?? 0) >= this.threshold);

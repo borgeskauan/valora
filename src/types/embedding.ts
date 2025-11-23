@@ -29,7 +29,7 @@ export interface TransactionEmbeddingMetadata {
  * Return type for embed/update operations
  */
 export interface EmbeddingOperationResult {
-  qdrantId: string;
+  embeddingId: string;
   transactionId: string;
 }
 
