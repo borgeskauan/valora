@@ -170,9 +170,6 @@ export const editLastRecurringTransactionDeclaration = {
   },
 };
 
-/**
- * Function declaration for editing a specific transaction by ID
- */
 export const editTransactionByIdDeclaration = {
   name: "editTransactionById",
   parameters: {
@@ -181,7 +178,7 @@ export const editTransactionByIdDeclaration = {
     properties: {
       id: {
         type: Type.STRING,
-        description: "The ID of the transaction to edit (obtained from searchTransactions results)",
+        description: "The ID of the transaction to edit (obtained from aggregateTransactions results).",
       },
       updates: {
         type: Type.OBJECT,
@@ -193,9 +190,6 @@ export const editTransactionByIdDeclaration = {
   },
 };
 
-/**
- * Function declaration for editing a specific recurring transaction by ID
- */
 export const editRecurringTransactionByIdDeclaration = {
   name: "editRecurringTransactionById",
   parameters: {
@@ -204,7 +198,7 @@ export const editRecurringTransactionByIdDeclaration = {
     properties: {
       id: {
         type: Type.STRING,
-        description: "The ID of the recurring transaction to edit (obtained from searchTransactions results on RecurringTransaction table)",
+        description: "The ID of the recurring transaction to edit (obtained from aggregateRecurringTransactions results).",
       },
       updates: {
         type: Type.OBJECT,
@@ -216,9 +210,6 @@ export const editRecurringTransactionByIdDeclaration = {
   },
 };
 
-/**
- * Function declaration for deleting one-time transactions
- */
 export const deleteTransactionsDeclaration = {
   name: "deleteTransactions",
   parameters: {
@@ -227,20 +218,17 @@ export const deleteTransactionsDeclaration = {
     properties: {
       ids: {
         type: Type.ARRAY,
-        description: "Array of transaction IDs to delete (obtained from searchTransactions results on Transaction table). Can be single ID [123] or multiple [123, 456, 789]",
+        description: "Array of transaction IDs to delete (typically obtained from aggregateTransactions results on the Transaction collection). Can be single ID ['123'] or multiple ['123', '456', '789'].",
         items: {
           type: Type.STRING,
-          description: "Transaction ID"
-        }
-      }
+          description: "Transaction ID",
+        },
+      },
     },
-    required: ["ids"]
-  }
+    required: ["ids"],
+  },
 };
 
-/**
- * Function declaration for deleting (deactivating) recurring transactions
- */
 export const deleteRecurringTransactionsDeclaration = {
   name: "deleteRecurringTransactions",
   parameters: {
@@ -249,73 +237,26 @@ export const deleteRecurringTransactionsDeclaration = {
     properties: {
       ids: {
         type: Type.ARRAY,
-        description: "Array of recurring transaction IDs to delete (obtained from searchTransactions results on RecurringTransaction table). Can be single ID [12] or multiple [12, 34, 56]",
+        description: "Array of recurring transaction IDs to delete (typically obtained from aggregateRecurringTransactions results on the RecurringTransaction collection). Can be single ID ['12'] or multiple ['12', '34', '56'].",
         items: {
           type: Type.STRING,
-          description: "Recurring transaction ID"
-        }
-      }
+          description: "Recurring transaction ID",
+        },
+      },
     },
-    required: ["ids"]
-  }
+    required: ["ids"],
+  },
 };
 
 export const aggregateTransactionsDeclaration = {
   name: "aggregateTransactions",
   parameters: {
     type: Type.OBJECT,
-    description: `Execute a MongoDB aggregation pipeline on the Transaction collection. 
-
-CRITICAL: This function is used for ALL transaction queries - not just analytics. Use it for:
-- Finding transactions to edit/delete (MUST include _id in $project or select all fields)
-- Generating reports and analytics ($group, calculations, etc.)
-- Filtering by date ranges, categories, amounts, etc.
-- Sorting and limiting results
-
-You have FULL CONTROL over the pipeline. The service will automatically:
-1. Prepend { $match: { userId } } for security (you don't add this)
-2. Enforce sane limits (clamp to 1000 max, add 100 default if missing)
-
-Common pipeline patterns:
-
-1. FIND TRANSACTIONS TO EDIT/DELETE:
-[
-  { $match: { category: "Food & Dining", date: { $gte: "2025-01-01" } } },
-  { $sort: { date: -1 } },
-  { $limit: 10 }
-]
-Result includes full documents with _id field for subsequent operations.
-
-2. ANALYTICS - Monthly spending by category:
-[
-  { $match: { date: { $gte: "2025-01-01", $lte: "2025-12-31" } } },
-  { $addFields: { month: { $substr: ["$date", 0, 7] } } },
-  { $group: { _id: { month: "$month", category: "$category" }, total: { $sum: "$amount" } } },
-  { $sort: { "_id.month": 1, total: -1 } }
-]
-
-3. TOP EXPENSES:
-[
-  { $match: { type: "expense" } },
-  { $sort: { amount: -1 } },
-  { $limit: 5 },
-  { $project: { date: 1, description: 1, category: 1, amount: 1 } }
-]
-
-MongoDB Aggregation Operators:
-- Filtering: $match (queries), $limit, $skip
-- Grouping: $group with $sum, $avg, $min, $max, $count
-- Sorting: $sort (1 for ascending, -1 for descending)
-- Projecting: $project (select fields), $addFields (computed fields)
-- Date operations: $year, $month, $dayOfMonth, $substr for date strings
-- Conditionals: $cond, $switch for logic
-- String operations: $concat, $substr, $toLower, $toUpper
-
-Returns structured result with 'success' field. On success, data is array of documents matching your pipeline output. On failure, includes error details.`,
+    description: "Execute a MongoDB aggregation pipeline on the Transaction collection. Use for ALL queries: finding transactions to edit/delete, generating reports, analytics, filtering, sorting. You control the entire pipeline. Returns ServiceResult with document array.",
     properties: {
       pipeline: {
         type: Type.ARRAY,
-        description: "MongoDB aggregation pipeline stages (array of objects). Do NOT include { $match: { userId } } - it's added automatically. Each stage is an object with one operator key (e.g., { $match: {...} }, { $group: {...} }).",
+        description: "MongoDB aggregation pipeline stages (array of objects). Each stage is an object with one operator key.",
         items: {
           type: Type.OBJECT,
           description: "Aggregation stage object"
@@ -323,7 +264,7 @@ Returns structured result with 'success' field. On success, data is array of doc
       },
       textQuery: {
         type: Type.STRING,
-        description: "Optional semantic search query to pre-filter transactions before aggregation. Example: 'coffee purchases', 'uber rides'. The service will find semantically similar transactions and add their IDs to the pipeline automatically."
+        description: "Optional semantic search query to pre-filter transactions before aggregation (e.g., 'coffee purchases', 'uber rides')."
       }
     },
     required: ["pipeline"]
@@ -334,59 +275,11 @@ export const aggregateRecurringTransactionsDeclaration = {
   name: "aggregateRecurringTransactions",
   parameters: {
     type: Type.OBJECT,
-    description: `Execute a MongoDB aggregation pipeline on the RecurringTransaction collection.
-
-CRITICAL: This function is used for ALL recurring transaction queries. Use it for:
-- Finding recurring transactions to edit/delete (MUST include _id in results)
-- Analyzing subscription costs and patterns
-- Finding upcoming bills (filter by nextDue date)
-- Calculating total recurring expenses/income
-
-You have FULL CONTROL over the pipeline. The service will automatically:
-1. Prepend { $match: { userId } } for security
-2. Enforce sane limits (clamp to 1000 max, add 100 default if missing)
-
-Common patterns:
-
-1. FIND RECURRING TRANSACTIONS TO EDIT/DELETE:
-[
-  { $match: { frequency: "monthly", isActive: true } },
-  { $sort: { nextDue: 1 } },
-  { $limit: 10 }
-]
-
-2. UPCOMING BILLS (next 30 days):
-[
-  { $match: { 
-      isActive: true, 
-      nextDue: { $gte: "2025-11-23", $lte: "2025-12-23" } 
-    } },
-  { $sort: { nextDue: 1 } }
-]
-
-3. TOTAL MONTHLY RECURRING COSTS:
-[
-  { $match: { isActive: true, type: "expense" } },
-  { $group: { 
-      _id: "$frequency", 
-      count: { $sum: 1 }, 
-      total: { $sum: "$amount" } 
-    } }
-]
-
-RecurringTransaction fields:
-- frequency: "daily" | "weekly" | "monthly" | "yearly"
-- interval: number (e.g., 2 for every 2 weeks)
-- nextDue: ISO date string of next occurrence
-- isActive: boolean (false = deactivated/cancelled)
-- amount, category, description, type (expense/income)
-- dayOfWeek, dayOfMonth, monthOfYear (pattern fields)
-
-Returns structured result with 'success' field. On success, data is array of documents. On failure, includes error details.`,
+    description: "Execute a MongoDB aggregation pipeline on the RecurringTransaction collection. Use for ALL recurring transaction queries: finding to edit/delete, analyzing subscriptions, upcoming bills, calculating totals. Returns ServiceResult with document array.",
     properties: {
       pipeline: {
         type: Type.ARRAY,
-        description: "MongoDB aggregation pipeline stages. Do NOT include { $match: { userId } } - it's added automatically.",
+        description: "MongoDB aggregation pipeline stages (array of objects).",
         items: {
           type: Type.OBJECT,
           description: "Aggregation stage object"
@@ -394,7 +287,7 @@ Returns structured result with 'success' field. On success, data is array of doc
       },
       textQuery: {
         type: Type.STRING,
-        description: "Optional semantic search query. Example: 'streaming services', 'music subscription'."
+        description: "Optional semantic search query (e.g., 'streaming services', 'music subscription')."
       }
     },
     required: ["pipeline"]
