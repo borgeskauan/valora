@@ -9,17 +9,14 @@ import { TransactionEmbeddingService } from '../ai/embedding/TransactionEmbeddin
 import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class TransactionService {
-  private userId: string;
   private prisma: PrismaClient;
   private lookupService: TransactionLookupService;
   private embeddingService: TransactionEmbeddingService;
 
   constructor(
-    userId: string, 
     embeddingService: TransactionEmbeddingService,
     lookupService: TransactionLookupService
   ) {
-    this.userId = userId;
     this.prisma = PrismaClientManager.getClient();
     this.lookupService = lookupService;
     this.embeddingService = embeddingService;
@@ -28,9 +25,9 @@ export class TransactionService {
   /**
    * Add a new transaction
    */
-  async addTransaction(transactionData: Transaction): Promise<TransactionResult> {
+  async addTransaction(userId: string, transactionData: Transaction): Promise<TransactionResult> {
     // Inject user ID directly
-    transactionData.userId = this.userId;
+    transactionData.userId = userId;
     
     // Store original category before normalization
     const originalCategory = transactionData.category;
@@ -124,6 +121,7 @@ export class TransactionService {
    * Uses pure functions for validation logic
    */
   private buildTransactionUpdateData(
+    userId: string,
     updates: TransactionUpdateData,
     existingTransaction: TransactionData
   ): { result?: TransactionResult; updateData?: any; warnings: string[]; originalCategory?: string } {
@@ -185,13 +183,14 @@ export class TransactionService {
    * @returns ServiceResult with updated transaction
    */
   async updateTransaction(
+    userId: string,
     id: string,
     updates: TransactionUpdateData,
     existingTransaction: TransactionData
   ): Promise<TransactionResult> {
     try {
       // Build and validate update data
-      const buildResult = this.buildTransactionUpdateData(updates, existingTransaction);
+      const buildResult = this.buildTransactionUpdateData(userId, updates, existingTransaction);
       
       if (buildResult.result) {
         return buildResult.result; // Validation error
@@ -270,18 +269,19 @@ export class TransactionService {
    * @returns ServiceResult with updated transaction
    */
   async editLastTransaction(
+    userId: string,
     updates: TransactionUpdateData,
     transactionType?: TransactionType
   ): Promise<TransactionResult> {
-    // Query for last transaction using this.userId
-    const lastTxResult = await this.lookupService.getLastTransactionByUser(this.userId, transactionType);
+    // Query for last transaction using userId
+    const lastTxResult = await this.lookupService.getLastTransactionByUser(userId, transactionType);
     
     if (!lastTxResult.success) {
       return lastTxResult;
     }
 
     // Update the transaction (passing existing data to avoid redundant query)
-    return await this.updateTransaction(lastTxResult.data!.id, updates, lastTxResult.data!);
+    return await this.updateTransaction(userId, lastTxResult.data!.id, updates, lastTxResult.data!);
   }
 
   /**
@@ -291,18 +291,19 @@ export class TransactionService {
    * @returns ServiceResult with updated transaction or error
    */
   async editTransactionById(
+    userId: string,
     id: string,
     updates: TransactionUpdateData
   ): Promise<TransactionResult> {
-    // Query for transaction by ID with ownership validation using this.userId
-    const transactionResult = await this.lookupService.getTransactionById(id, this.userId);
+    // Query for transaction by ID with ownership validation using userId
+    const transactionResult = await this.lookupService.getTransactionById(id, userId);
     
     if (!transactionResult.success) {
       return transactionResult;
     }
 
     // Update the transaction (passing existing data to avoid redundant query)
-    return await this.updateTransaction(id, updates, transactionResult.data!);
+    return await this.updateTransaction(userId, id, updates, transactionResult.data!);
   }
 
   /**
@@ -311,6 +312,7 @@ export class TransactionService {
    * @returns ServiceResult with count of deleted transactions
    */
   async deleteTransactions(
+    userId: string,
     ids: string[]
   ): Promise<ServiceResult<{ deletedCount: number }>> {
     // Validate IDs array
@@ -327,7 +329,7 @@ export class TransactionService {
       const transactions = await this.prisma.transaction.findMany({
         where: {
           id: { in: ids },
-          userId: this.userId
+          userId: userId
         },
         select: { id: true }
       });
@@ -349,11 +351,11 @@ export class TransactionService {
       const result = await this.prisma.transaction.deleteMany({
         where: {
           id: { in: ids },
-          userId: this.userId // Extra safety
+          userId: userId // Extra safety
         }
       });
 
-      console.log(`Deleted ${result.count} transaction(s) for user ${this.userId}`);
+      console.log(`Deleted ${result.count} transaction(s) for user ${userId}`);
 
       // Build success message
       const message = result.count === 1 

@@ -12,7 +12,7 @@ export class AIMessageService implements IAIMessageService {
     this.functionDeclarationService = functionDeclarationService;
   }
 
-  async handleMessage(message: string, conversationHistory: Content[] = []): Promise<FunctionCallResult> {
+  async handleMessage(userId: string, message: string, conversationHistory: Content[] = []): Promise<FunctionCallResult> {
     let iterations = 0;
     const originalHistoryLength = conversationHistory.length;
     const currentContents = [...conversationHistory];
@@ -21,6 +21,7 @@ export class AIMessageService implements IAIMessageService {
       this.addUserMessage(currentContents, message);
 
       const finalResponse = await this.processFunctionCalls(
+        userId,
         currentContents,
         iterations
       );
@@ -35,6 +36,7 @@ export class AIMessageService implements IAIMessageService {
   }
 
   private async processFunctionCalls(
+    userId: string,
     contents: Content[],
     iterations: number
   ): Promise<any> {
@@ -52,7 +54,7 @@ export class AIMessageService implements IAIMessageService {
       console.log(`Function call(s) detected in iteration ${iterations}:`, functionCalls);
 
       this.addModelResponse(contents, generateContentResponse);
-      await this.executeFunctionCalls(functionCalls, contents);
+      await this.executeFunctionCalls(userId, functionCalls, contents);
 
       console.log(`Completed iteration ${iterations}, function responses sent back to model`);
     }
@@ -61,6 +63,7 @@ export class AIMessageService implements IAIMessageService {
   }
 
   private async executeFunctionCalls(
+    userId: string,
     functionCalls: any[],
     contents: Content[]
   ): Promise<void> {
@@ -72,7 +75,7 @@ export class AIMessageService implements IAIMessageService {
         continue;
       }
 
-      const result = await this.executeSingleFunctionCall(functionCall);
+      const result = await this.executeSingleFunctionCall(userId, functionCall);
 
       functionResponses.push({
         name: functionCall.name,
@@ -83,8 +86,8 @@ export class AIMessageService implements IAIMessageService {
     this.addFunctionResponses(contents, functionResponses);
   }
 
-  private async executeSingleFunctionCall(functionCall: any): Promise<any> {
-    const result = this.functionDeclarationService.executeFunction(functionCall.name, functionCall.args);
+  private async executeSingleFunctionCall(userId: string, functionCall: any): Promise<any> {
+    const result = this.functionDeclarationService.executeFunction(functionCall.name, userId, functionCall.args);
 
     console.log(`Function ${functionCall.name} result:`, result);
     return result;

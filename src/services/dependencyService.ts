@@ -55,12 +55,10 @@ export class DependencyService {
       const embedder = new Embedder();
       const qdrant = new QdrantService();
 
-      // Business services - using default userId '1' for now
-      // TODO: This should come from authentication/session context in the future
-      const userId = '1';
+      // Business services - no longer need userId in constructor
       const transactionEmbeddingService = new TransactionEmbeddingService(embedder, qdrant);
-      const transactionService = new TransactionService(userId, transactionEmbeddingService, transactionLookupService);
-      const recurringTransactionService = new RecurringTransactionService(userId, transactionEmbeddingService, transactionLookupService);
+      const transactionService = new TransactionService(transactionEmbeddingService, transactionLookupService);
+      const recurringTransactionService = new RecurringTransactionService(transactionEmbeddingService, transactionLookupService);
       
       // Orchestration layer
       const transactionSearchService = new TransactionSearchService(transactionQueryService, transactionEmbeddingService);

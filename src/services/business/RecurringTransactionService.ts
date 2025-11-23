@@ -10,17 +10,14 @@ import { TransactionEmbeddingService } from '../ai/embedding/TransactionEmbeddin
 import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class RecurringTransactionService {
-  private userId: string;
   private prisma: PrismaClient;
   private lookupService: TransactionLookupService;
   private embeddingService: TransactionEmbeddingService;
 
   constructor(
-    userId: string, 
     embeddingService: TransactionEmbeddingService,
     lookupService: TransactionLookupService
   ) {
-    this.userId = userId;
     this.prisma = PrismaClientManager.getClient();
     this.lookupService = lookupService;
     this.embeddingService = embeddingService;
@@ -72,9 +69,9 @@ export class RecurringTransactionService {
   /**
    * Create a new recurring transaction
    */
-  async createRecurringTransaction(data: RecurringTransactionInput): Promise<RecurringTransactionResult> {
+  async createRecurringTransaction(userId: string, data: RecurringTransactionInput): Promise<RecurringTransactionResult> {
     // Inject user ID directly
-    data.userId = this.userId;
+    data.userId = userId;
 
     // Store original category before normalization
     const originalCategory = data.category;
@@ -385,12 +382,10 @@ export class RecurringTransactionService {
    * @returns ServiceResult with updated recurring transaction
    */
   async editLastRecurringTransaction(
+    userId: string,
     updates: RecurringTransactionUpdateData,
     transactionType?: TransactionType
   ): Promise<RecurringTransactionResult> {
-    // Get userId directly from service
-    const userId = this.userId;
-    
     // Look up the specified recurring transaction
     const lastRecurringTxResult = await this.lookupService.getLastRecurringTransactionByUser(userId, transactionType);
     
@@ -409,12 +404,10 @@ export class RecurringTransactionService {
    * @returns ServiceResult with updated recurring transaction or error
    */
   async editRecurringTransactionById(
+    userId: string,
     id: string,
     updates: RecurringTransactionUpdateData
   ): Promise<RecurringTransactionResult> {
-    // Get userId directly from service
-    const userId = this.userId;
-    
     if (!userId) {
       return failure(
         'User context not available',
@@ -440,6 +433,7 @@ export class RecurringTransactionService {
    * @returns ServiceResult with count of deactivated recurring transactions
    */
   async deleteRecurringTransactions(
+    userId: string,
     ids: string[]
   ): Promise<ServiceResult<{ deactivatedCount: number }>> {
     // Validate IDs array
@@ -450,9 +444,6 @@ export class RecurringTransactionService {
         'Please provide at least one recurring transaction ID to delete.'
       );
     }
-
-    // Get userId directly from service
-    const userId = this.userId;
     
     try {
       // Step 1: Fetch all recurring transactions matching IDs, userId, and active status
