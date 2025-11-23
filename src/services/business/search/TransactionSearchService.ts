@@ -39,9 +39,8 @@ export class TransactionSearchService {
         );
       }
 
-      const ids = semanticRes.data.map((hit) => hit.transaction.id);
-
-      if (ids.length === 0) {
+      // Extract IDs from lightweight matches (only onetime transactions)
+      const ids = semanticRes.data.map((match) => match.id);if (ids.length === 0) {
         return success(
           { documents: [], total: 0 },
           "No transactions matched the semantic query",
@@ -88,8 +87,8 @@ export class TransactionSearchService {
         );
       }
 
-      // Here we treat hit.transaction.id as RecurringTransaction._id
-      const ids = semanticRes.data.map((hit) => hit.transaction.id);
+      // Extract IDs from lightweight matches (only recurring transactions)
+      const ids = semanticRes.data.map((match) => match.id);
 
       if (ids.length === 0) {
         return success<RecurringSearchData>(

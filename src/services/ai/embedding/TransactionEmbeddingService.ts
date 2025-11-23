@@ -2,22 +2,35 @@ import { ServiceResult, success, failure } from '../../../types/serviceResult';
 import {
   TransactionEmbeddingInput,
   TransactionEmbeddingMetadata,
-  TransactionSearchResult,
+  TransactionSearchMatch,
   EmbeddingOperationResult,
 } from '../../../types/embedding';
-import { TransactionType } from '../../../config/transactionTypes';
-import { PrismaClient } from '../../../generated/prisma';
-import { PrismaClientManager } from '../../../lib/PrismaClientManager';
 import { config } from '../../../config/config';
-import embeddingStore from './embeddingStore';
+import { Embedder } from './embedder';
+import { QdrantService, Payload } from './qdrant';
+import { TransactionEmbeddingHelpers } from '../../../lib/TransactionEmbeddingHelpers';
+import { v4 as uuidv4 } from 'uuid';
 
 export class TransactionEmbeddingService {
-  private prisma: PrismaClient;
+  private embedder: Embedder;
+  private qdrant: QdrantService;
   private threshold: number;
+  private collectionEnsured: boolean = false;
 
-  constructor() {
-    this.prisma = PrismaClientManager.getClient();
+  constructor(embedder?: Embedder, qdrant?: QdrantService) {
+    this.embedder = embedder ?? new Embedder();
+    this.qdrant = qdrant ?? new QdrantService();
     this.threshold = config.embeddingThreshold;
+  }
+
+  /**
+   * Ensure Qdrant collection is created with proper indexes
+   */
+  private async ensureCollectionCreated(): Promise<void> {
+    if (!this.collectionEnsured) {
+      await this.qdrant.ensureCollectionWithDescriptionIndex();
+      this.collectionEnsured = true;
+    }
   }
 
   /**
@@ -27,17 +40,24 @@ export class TransactionEmbeddingService {
     input: TransactionEmbeddingInput
   ): Promise<ServiceResult<EmbeddingOperationResult>> {
     try {
-      const prefixedId = this.buildPrefixedId(input.id, input.kind);
-      const description = this.generateDescription(input);
-      const metadata = this.buildMetadata(prefixedId, input.type, input.kind, input.userId);
+      const prefixedId = TransactionEmbeddingHelpers.buildPrefixedId(input.id, input.kind);
+      const description = TransactionEmbeddingHelpers.generateDescription(input);
+      const metadata = TransactionEmbeddingHelpers.buildMetadata(prefixedId, input.type, input.kind, input.userId);
 
       console.log(`[TransactionEmbedding] Embedding ${input.kind} transaction ${prefixedId} for user ${input.userId}`);
       console.log(`[TransactionEmbedding] Description: "${description.substring(0, 50)}${description.length > 50 ? '...' : ''}"}`);
 
-      const qdrantId = await embeddingStore.save(
-        description,
-        metadata as unknown as Record<string, unknown>
-      );
+      // Generate embedding vector
+      const vector = await this.embedder.embedText(description);
+      await this.ensureCollectionCreated();
+
+      // Store in Qdrant
+      const qdrantId = uuidv4();
+      const payload: Payload = { 
+        description, 
+        metadata: metadata as unknown as Record<string, unknown> 
+      };
+      await this.qdrant.upsertPoint(qdrantId, vector, payload);
 
       console.log(`[TransactionEmbedding] Successfully embedded ${prefixedId} with Qdrant ID: ${qdrantId}`);
 
@@ -62,23 +82,33 @@ export class TransactionEmbeddingService {
     input: TransactionEmbeddingInput
   ): Promise<ServiceResult<EmbeddingOperationResult>> {
     try {
-      const prefixedId = this.buildPrefixedId(input.id, input.kind);
-      const description = this.generateDescription(input);
-      const metadata = this.buildMetadata(prefixedId, input.type, input.kind, input.userId);
+      const prefixedId = TransactionEmbeddingHelpers.buildPrefixedId(input.id, input.kind);
+      const description = TransactionEmbeddingHelpers.generateDescription(input);
+      const metadata = TransactionEmbeddingHelpers.buildMetadata(prefixedId, input.type, input.kind, input.userId);
 
       console.log(`[TransactionEmbedding] Updating ${input.kind} transaction ${prefixedId} for user ${input.userId}`);
       console.log(`[TransactionEmbedding] New description: "${description.substring(0, 50)}${description.length > 50 ? '...' : ''}"}`);
 
-      const qdrantId = await embeddingStore.update(
-        prefixedId,
-        description,
-        metadata as unknown as Record<string, unknown>
-      );
+      await this.ensureCollectionCreated();
 
-      console.log(`[TransactionEmbedding] Successfully updated ${prefixedId} with Qdrant ID: ${qdrantId}`);
+      // Find existing point by transactionId
+      const found = await this.qdrant.findPointByKey('transactionId', prefixedId);
+      if (!found) {
+        throw new Error(`No point found with transactionId: ${prefixedId}`);
+      }
+
+      // Generate new embedding and update
+      const newVector = await this.embedder.embedText(description);
+      const newPayload: Payload = {
+        description,
+        metadata: metadata as unknown as Record<string, unknown>,
+      };
+      await this.qdrant.upsertPoint(found.id, newVector, newPayload);
+
+      console.log(`[TransactionEmbedding] Successfully updated ${prefixedId} with Qdrant ID: ${found.id}`);
 
       return success(
-        { qdrantId, transactionId: prefixedId },
+        { qdrantId: found.id, transactionId: prefixedId },
         'Transaction embedding updated successfully'
       );
     } catch (error) {
@@ -93,35 +123,52 @@ export class TransactionEmbeddingService {
 
   /**
    * Search transactions by natural language description
+   * Returns lightweight matches with IDs and scores
+   * Caller is responsible for fetching full transaction data if needed
    */
   async searchTransactionsByDescription(
     userId: string,
     query: string,
     k = 20
-  ): Promise<ServiceResult<TransactionSearchResult[]>> {
+  ): Promise<ServiceResult<TransactionSearchMatch[]>> {
     console.log(`[TransactionEmbedding] Searching transactions for user ${userId} with query: "${query}" (threshold=${this.threshold})`);
 
     try {
-      const hits = await embeddingStore.query(query, k);
+      // Generate query embedding
+      const vector = await this.embedder.embedText(query);
+      await this.ensureCollectionCreated();
+
+      // Search in Qdrant
+      const hits = await this.qdrant.queryVector(vector, k);
       console.log(`[TransactionEmbedding] Vector search returned ${hits.length} hits from Qdrant`);
 
       // Filter by threshold
       const filteredHits = hits.filter(hit => (hit.score ?? 0) >= this.threshold);
       console.log(`[TransactionEmbedding] ${filteredHits.length} results above threshold ${this.threshold}`);
 
-      const { onetimeIds, recurringIds, scoreMap } = this.parseEmbeddingHits(filteredHits);
+      // Parse hits to extract IDs and scores
+      const { onetimeIds, recurringIds, scoreMap } = TransactionEmbeddingHelpers.parseEmbeddingHits(filteredHits);
       console.log(`[TransactionEmbedding] Parsed ${onetimeIds.length} one-time and ${recurringIds.length} recurring transaction IDs`);
 
-      const transactions = await this.fetchTransactionsByIds(onetimeIds, recurringIds, userId);
-      const results = this.buildSearchResults(transactions, scoreMap);
+      // Build lightweight matches
+      const matches: TransactionSearchMatch[] = [
+        ...onetimeIds.map(id => ({
+          id,
+          kind: 'onetime' as const,
+          score: scoreMap.get(`T-${id}`) ?? 0,
+        })),
+        ...recurringIds.map(id => ({
+          id,
+          kind: 'recurring' as const,
+          score: scoreMap.get(`RT-${id}`) ?? 0,
+        })),
+      ];
 
-      console.log(`[TransactionEmbedding] Search completed: ${results.length} transactions matched for user ${userId}`);
-
-      console.log(`[TransactionEmbedding] Results: ${JSON.stringify(results, null, 2)}`);
+      console.log(`[TransactionEmbedding] Search completed: ${matches.length} transactions matched for user ${userId}`);
 
       return success(
-        results,
-        `Found ${results.length} matching transactions`
+        matches,
+        `Found ${matches.length} matching transactions`
       );
     } catch (error) {
       console.error(`[TransactionEmbedding] Search failed for user ${userId}:`, error);
@@ -131,161 +178,5 @@ export class TransactionEmbeddingService {
         error instanceof Error ? error.message : String(error)
       );
     }
-  }
-
-  /**
-   * Parse embedding hits and extract transaction IDs grouped by kind
-   */
-  private parseEmbeddingHits(hits: any[]) {
-    const onetimeIds: string[] = [];
-    const recurringIds: string[] = [];
-    const scoreMap = new Map<string, number>();
-
-    for (const hit of hits) {
-      const metadata = hit.payload?.metadata as TransactionEmbeddingMetadata;
-      if (!metadata || !metadata.transactionId) continue;
-
-      scoreMap.set(metadata.transactionId, hit.score ?? 0);
-
-      if (metadata.transactionId.startsWith('T-')) {
-        const id = metadata.transactionId.substring(2);
-        if (id) onetimeIds.push(id);
-      } else if (metadata.transactionId.startsWith('RT-')) {
-        const id = metadata.transactionId.substring(3);
-        if (id) recurringIds.push(id);
-      }
-    }
-
-    return { onetimeIds, recurringIds, scoreMap };
-  }
-
-  /**
-   * Fetch transactions from database by IDs
-   */
-  private async fetchTransactionsByIds(onetimeIds: string[], recurringIds: string[], userId: string) {
-    console.log(`[TransactionEmbedding] Fetching transactions from DB for user ${userId}: ${onetimeIds.length} one-time, ${recurringIds.length} recurring`);
-    console.log(`[TransactionEmbedding] One-time IDs: ${onetimeIds.join(', ')}`);
-    console.log(`[TransactionEmbedding] Recurring IDs: ${recurringIds.join(', ')}`);
-
-    const r = await this.prisma.recurringTransaction.findMany();
-    console.log(`[TransactionEmbedding] Total recurring transactions in DB: ${r.length}`);
-
-    const [onetimeTransactions, recurringTransactions] = await Promise.all([
-      onetimeIds.length > 0
-        ? this.prisma.transaction.findMany({ 
-            where: { 
-              id: { in: onetimeIds },
-              userId: userId
-            } 
-          })
-        : Promise.resolve([]),
-      recurringIds.length > 0
-        ? this.prisma.recurringTransaction.findMany({ 
-            where: { 
-              id: { in: recurringIds },
-              userId: userId
-            } 
-          })
-        : Promise.resolve([]),
-    ]);
-
-    console.log(`[TransactionEmbedding] Fetched ${onetimeTransactions.length} one-time and ${recurringTransactions.length} recurring transactions`);
-
-    return { onetimeTransactions, recurringTransactions };
-  }
-
-  /**
-   * Build search results from fetched transactions and scores
-   */
-  private buildSearchResults(
-    transactions: { onetimeTransactions: any[]; recurringTransactions: any[] },
-    scoreMap: Map<string, number>
-  ): TransactionSearchResult[] {
-    const results: TransactionSearchResult[] = [];
-
-    // Map onetime transactions
-    for (const tx of transactions.onetimeTransactions) {
-      const prefixedId = `T-${tx.id}`;
-      results.push({
-        transaction: {
-          id: tx.id,
-          amount: tx.amount,
-          category: tx.category,
-          description: tx.description,
-          date: tx.date,
-          type: tx.type as TransactionType,
-        },
-        score: scoreMap.get(prefixedId) ?? 0,
-        kind: 'onetime',
-      });
-    }
-
-    // Map recurring transactions
-    for (const tx of transactions.recurringTransactions) {
-      const prefixedId = `RT-${tx.id}`;
-      results.push({
-        transaction: {
-          id: tx.id,
-          amount: tx.amount,
-          category: tx.category,
-          description: tx.description,
-          date: tx.startDate,
-          type: tx.type as TransactionType,
-        },
-        score: scoreMap.get(prefixedId) ?? 0,
-        kind: 'recurring',
-      });
-    }
-
-    // Sort by score descending
-    results.sort((a, b) => b.score - a.score);
-
-    return results;
-  }
-
-  /**
-   * Build prefixed transaction ID
-   */
-  private buildPrefixedId(id: string, kind: string): string {
-    return kind === 'recurring' ? `RT-${id}` : `T-${id}`;
-  }
-
-  /**
-   * Generate description from transaction data
-   * If description exists, use it; otherwise generate synthetic description
-   */
-  private generateDescription(input: TransactionEmbeddingInput): string {
-    if (input.description) {
-      return input.description;
-    }
-
-    // Generate synthetic description
-    const amount = `$${input.amount.toFixed(2)}`;
-    const type = input.type;
-    const category = input.category;
-    const date = new Date(input.date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-
-    return `${amount} ${type} in ${category} on ${date}`;
-  }
-
-  /**
-   * Build metadata payload for Qdrant
-   */
-  private buildMetadata(
-    transactionId: string,
-    type: TransactionType,
-    kind: string,
-    userId: string
-  ): TransactionEmbeddingMetadata {
-    return {
-      transactionId,
-      transactionKind: kind as 'onetime' | 'recurring',
-      transactionType: type,
-      userId,
-    };
   }
 }

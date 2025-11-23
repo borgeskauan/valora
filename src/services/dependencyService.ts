@@ -9,6 +9,8 @@ import { TransactionSearchService } from './business/search/TransactionSearchSer
 import { MongoConnectionManager } from './infrastructure/database/MongoConnectionManager';
 import { FreeformTransactionSearchService } from './infrastructure/database/FreeformTransactionSearchService';
 import { TransactionLookupService } from './business/TransactionLookupService';
+import { Embedder } from './ai/embedding/embedder';
+import { QdrantService } from './ai/embedding/qdrant';
 
 export class DependencyService {
   private static instance: DependencyService;
@@ -49,10 +51,14 @@ export class DependencyService {
       const transactionQueryService = new FreeformTransactionSearchService(transactionCollection, recurringCollection);
       const transactionLookupService = new TransactionLookupService();
 
+      // Embedding dependencies
+      const embedder = new Embedder();
+      const qdrant = new QdrantService();
+
       // Business services - using default userId '1' for now
       // TODO: This should come from authentication/session context in the future
       const userId = '1';
-      const transactionEmbeddingService = new TransactionEmbeddingService();
+      const transactionEmbeddingService = new TransactionEmbeddingService(embedder, qdrant);
       const transactionService = new TransactionService(userId, transactionEmbeddingService, transactionLookupService);
       const recurringTransactionService = new RecurringTransactionService(userId, transactionEmbeddingService, transactionLookupService);
       

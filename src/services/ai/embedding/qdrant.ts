@@ -137,7 +137,3 @@ export class QdrantService {
     };
   }
 }
-
-// Default instance for convenience (backwards-compatible default export)
-export const qdrant = new QdrantService();
-export default qdrant;

@@ -26,18 +26,19 @@ export interface TransactionEmbeddingMetadata {
 }
 
 /**
- * Search result with relevance score
- */
-export interface TransactionSearchResult {
-  transaction: TransactionData;
-  score: number;
-  kind: 'onetime' | 'recurring';
-}
-
-/**
  * Return type for embed/update operations
  */
 export interface EmbeddingOperationResult {
   qdrantId: string;
   transactionId: string;
+}
+
+/**
+ * Lightweight search match returned by embedding service
+ * Caller is responsible for fetching full transaction data if needed
+ */
+export interface TransactionSearchMatch {
+  id: string;
+  kind: 'onetime' | 'recurring';
+  score: number;
 }

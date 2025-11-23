@@ -28,6 +28,3 @@ export class Embedder {
     return embeddings[0];
   }
 }
-
-export const embedder = new Embedder();
-export default embedder;
