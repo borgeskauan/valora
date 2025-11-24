@@ -72,6 +72,7 @@ export class QdrantService {
     }
   }
 
+  // TODO: Move this to docker-compose.yml (with proper volume for persistence)
   async ensureCollectionWithIndexes(collectionName: string): Promise<void> {
     await this.ensureCollection(collectionName);
     await this.ensureTransactionIdIndex(collectionName);
