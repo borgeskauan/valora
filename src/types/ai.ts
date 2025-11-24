@@ -14,6 +14,10 @@ export interface Part {
     name: string;
     response: { resultValue: any };
   };
+  functionCall?: {
+    name: string;
+    args: any;
+  };
 }
 
 export interface IAIConversationalService {

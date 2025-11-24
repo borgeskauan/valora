@@ -62,12 +62,6 @@ export class ConversationService {
     const conversation = await this.getOrCreateConversation(userId);
 
     for (const message of newMessages) {
-      // Skip messages with no parts or empty content
-      if (!this.isValidContent(message)) {
-        console.warn('Skipping empty content message:', message);
-        continue;
-      }
-
       await this.prisma.message.create({
         data: {
           conversationId: conversation.id,
@@ -76,31 +70,6 @@ export class ConversationService {
         },
       });
     }
-  }
-
-  /**
-   * Check if content has meaningful data
-   * @param content - Content to validate
-   * @returns true if content is valid, false otherwise
-   */
-  private isValidContent(content: Content): boolean {
-    // Content is invalid if it has no parts or all parts are empty
-    if (!content.parts || content.parts.length === 0) {
-      return false;
-    }
-
-    // Check if at least one part has meaningful content
-    return content.parts.some(part => {
-      // Valid if has text content
-      if (part.text && part.text.trim() !== '') {
-        return true;
-      }
-      // Valid if has function response
-      if (part.functionResponse) {
-        return true;
-      }
-      return false;
-    });
   }
 }
 

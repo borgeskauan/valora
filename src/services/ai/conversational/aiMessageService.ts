@@ -87,7 +87,7 @@ export class AIMessageService implements IAIMessageService {
   }
 
   private async executeSingleFunctionCall(userId: string, functionCall: any): Promise<any> {
-    const result = this.functionDeclarationService.executeFunction(functionCall.name, userId, functionCall.args);
+    const result = await this.functionDeclarationService.executeFunction(functionCall.name, userId, functionCall.args);
 
     console.log(`Function ${functionCall.name} result:`, result);
     return result;
