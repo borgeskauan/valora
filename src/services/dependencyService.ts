@@ -2,6 +2,8 @@ import { GeminiConversationalService } from './ai/conversational/geminiService';
 import { AIMessageService } from './ai/conversational/aiMessageService';
 import { config } from '../config/config';
 import { FunctionDeclarationService } from './ai/functionDeclarationService';
+import { WhatsAppService } from './infrastructure/whatsappService';
+import { ConversationService } from './infrastructure/conversationService';
 import { TransactionService } from './business/TransactionService';
 import { RecurringTransactionService } from './business/RecurringTransactionService';
 import { TransactionEmbeddingService } from './ai/embedding/TransactionEmbeddingService';
@@ -79,9 +81,13 @@ export class DependencyService {
         functionDeclarationService
       );
       const aiMessageService = new AIMessageService(geminiService, functionDeclarationService);
+      const whatsappService = new WhatsAppService();
+      const conversationService = new ConversationService();
 
       // Register services
       this.services.set('MongoConnectionManager', mongoConnectionManager);
+      this.services.set('WhatsAppService', whatsappService);
+      this.services.set('ConversationService', conversationService);
       this.services.set('TransactionQueryService', transactionQueryService);
       this.services.set('TransactionSearchService', transactionSearchService);
       this.services.set('GeminiService', geminiService);
@@ -101,6 +107,14 @@ export class DependencyService {
   // Convenience getters for commonly used services
   get aiMessageService(): AIMessageService {
     return this.getService<AIMessageService>('AIMessageService');
+  }
+
+  get whatsappService(): WhatsAppService {
+    return this.getService<WhatsAppService>('WhatsAppService');
+  }
+
+  get conversationService(): ConversationService {
+    return this.getService<ConversationService>('ConversationService');
   }
 
   get transactionEmbeddingService(): TransactionEmbeddingService {

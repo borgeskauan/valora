@@ -17,7 +17,11 @@ async function main() {
   app.use(express.json());
 
   // Routes
-  app.use('/whatsapp', createWhatsAppRoutes(dependencyService.aiMessageService));
+  app.use('/whatsapp', createWhatsAppRoutes(
+    dependencyService.aiMessageService,
+    dependencyService.whatsappService,
+    dependencyService.conversationService
+  ));
 
   // Start server
   const PORT = config.port;

@@ -1,10 +1,16 @@
 import { Router } from 'express';
 import { AIMessageService } from '../services/ai/conversational/aiMessageService';
+import { WhatsAppService } from '../services/infrastructure/whatsappService';
+import { ConversationService } from '../services/infrastructure/conversationService';
 import { WhatsAppController } from '../controllers/whatsappController';
 
-export function createWhatsAppRoutes(aiMessageService: AIMessageService) {
+export function createWhatsAppRoutes(
+  aiMessageService: AIMessageService,
+  whatsappService: WhatsAppService,
+  conversationService: ConversationService
+) {
   const router = Router();
-  const controller = new WhatsAppController(aiMessageService);
+  const controller = new WhatsAppController(aiMessageService, whatsappService, conversationService);
 
   /**
    * Webhook endpoint to receive messages from WhatsApp
