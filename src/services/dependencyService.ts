@@ -9,8 +9,8 @@ import { FreeformTransactionSearchService } from './business/search/FreeformTran
 import { MongoConnectionManager } from './infrastructure/database/MongoConnectionManager';
 import { MqlTransactionSearchService } from './infrastructure/database/MqlTransactionSearchService';
 import { TransactionLookupService } from './business/TransactionLookupService';
-import { Embedder } from './ai/embedding/embedder';
-import { QdrantService } from './ai/embedding/qdrant';
+import { Embedder } from './ai/embedding/Embedder';
+import { QdrantService } from './ai/embedding/QdrantService';
 
 export class DependencyService {
   private static instance: DependencyService;

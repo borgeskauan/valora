@@ -5,8 +5,8 @@ import {
   EmbeddingOperationResult,
 } from '../../../types/embedding';
 import { config } from '../../../config/config';
-import { Embedder } from './embedder';
-import { QdrantService, Payload } from './qdrant';
+import { Embedder } from './Embedder';
+import { QdrantService, Payload } from './QdrantService';
 import { TransactionEmbeddingHelpers } from '../../../lib/TransactionEmbeddingHelpers';
 import { v4 as uuidv4 } from 'uuid';
 
