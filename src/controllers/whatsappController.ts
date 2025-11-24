@@ -19,14 +19,15 @@ export class WhatsAppController {
       // Ignore messages from the bot itself
       if (payload.fromMe) {
         console.log('Ignoring message from bot itself');
-        res.json({ success: true, ignored: true, reason: 'fromMe' });
+        res.json({ success: true });
         return;
       }
 
       // Validate payload
       if (!payload.remoteJid || !payload.text) {
         console.warn('Invalid webhook payload:', payload);
-        res.status(200).json({ 
+        res.status(200).json({
+          success: false,
           error: 'Payload was ignored due to missing fields',
           message: 'Missing required fields: remoteJid or text' 
         });
@@ -39,6 +40,24 @@ export class WhatsAppController {
 
       console.log(`Processing message from ${userName} (${userId}): ${userMessage}`);
 
+      // Respond to webhook immediately with 200
+      res.json({ success: true });
+
+      // Process the message asynchronously
+      await this.processUserMessage(userId, userMessage);
+
+    } catch (error) {
+      console.error('Error processing WhatsApp webhook:', error);
+      res.status(500).json({ 
+        success: false,
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
+
+  private async processUserMessage(userId: string, userMessage: string) {
+    try {
       // Get conversation history
       const conversationHistory = await conversationService.getConversationHistory(userId);
 
@@ -53,19 +72,8 @@ export class WhatsAppController {
 
       console.log(`Response sent to ${userId}:`, sendResult);
 
-      // Respond to the webhook
-      res.json({
-        success: true,
-        messageId: sendResult.id,
-        to: sendResult.to
-      });
-
     } catch (error) {
-      console.error('Error processing WhatsApp webhook:', error);
-      res.status(500).json({ 
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
+      console.error(`Error processing message for user ${userId}:`, error);
     }
   }
 }
