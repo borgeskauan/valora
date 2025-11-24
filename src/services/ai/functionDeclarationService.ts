@@ -36,7 +36,7 @@ export class FunctionDeclarationService {
     [
       "addTransaction",
       async (userId: string, params: { transactionData: Transaction }) => {
-        console.log("Executing addTransaction with params:", params);
+        console.log("Executing addTransaction with params:", JSON.stringify(params, null, 2));
         return await this.transactionService.addTransaction(userId, params.transactionData);
       }
     ],
@@ -44,7 +44,7 @@ export class FunctionDeclarationService {
     [
       "createRecurringTransaction",
       async (userId: string, params: { recurringTransactionData: RecurringTransactionInput }) => {
-        console.log("Executing createRecurringTransaction with params:", params);
+        console.log("Executing createRecurringTransaction with params:", JSON.stringify(params, null, 2));
         return await this.recurringTransactionService.createRecurringTransaction(userId, params.recurringTransactionData);
       }
     ],
@@ -52,7 +52,7 @@ export class FunctionDeclarationService {
     [
       "editLastTransaction",
       async (userId: string, params: { updates: TransactionUpdateData, transactionType?: TransactionType }) => {
-        console.log("Executing editLastTransaction with params:", params);
+        console.log("Executing editLastTransaction with params:", JSON.stringify(params, null, 2));
         return await this.transactionService.editLastTransaction(userId, params.updates, params.transactionType);
       }
     ],
@@ -60,7 +60,7 @@ export class FunctionDeclarationService {
     [
       "editLastRecurringTransaction",
       async (userId: string, params: { updates: RecurringTransactionUpdateData, transactionType?: TransactionType }) => {
-        console.log("Executing editLastRecurringTransaction with params:", params);
+        console.log("Executing editLastRecurringTransaction with params:", JSON.stringify(params, null, 2));
         return await this.recurringTransactionService.editLastRecurringTransaction(userId, params.updates, params.transactionType);
       }
     ],
@@ -68,7 +68,7 @@ export class FunctionDeclarationService {
     [
       "editTransactionById",
       async (userId: string, params: { id: string, updates: TransactionUpdateData }) => {
-        console.log("Executing editTransactionById with params:", params);
+        console.log("Executing editTransactionById with params:", JSON.stringify(params, null, 2));
         return await this.transactionService.editTransactionById(userId, params.id, params.updates);
       }
     ],
@@ -76,7 +76,7 @@ export class FunctionDeclarationService {
     [
       "editRecurringTransactionById",
       async (userId: string, params: { id: string, updates: RecurringTransactionUpdateData }) => {
-        console.log("Executing editRecurringTransactionById with params:", params);
+        console.log("Executing editRecurringTransactionById with params:", JSON.stringify(params, null, 2));
         return await this.recurringTransactionService.editRecurringTransactionById(userId, params.id, params.updates);
       }
     ],
@@ -84,7 +84,7 @@ export class FunctionDeclarationService {
     [
       "deleteTransactions",
       async (userId: string, params: { ids: string[] }) => {
-        console.log("Executing deleteTransactions with params:", params);
+        console.log("Executing deleteTransactions with params:", JSON.stringify(params, null, 2));
         return await this.transactionService.deleteTransactions(userId, params.ids);
       }
     ],
@@ -92,7 +92,7 @@ export class FunctionDeclarationService {
     [
       "deleteRecurringTransactions",
       async (userId: string, params: { ids: string[] }) => {
-        console.log("Executing deleteRecurringTransactions with params:", params);
+        console.log("Executing deleteRecurringTransactions with params:", JSON.stringify(params, null, 2));
         return await this.recurringTransactionService.deleteRecurringTransactions(userId, params.ids);
       }
     ],
@@ -100,7 +100,7 @@ export class FunctionDeclarationService {
     [
       "aggregateTransactions",
       async (userId: string, params: { pipeline: any[], textQuery?: string }) => {
-        console.log("Executing aggregateTransactions with params:", params);
+        console.log("Executing aggregateTransactions with params:", JSON.stringify(params, null, 2));
         return await this.searchService.aggregateTransactions(userId, {
           pipeline: params.pipeline,
           textQuery: params.textQuery
@@ -110,7 +110,7 @@ export class FunctionDeclarationService {
     [
       "aggregateRecurringTransactions",
       async (userId: string, params: { pipeline: any[], textQuery?: string }) => {
-        console.log("Executing aggregateRecurringTransactions with params:", params);
+        console.log("Executing aggregateRecurringTransactions with params:", JSON.stringify(params, null, 2));
         return await this.searchService.aggregateRecurringTransactions(userId, {
           pipeline: params.pipeline,
           textQuery: params.textQuery
