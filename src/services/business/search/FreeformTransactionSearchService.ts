@@ -79,7 +79,7 @@ export class FreeformTransactionSearchService {
       return this.queryService.aggregateRecurringTransactions(userId, pipeline);
     }
 
-    const semanticRes = await this.embeddingService.searchTransactionsByDescription(
+    const semanticRes = await this.embeddingService.searchRecurringTransactionsByDescription(
       userId,
       textQuery,
       SEMANTIC_TOP_K

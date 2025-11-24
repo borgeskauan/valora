@@ -19,8 +19,7 @@ export interface TransactionEmbeddingInput {
  * Metadata stored in Qdrant
  */
 export interface TransactionEmbeddingMetadata {
-  transactionId: string;  // Prefixed: "T-123" or "RT-456"
-  transactionKind: 'onetime' | 'recurring';
+  transactionId: string;  // Plain ID (no prefix) - collection determines kind
   transactionType: TransactionType;
   userId: string;         // For user-scoped filtering
 }

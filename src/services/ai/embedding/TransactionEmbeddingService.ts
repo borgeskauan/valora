@@ -11,10 +11,12 @@ import { TransactionEmbeddingHelpers } from '../../../lib/TransactionEmbeddingHe
 import { v4 as uuidv4 } from 'uuid';
 
 export class TransactionEmbeddingService {
+  private readonly TRANSACTIONS_COLLECTION = "transactions";
+  private readonly RECURRING_TRANSACTIONS_COLLECTION = "recurring_transactions";
+  
   private embedder: Embedder;
   private qdrant: QdrantService;
   private threshold: number;
-  private collectionEnsured: boolean = false;
 
   constructor(embedder?: Embedder, qdrant?: QdrantService) {
     this.embedder = embedder ?? new Embedder();
@@ -23,13 +25,14 @@ export class TransactionEmbeddingService {
   }
 
   /**
-   * Ensure Qdrant collection is created with proper indexes
+   * Initialize both collections with proper indexes
+   * Must be called after construction before using the service
    */
-  private async ensureCollectionCreated(): Promise<void> {
-    if (!this.collectionEnsured) {
-      await this.qdrant.ensureCollectionWithIndexes();
-      this.collectionEnsured = true;
-    }
+  async initialize(): Promise<void> {
+    await Promise.all([
+      this.qdrant.ensureCollectionWithIndexes(this.TRANSACTIONS_COLLECTION),
+      this.qdrant.ensureCollectionWithIndexes(this.RECURRING_TRANSACTIONS_COLLECTION)
+    ]);
   }
 
   /**
@@ -39,16 +42,18 @@ export class TransactionEmbeddingService {
     input: TransactionEmbeddingInput
   ): Promise<ServiceResult<EmbeddingOperationResult>> {
     try {
-      const prefixedId = TransactionEmbeddingHelpers.buildPrefixedId(input.id, input.kind);
+      const collection = input.kind === 'recurring' 
+        ? this.RECURRING_TRANSACTIONS_COLLECTION 
+        : this.TRANSACTIONS_COLLECTION;
+      
       const description = TransactionEmbeddingHelpers.generateDescription(input);
-      const metadata = TransactionEmbeddingHelpers.buildMetadata(prefixedId, input.type, input.kind, input.userId);
+      const metadata = TransactionEmbeddingHelpers.buildMetadata(input.id, input.type, input.userId);
 
-      console.log(`[TransactionEmbedding] Embedding ${input.kind} transaction ${prefixedId} for user ${input.userId}`);
+      console.log(`[TransactionEmbedding] Embedding ${input.kind} transaction ${input.id} for user ${input.userId} in collection ${collection}`);
       console.log(`[TransactionEmbedding] Description: "${description.substring(0, 50)}${description.length > 50 ? '...' : ''}"}`);
 
       // Generate embedding vector
       const vector = await this.embedder.embedText(description);
-      await this.ensureCollectionCreated();
 
       // Store in Qdrant
       const embeddingId = uuidv4();
@@ -56,12 +61,12 @@ export class TransactionEmbeddingService {
         description, 
         metadata: metadata as unknown as Record<string, unknown> 
       };
-      await this.qdrant.upsertPoint(embeddingId, vector, payload);
+      await this.qdrant.upsertPoint(collection, embeddingId, vector, payload);
 
-      console.log(`[TransactionEmbedding] Successfully embedded ${prefixedId} with Qdrant ID: ${embeddingId}`);
+      console.log(`[TransactionEmbedding] Successfully embedded ${input.id} with Qdrant ID: ${embeddingId}`);
 
       return success(
-        { embeddingId, transactionId: prefixedId },
+        { embeddingId, transactionId: input.id },
         'Transaction embedded successfully'
       );
     } catch (error) {
@@ -81,19 +86,20 @@ export class TransactionEmbeddingService {
     input: TransactionEmbeddingInput
   ): Promise<ServiceResult<EmbeddingOperationResult>> {
     try {
-      const prefixedId = TransactionEmbeddingHelpers.buildPrefixedId(input.id, input.kind);
+      const collection = input.kind === 'recurring' 
+        ? this.RECURRING_TRANSACTIONS_COLLECTION 
+        : this.TRANSACTIONS_COLLECTION;
+      
       const description = TransactionEmbeddingHelpers.generateDescription(input);
-      const metadata = TransactionEmbeddingHelpers.buildMetadata(prefixedId, input.type, input.kind, input.userId);
+      const metadata = TransactionEmbeddingHelpers.buildMetadata(input.id, input.type, input.userId);
 
-      console.log(`[TransactionEmbedding] Updating ${input.kind} transaction ${prefixedId} for user ${input.userId}`);
+      console.log(`[TransactionEmbedding] Updating ${input.kind} transaction ${input.id} for user ${input.userId} in collection ${collection}`);
       console.log(`[TransactionEmbedding] New description: "${description.substring(0, 50)}${description.length > 50 ? '...' : ''}"}`);
 
-      await this.ensureCollectionCreated();
-
       // Find existing point by transactionId
-      const found = await this.qdrant.findPointByKey('transactionId', prefixedId);
+      const found = await this.qdrant.findPointByKey(collection, 'transactionId', input.id);
       if (!found) {
-        throw new Error(`No point found with transactionId: ${prefixedId}`);
+        throw new Error(`No point found with transactionId: ${input.id}`);
       }
 
       // Generate new embedding and update
@@ -102,12 +108,12 @@ export class TransactionEmbeddingService {
         description,
         metadata: metadata as unknown as Record<string, unknown>,
       };
-      await this.qdrant.upsertPoint(found.id, newVector, newPayload);
+      await this.qdrant.upsertPoint(collection, found.id, newVector, newPayload);
 
-      console.log(`[TransactionEmbedding] Successfully updated ${prefixedId} with Qdrant ID: ${found.id}`);
+      console.log(`[TransactionEmbedding] Successfully updated ${input.id} with Qdrant ID: ${found.id}`);
 
       return success(
-        { embeddingId: found.id, transactionId: prefixedId },
+        { embeddingId: found.id, transactionId: input.id },
         'Transaction embedding updated successfully'
       );
     } catch (error) {
@@ -121,21 +127,24 @@ export class TransactionEmbeddingService {
   }
 
   /**
-   * Search transactions by natural language description
-   * Returns lightweight matches with IDs and scores
-   * Caller is responsible for fetching full transaction data if needed
+   * Private helper to search transactions by natural language description
    */
-  async searchTransactionsByDescription(
+  private async searchByDescription(
     userId: string,
     query: string,
+    kind: 'onetime' | 'recurring',
     k = 20
   ): Promise<ServiceResult<TransactionSearchMatch[]>> {
-    console.log(`[TransactionEmbedding] Searching transactions for user ${userId} with query: "${query}" (threshold=${this.threshold})`);
+    const collection = kind === 'recurring' 
+      ? this.RECURRING_TRANSACTIONS_COLLECTION 
+      : this.TRANSACTIONS_COLLECTION;
+    const kindLabel = kind === 'recurring' ? 'recurring' : 'one-time';
+
+    console.log(`[TransactionEmbedding] Searching ${kindLabel} transactions for user ${userId} with query: "${query}" (threshold=${this.threshold})`);
 
     try {
       // Generate query embedding
       const vector = await this.embedder.embedText(query);
-      await this.ensureCollectionCreated();
 
       // Build userId filter for Qdrant
       const userFilter = {
@@ -145,45 +154,62 @@ export class TransactionEmbeddingService {
       };
       console.log(`[TransactionEmbedding] Applying userId filter: ${userId}`);
 
-      // Search in Qdrant with user filter
-      const hits = await this.qdrant.queryVector(vector, k, userFilter);
-      console.log(`[TransactionEmbedding] Vector search returned ${hits.length} hits from Qdrant (user-filtered)`);
+      // Search in appropriate collection
+      const hits = await this.qdrant.queryVector(collection, vector, k, userFilter);
+      console.log(`[TransactionEmbedding] Vector search returned ${hits.length} hits from ${collection} (user-filtered)`);
 
-      // Filter by threshold
+      // Filter by threshold and build matches
       const filteredHits = hits.filter(hit => (hit.score ?? 0) >= this.threshold);
       console.log(`[TransactionEmbedding] ${filteredHits.length} results above threshold ${this.threshold}`);
 
-      // Parse hits to extract IDs and scores
-      const { onetimeIds, recurringIds, scoreMap } = TransactionEmbeddingHelpers.parseEmbeddingHits(filteredHits);
-      console.log(`[TransactionEmbedding] Parsed ${onetimeIds.length} one-time and ${recurringIds.length} recurring transaction IDs`);
+      const matches: TransactionSearchMatch[] = filteredHits.map(hit => {
+        const metadata = hit.payload?.metadata as any;
+        return {
+          id: metadata?.transactionId ?? '',
+          kind,
+          score: hit.score ?? 0,
+        };
+      });
 
-      // Build lightweight matches
-      const matches: TransactionSearchMatch[] = [
-        ...onetimeIds.map(id => ({
-          id,
-          kind: 'onetime' as const,
-          score: scoreMap.get(`T-${id}`) ?? 0,
-        })),
-        ...recurringIds.map(id => ({
-          id,
-          kind: 'recurring' as const,
-          score: scoreMap.get(`RT-${id}`) ?? 0,
-        })),
-      ];
-
-      console.log(`[TransactionEmbedding] Search completed: ${matches.length} transactions matched for user ${userId}`);
+      console.log(`[TransactionEmbedding] Search completed: ${matches.length} ${kindLabel} transactions matched for user ${userId}`);
 
       return success(
         matches,
-        `Found ${matches.length} matching transactions`
+        `Found ${matches.length} matching ${kindLabel} transactions`
       );
     } catch (error) {
-      console.error(`[TransactionEmbedding] Search failed for user ${userId}:`, error);
+      console.error(`[TransactionEmbedding] ${kindLabel} transaction search failed for user ${userId}:`, error);
       return failure(
-        'Failed to search transactions',
+        `Failed to search ${kindLabel} transactions`,
         'SEARCH_ERROR',
         error instanceof Error ? error.message : String(error)
       );
     }
+  }
+
+  /**
+   * Search one-time transactions by natural language description
+   * Returns lightweight matches with IDs and scores
+   * Caller is responsible for fetching full transaction data if needed
+   */
+  async searchTransactionsByDescription(
+    userId: string,
+    query: string,
+    k = 20
+  ): Promise<ServiceResult<TransactionSearchMatch[]>> {
+    return this.searchByDescription(userId, query, 'onetime', k);
+  }
+
+  /**
+   * Search recurring transactions by natural language description
+   * Returns lightweight matches with IDs and scores
+   * Caller is responsible for fetching full transaction data if needed
+   */
+  async searchRecurringTransactionsByDescription(
+    userId: string,
+    query: string,
+    k = 20
+  ): Promise<ServiceResult<TransactionSearchMatch[]>> {
+    return this.searchByDescription(userId, query, 'recurring', k);
   }
 }

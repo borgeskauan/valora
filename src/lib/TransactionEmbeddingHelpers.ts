@@ -7,14 +7,6 @@ import { TransactionEmbeddingInput, TransactionEmbeddingMetadata } from '../type
  */
 export class TransactionEmbeddingHelpers {
   /**
-   * Build prefixed transaction ID for Qdrant storage
-   * Format: "T-{id}" for one-time transactions, "RT-{id}" for recurring
-   */
-  static buildPrefixedId(id: string, kind: string): string {
-    return kind === 'recurring' ? `RT-${id}` : `T-${id}`;
-  }
-
-  /**
    * Generate description from transaction data
    * If description exists, use it; otherwise generate synthetic description
    */
@@ -38,50 +30,17 @@ export class TransactionEmbeddingHelpers {
 
   /**
    * Build metadata payload for Qdrant
+   * Stores plain transaction ID (no prefix) - collection determines kind
    */
   static buildMetadata(
     transactionId: string,
     type: TransactionType,
-    kind: string,
     userId: string
   ): TransactionEmbeddingMetadata {
     return {
       transactionId,
-      transactionKind: kind as 'onetime' | 'recurring',
       transactionType: type,
       userId,
     };
-  }
-
-  /**
-   * Parse embedding hits and extract transaction IDs grouped by kind
-   * Returns separated arrays of one-time and recurring transaction IDs
-   * along with a score map for relevance ranking
-   */
-  static parseEmbeddingHits(hits: any[]): {
-    onetimeIds: string[];
-    recurringIds: string[];
-    scoreMap: Map<string, number>;
-  } {
-    const onetimeIds: string[] = [];
-    const recurringIds: string[] = [];
-    const scoreMap = new Map<string, number>();
-
-    for (const hit of hits) {
-      const metadata = hit.payload?.metadata as TransactionEmbeddingMetadata;
-      if (!metadata || !metadata.transactionId) continue;
-
-      scoreMap.set(metadata.transactionId, hit.score ?? 0);
-
-      if (metadata.transactionId.startsWith('T-')) {
-        const id = metadata.transactionId.substring(2);
-        if (id) onetimeIds.push(id);
-      } else if (metadata.transactionId.startsWith('RT-')) {
-        const id = metadata.transactionId.substring(3);
-        if (id) recurringIds.push(id);
-      }
-    }
-
-    return { onetimeIds, recurringIds, scoreMap };
   }
 }

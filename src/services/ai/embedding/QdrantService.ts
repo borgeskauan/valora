@@ -1,6 +1,5 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
 
-const COLLECTION = "descriptions";
 const VECTOR_SIZE = 3072;
 
 export type Payload = {
@@ -33,9 +32,9 @@ export class QdrantService {
     });
   }
 
-  private async ensureCollection(): Promise<void> {
+  private async ensureCollection(collectionName: string): Promise<void> {
     try {
-      await this.client.createCollection(COLLECTION, {
+      await this.client.createCollection(collectionName, {
         vectors: { size: VECTOR_SIZE, distance: "Cosine" },
       });
     } catch (err) {
@@ -47,9 +46,9 @@ export class QdrantService {
    * Ensure an index on payload.metadata.transactionId for fast exact matches.
    * Use "keyword" for exact equality (case-sensitive).
    */
-  private async ensureTransactionIdIndex(): Promise<void> {
+  private async ensureTransactionIdIndex(collectionName: string): Promise<void> {
     try {
-      await this.client.createPayloadIndex(COLLECTION, {
+      await this.client.createPayloadIndex(collectionName, {
         field_name: "metadata.transactionId",
         field_schema: "keyword",
       });
@@ -62,9 +61,9 @@ export class QdrantService {
    * Ensure an index on payload.metadata.userId for fast user filtering.
    * Use "keyword" for exact equality (case-sensitive).
    */
-  private async ensureUserIdIndex(): Promise<void> {
+  private async ensureUserIdIndex(collectionName: string): Promise<void> {
     try {
-      await this.client.createPayloadIndex(COLLECTION, {
+      await this.client.createPayloadIndex(collectionName, {
         field_name: "metadata.userId",
         field_schema: "keyword",
       });
@@ -73,18 +72,19 @@ export class QdrantService {
     }
   }
 
-  async ensureCollectionWithIndexes(): Promise<void> {
-    await this.ensureCollection();
-    await this.ensureTransactionIdIndex();
-    await this.ensureUserIdIndex();
+  async ensureCollectionWithIndexes(collectionName: string): Promise<void> {
+    await this.ensureCollection(collectionName);
+    await this.ensureTransactionIdIndex(collectionName);
+    await this.ensureUserIdIndex(collectionName);
   }
 
   async upsertPoint(
+    collectionName: string,
     id: string,
     vector: number[],
     payload: Payload
   ): Promise<void> {
-    await this.client.upsert(COLLECTION, {
+    await this.client.upsert(collectionName, {
       points: [
         {
           id,
@@ -95,8 +95,8 @@ export class QdrantService {
     });
   }
 
-  async queryVector(vector: number[], limit = 5, filter?: Record<string, any>): Promise<SearchHit[]> {
-    const res = await this.client.search(COLLECTION, {
+  async queryVector(collectionName: string, vector: number[], limit = 5, filter?: Record<string, any>): Promise<SearchHit[]> {
+    const res = await this.client.search(collectionName, {
       vector,
       limit,
       withPayload: true,
@@ -111,7 +111,7 @@ export class QdrantService {
     return hits;
   }
 
-  async findPointByKey(key: string, value: string): Promise<SearchHit | null> {
+  async findPointByKey(collectionName: string, key: string, value: string): Promise<SearchHit | null> {
     if (!key || typeof key !== "string") {
       throw new TypeError("key must be a non-empty string");
     }
@@ -119,7 +119,7 @@ export class QdrantService {
       throw new TypeError("value must be a non-empty string");
     }
 
-    const response = await this.client.scroll(COLLECTION, {
+    const response = await this.client.scroll(collectionName, {
       filter: {
         must: [{ key: `metadata.${key}`, match: { value } }],
       },

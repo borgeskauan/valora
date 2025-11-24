@@ -57,6 +57,8 @@ export class DependencyService {
 
       // Business services - no longer need userId in constructor
       const transactionEmbeddingService = new TransactionEmbeddingService(embedder, qdrant);
+      await transactionEmbeddingService.initialize(); // Initialize collections
+      
       const transactionService = new TransactionService(transactionEmbeddingService, transactionLookupService);
       const recurringTransactionService = new RecurringTransactionService(transactionEmbeddingService, transactionLookupService);
       
