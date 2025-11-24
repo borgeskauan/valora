@@ -422,11 +422,11 @@ export class RecurringTransactionService {
   }
 
   /**
-   * Delete (deactivate) one or multiple recurring transactions by IDs
-   * @param ids - Array of recurring transaction IDs to delete
+   * Disable (deactivate) one or multiple recurring transactions by IDs
+   * @param ids - Array of recurring transaction IDs to disable
    * @returns ServiceResult with count of deactivated recurring transactions
    */
-  async deleteRecurringTransactions(
+  async disableRecurringTransactions(
     userId: string,
     ids: string[]
   ): Promise<ServiceResult<{ deactivatedCount: number }>> {

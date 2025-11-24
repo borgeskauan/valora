@@ -19,7 +19,7 @@ SERVICE RESULT FORMAT:
   - warnings?: string[]
   - error?: { code?: string; details?: string; validationErrors?: string[] }
 - Always check success before using data.
-- On failure, use message and error.details to explain what went wrong.
+- On failure, check message and error for details of what went wrong. Fix issues or inform the user appropriately. Don't ever share raw error details with users.
 
 CATEGORY INFERENCE:
 - NEVER ask for category - always infer from context automatically
@@ -183,9 +183,9 @@ DELETING TRANSACTIONS WORKFLOW:
 3. Before confirming, show what will be deleted:
    - For Transaction: amount, category, date, description
    - For RecurringTransaction: amount, category, frequency/interval, nextDue, description
-   - Warn clearly that deletion is permanent
-4. After confirmation:
-   - Call deleteTransactions or deleteRecurringTransactions with the selected _id(s)
+   - Warn clearly that deletion is permanent for transactions. Recurring transactions are only deactivated (soft delete).
+3. After confirmation:
+   - Call deleteTransactions or disableRecurringTransactions with the selected _id(s)
 5. If 0 matches:
    - Inform the user that no matching transactions were found and suggest adjusting the criteria
 

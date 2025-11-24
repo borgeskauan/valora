@@ -229,11 +229,11 @@ export const deleteTransactionsDeclaration = {
   },
 };
 
-export const deleteRecurringTransactionsDeclaration = {
-  name: "deleteRecurringTransactions",
+export const disableRecurringTransactionsDeclaration = {
+  name: "disableRecurringTransactions",
   parameters: {
     type: Type.OBJECT,
-    description: `Delete (deactivate) one or multiple recurring transactions by their IDs. Deactivates recurring transactions (soft delete) - stops future occurrences but preserves history. Returns a structured result with 'success' field. On success, includes deactivatedCount and confirmation message. On failure, includes error details. All-or-nothing operation.`,
+    description: `Disable (deactivate) one or multiple recurring transactions by their IDs. Deactivates recurring transactions (soft delete) - stops future occurrences but preserves history. Returns a structured result with 'success' field. On success, includes deactivatedCount and confirmation message. On failure, includes error details. All-or-nothing operation.`,
     properties: {
       ids: {
         type: Type.ARRAY,
@@ -306,7 +306,7 @@ export const FUNCTION_DECLARATIONS = [
   editTransactionByIdDeclaration,
   editRecurringTransactionByIdDeclaration,
   deleteTransactionsDeclaration,
-  deleteRecurringTransactionsDeclaration,
+  disableRecurringTransactionsDeclaration,
   aggregateTransactionsDeclaration,
   aggregateRecurringTransactionsDeclaration
 ];

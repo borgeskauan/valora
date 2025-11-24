@@ -19,7 +19,7 @@ Located in `src/services/ai/functionDeclarationService.ts`:
 7. **editRecurringTransactionById(id, updates)** - Edits specific recurring transaction by ID
 8. **queryTransactions(queryDescription, sqlQuery)** - Queries for reports or finding transactions to edit/delete
 9. **deleteTransactions(ids)** - Permanently deletes one or multiple one-time transactions (hard delete)
-10. **deleteRecurringTransactions(ids)** - Deactivates one or multiple recurring transactions (soft delete)
+10. **disableRecurringTransactions(ids)** - Deactivates one or multiple recurring transactions (soft delete)
 
 ### Delete Operations Pattern
 - **Hard Delete** (Transaction table): Permanent removal via Prisma `deleteMany`
@@ -43,7 +43,7 @@ Full CRUD operations for recurring transactions:
 - `createRecurringTransaction(data)` - Creates recurring transaction (expense or income)
 - `editLastRecurringTransaction(userId, updates)` - Edits most recent recurring
 - `editRecurringTransactionById(userId, id, updates)` - Edits specific recurring by ID
-- `deleteRecurringTransactions(userId, ids)` - Deactivates recurring transactions by IDs (batch support)
+- `disableRecurringTransactions(userId, ids)` - Deactivates recurring transactions by IDs (batch support)
 - Uses RecurrencePattern domain object for frequency calculations
 - Returns `ServiceResult<T>` for all operations
 

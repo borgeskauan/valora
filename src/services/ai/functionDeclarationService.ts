@@ -88,12 +88,12 @@ export class FunctionDeclarationService {
         return await this.transactionService.deleteTransactions(userId, params.ids);
       }
     ],
-    // Delete recurring transactions (async)
+    // Disable recurring transactions (async)
     [
-      "deleteRecurringTransactions",
+      "disableRecurringTransactions",
       async (userId: string, params: { ids: string[] }) => {
-        console.log("Executing deleteRecurringTransactions with params:", JSON.stringify(params, null, 2));
-        return await this.recurringTransactionService.deleteRecurringTransactions(userId, params.ids);
+        console.log("Executing disableRecurringTransactions with params:", JSON.stringify(params, null, 2));
+        return await this.recurringTransactionService.disableRecurringTransactions(userId, params.ids);
       }
     ],
     // Aggregation functions (async)
