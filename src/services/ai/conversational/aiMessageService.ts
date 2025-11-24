@@ -124,11 +124,16 @@ export class AIMessageService implements IAIMessageService {
     conversationHistory: Content[],
     originalHistoryLength: number
   ): FunctionCallResult {
+    // Check if the final response has any valid content
+    if (!finalResponse.text || finalResponse.text.trim() === '') {
+      throw new Error('AI returned empty response with no content');
+    }
+
     // Extract only the new entries added during this interaction
     const newConversationEntries = conversationHistory.slice(originalHistoryLength);
-    
+
     return {
-      response: finalResponse.text || 'No response text',
+      response: finalResponse.text,
       newConversationEntries: newConversationEntries
     };
   }
