@@ -159,11 +159,8 @@ export class RecurringTransactionService {
       });
 
       if (!embeddingResult.success) {
-        return failure(
-          'Failed to create recurring transaction embedding',
-          'EMBEDDING_ERROR',
-          embeddingResult.message
-        );
+        console.error(`[RecurringTransactionService] Failed to embed recurring transaction ${recurringTransaction.id}: ${embeddingResult.message}`);
+        // Continue - semantic search unavailable but recurring transaction saved
       }
 
       // Build success message using MessageBuilder static method
@@ -341,11 +338,8 @@ export class RecurringTransactionService {
       });
 
       if (!embeddingResult.success) {
-        return failure(
-          'Failed to update recurring transaction embedding',
-          'EMBEDDING_ERROR',
-          embeddingResult.message
-        );
+        console.error(`[RecurringTransactionService] Failed to update recurring transaction embedding ${updatedRecurringTransaction.id}: ${embeddingResult.message}`);
+        // Continue - semantic search unavailable but recurring transaction updated
       }
 
       // Build success message

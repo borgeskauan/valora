@@ -81,11 +81,8 @@ export class TransactionService {
       });
 
       if (!embeddingResult.success) {
-        return failure(
-          'Failed to create transaction embedding',
-          'EMBEDDING_ERROR',
-          embeddingResult.message
-        );
+        console.error(`[TransactionService] Failed to embed transaction ${transaction.id}: ${embeddingResult.message}`);
+        // Continue - semantic search unavailable but transaction saved
       }
       
       // Build success message using MessageBuilder static method
@@ -219,11 +216,8 @@ export class TransactionService {
       });
 
       if (!embeddingResult.success) {
-        return failure(
-          'Failed to update transaction embedding',
-          'EMBEDDING_ERROR',
-          embeddingResult.message
-        );
+        console.error(`[TransactionService] Failed to update transaction embedding ${updatedTransaction.id}: ${embeddingResult.message}`);
+        // Continue - semantic search unavailable but transaction updated
       }
 
       // Build success message
