@@ -18,8 +18,6 @@ export const EXPENSE_CATEGORIES = [
   // Food & Leisure
   'Food & Dining',
   'Entertainment',
-  'Streaming',
-  'Subscriptions',
   'Travel',
 
   // Personal & Lifestyle

@@ -17,17 +17,18 @@
     "@google/genai": "^1.29.1",
     "@prisma/client": "^6.19.0",
     "@qdrant/js-client-rest": "^1.15.1",
+    "chrono-node": "^2.9.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mongodb": "^7.0.0",
-    "prisma": "^6.19.0"
+    "prisma": "^6.19.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.1",
-    "@types/uuid": "^11.0.0",
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

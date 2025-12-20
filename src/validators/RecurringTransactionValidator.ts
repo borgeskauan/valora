@@ -115,15 +115,4 @@ export class RecurringTransactionValidator {
       recurrencePattern,
     };
   }
-
-  /**
-   * Normalize start date
-   * Defaults to today if not provided
-   * 
-   * @param startDate - The start date to normalize
-   * @returns Normalized Date object
-   */
-  static normalizeStartDate(startDate?: Date | string): string {
-    return TransactionValidator.normalizeDate(startDate);
-  }
 }

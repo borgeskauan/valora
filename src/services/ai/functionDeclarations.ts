@@ -21,7 +21,7 @@ const COMMON_PROPERTIES = {
   },
   date: {
     type: Type.STRING,
-    description: "The date and optional time in ISO format. If user provides only date, use YYYY-MM-DD format. If user specifies a time (e.g., 'at 8pm', 'at 2:30 PM', 'in the morning'), include it using full ISO-8601 format with UTC timezone (YYYY-MM-DDTHH:mm:ss.sssZ). Examples: '2025-11-10' (date only) or '2025-11-10T20:00:00.000Z' (date with 8pm time in UTC).",
+    description: "Raw date/time phrase as provided by the user (e.g., 'today', 'yesterday', '2025-11-10', 'Nov 10 at 8pm', 'last Friday'). Pass the user's exact wording. The backend will parse and validate it. If not provided, defaults to current date/time.",
   },
   type: {
     type: Type.STRING,
@@ -58,7 +58,7 @@ const RECURRING_PROPERTIES = {
   },
   startDate: {
     type: Type.STRING,
-    description: "The start date and optional time in ISO format. If user provides only date, use YYYY-MM-DD format. If user specifies a time, include it using full ISO-8601 format with UTC timezone (YYYY-MM-DDTHH:mm:ss.sssZ).",
+    description: "Raw date/time phrase for when the recurring transaction should start (e.g., 'today', 'next Monday', '2025-12-01'). Pass the user's exact wording. The backend will parse and validate it. If not provided, defaults to current date/time.",
   },
 };
 
@@ -95,7 +95,7 @@ export const addTransactionDeclaration = {
         type: Type.OBJECT,
         description: "The transaction data to add",
         properties: COMMON_PROPERTIES,
-        required: ["date", "amount", "category", "type"],
+        required: ["amount", "category", "type"],
       },
     },
     required: ["transactionData"],

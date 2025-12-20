@@ -1,4 +1,5 @@
 import { TransactionType, isValidTransactionType, TRANSACTION_TYPES } from '../config/transactionTypes';
+import { DateNormalizer } from '../lib/DateNormalizer';
 
 /**
  * Validation result for transactions
@@ -75,34 +76,6 @@ export class TransactionValidator {
   }
 
   /**
-   * Normalize date to Date object
-   * Defaults to today if not provided
-   * 
-   * @param date - The date to normalize (Date, string, or undefined)
-   * @returns Date object (defaults to today if undefined)
-   */
-  static normalizeDate(date?: Date | string): string {
-    if (!date) {
-      console.log('Date not provided, defaulting to today');
-      return new Date().toISOString(); // Full ISO-8601: 2025-11-08T17:30:00.000Z
-    }
-    
-    if (date instanceof Date) {
-      return date.toISOString(); // Full ISO-8601
-    }
-    
-    // If it's already a string, parse and validate
-    const parsedDate = new Date(date);
-    if (isNaN(parsedDate.getTime())) {
-      // If invalid, default to today
-      console.log('Invalid date string provided, defaulting to today');
-      return new Date().toISOString();
-    }
-    
-    return parsedDate.toISOString(); // Full ISO-8601
-  }
-
-  /**
    * Validate all transaction fields with date normalization
    * 
    * @param amount - The transaction amount
@@ -115,11 +88,23 @@ export class TransactionValidator {
     date: Date | string | undefined,
     type: TransactionType
   ): ValidationResult & { normalizedDate: string } {
+    const errors: string[] = [];
+    
     const amountResult = TransactionValidator.validateAmount(amount);
     const typeResult = TransactionValidator.validateType(type);
     
-    // Normalize date (defaults to today if undefined)
-    const normalizedDate = TransactionValidator.normalizeDate(date);
+    // Normalize date (defaults to today if undefined, fails if unparseable)
+    const dateNormResult = DateNormalizer.normalize(date);
+    if (!dateNormResult.isValid) {
+      errors.push(dateNormResult.error!);
+      // Early return - can't proceed without valid date
+      return {
+        isValid: false,
+        errors: [...amountResult.errors, ...typeResult.errors, ...errors],
+        normalizedDate: '', // Invalid, won't be used
+      };
+    }
+    const normalizedDate = dateNormResult.normalizedDate!;
     
     // Validate normalized date
     const dateResult = TransactionValidator.validateDate(normalizedDate);
