@@ -2,10 +2,6 @@ import { Type } from "@google/genai";
 import { FREQUENCIES } from "../../config/frequencies";
 import { TRANSACTION_TYPES } from "../../config/transactionTypes";
 
-/**
- * Common property definitions for transactions
- * Reusable across all function declarations
- */
 const COMMON_PROPERTIES = {
   amount: {
     type: Type.NUMBER,
@@ -13,7 +9,8 @@ const COMMON_PROPERTIES = {
   },
   category: {
     type: Type.STRING,
-    description: "The category for the transaction. Choose from the appropriate list based on the type (expense or income).",
+    description:
+      "The category for the transaction. Choose from the appropriate list based on the type (expense or income).",
   },
   description: {
     type: Type.STRING,
@@ -21,7 +18,8 @@ const COMMON_PROPERTIES = {
   },
   date: {
     type: Type.STRING,
-    description: "Raw date/time phrase as provided by the user (e.g., 'today', 'yesterday', '2025-11-10', 'Nov 10 at 8pm', 'last Friday'). Pass the user's exact wording. The backend will parse and validate it. If not provided, defaults to current date/time.",
+    description:
+      "Raw date/time phrase as provided by the user (e.g., 'today', 'yesterday', '2025-11-10', 'Nov 10 at 8pm', 'last Friday'). Pass the user's exact wording. The backend will parse and validate it. If not provided, defaults to current date/time.",
   },
   type: {
     type: Type.STRING,
@@ -30,10 +28,14 @@ const COMMON_PROPERTIES = {
   },
 };
 
-/**
- * Recurring-specific property definitions
- * Used for recurring transaction declarations
- */
+// Common for recurring should NOT include `date`
+const COMMON_RECURRING_PROPERTIES = {
+  amount: COMMON_PROPERTIES.amount,
+  category: COMMON_PROPERTIES.category,
+  description: COMMON_PROPERTIES.description,
+  type: COMMON_PROPERTIES.type,
+};
+
 const RECURRING_PROPERTIES = {
   frequency: {
     type: Type.STRING,
@@ -46,7 +48,8 @@ const RECURRING_PROPERTIES = {
   },
   dayOfWeek: {
     type: Type.NUMBER,
-    description: "For weekly frequency: Day of the week (0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday)",
+    description:
+      "For weekly frequency: Day of the week (0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday)",
   },
   dayOfMonth: {
     type: Type.NUMBER,
@@ -58,15 +61,13 @@ const RECURRING_PROPERTIES = {
   },
   startDate: {
     type: Type.STRING,
-    description: "Raw date/time phrase for when the recurring transaction should start (e.g., 'today', 'next Monday', '2025-12-01'). Pass the user's exact wording. The backend will parse and validate it. If not provided, defaults to current date/time.",
+    description:
+      "Raw date/time phrase for when the recurring transaction should start (e.g., 'today', 'next Monday', '2025-12-01'). Pass the user's exact wording. The backend will parse and validate it. Defaults to today if not provided.",
   },
 };
 
-/**
- * Combined properties for recurring transactions (common + recurring-specific)
- */
 const RECURRING_TRANSACTION_PROPERTIES = {
-  ...COMMON_PROPERTIES,
+  ...COMMON_RECURRING_PROPERTIES,
   ...RECURRING_PROPERTIES,
 };
 

@@ -30,7 +30,7 @@ export class WhatsAppController {
     try {
       const payload = req.body as WhatsAppWebhookPayload;
 
-      console.log('Received WhatsApp webhook:', JSON.stringify(payload, null, 2));
+      console.log('Received WhatsApp webhook:', payload);
 
       // Check if message should be ignored
       if (this.shouldIgnoreMessage(payload)) {
