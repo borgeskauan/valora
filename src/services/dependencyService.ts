@@ -6,6 +6,7 @@ import { WhatsAppService } from './infrastructure/whatsappService';
 import { ConversationService } from './infrastructure/conversationService';
 import { TransactionService } from './business/TransactionService';
 import { RecurringTransactionService } from './business/RecurringTransactionService';
+import { CategoryClassificationService } from './business/CategoryClassificationService';
 import { TransactionEmbeddingService } from './ai/embedding/TransactionEmbeddingService';
 import { FreeformTransactionSearchService } from './business/search/FreeformTransactionSearchService';
 import { MongoConnectionManager } from './infrastructure/database/MongoConnectionManager';
@@ -61,8 +62,12 @@ export class DependencyService {
       const transactionEmbeddingService = new TransactionEmbeddingService(embedder, qdrant);
       await transactionEmbeddingService.initialize(); // Initialize collections
       
-      const transactionService = new TransactionService(transactionEmbeddingService, transactionLookupService);
-      const recurringTransactionService = new RecurringTransactionService(transactionEmbeddingService, transactionLookupService);
+      // Initialize category classifier
+      const categoryClassifier = new CategoryClassificationService(embedder, qdrant);
+      await categoryClassifier.initialize(); // Seed category exemplars
+      
+      const transactionService = new TransactionService(transactionEmbeddingService, transactionLookupService, categoryClassifier);
+      const recurringTransactionService = new RecurringTransactionService(transactionEmbeddingService, transactionLookupService, categoryClassifier);
       
       // Orchestration layer
       const transactionSearchService = new FreeformTransactionSearchService(transactionQueryService, transactionEmbeddingService);

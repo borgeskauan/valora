@@ -10,7 +10,7 @@ const COMMON_PROPERTIES = {
   category: {
     type: Type.STRING,
     description:
-      "The category for the transaction. Choose from the appropriate list based on the type (expense or income).",
+      "OPTIONAL. Category will be automatically classified by backend using semantic analysis of the description. Only provide if user explicitly specifies a category (e.g., 'add $50 in Transportation').",
   },
   description: {
     type: Type.STRING,
@@ -96,7 +96,7 @@ export const addTransactionDeclaration = {
         type: Type.OBJECT,
         description: "The transaction data to add",
         properties: COMMON_PROPERTIES,
-        required: ["amount", "category", "type"],
+        required: ["amount", "type"],
       },
     },
     required: ["transactionData"],
@@ -116,7 +116,7 @@ export const addRecurringTransactionDeclaration = {
         type: Type.OBJECT,
         description: "The recurring transaction data to add",
         properties: RECURRING_TRANSACTION_PROPERTIES,
-        required: ["amount", "category", "frequency", "type"],
+        required: ["amount", "frequency", "type"],
       },
     },
     required: ["recurringTransactionData"],

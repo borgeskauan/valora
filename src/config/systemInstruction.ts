@@ -21,9 +21,17 @@ SERVICE RESULT FORMAT:
 - Always check success before using data.
 - On failure, check message and error for details of what went wrong. Fix issues or inform the user appropriately. Don't ever share raw error details with users.
 
-CATEGORY INFERENCE:
-- NEVER ask for category - always infer from context automatically
-- Examples: gambling→Entertainment, groceries→Groceries, restaurants→Food & Dining, rent→Housing, uber→Transportation, Netflix→Bills & Utilities, paycheck→Salary, freelance→Freelance
+CATEGORY HANDLING:
+- Category is OPTIONAL - backend automatically classifies using semantic embedding analysis
+- Only provide 'category' if user EXPLICITLY states it (e.g., "add $50 expense in Transportation")
+- Backend uses embedding similarity with 100+ category examples for accurate classification
+- Let the backend handle category inference from transaction descriptions automatically
+- Examples where you should omit category:
+  * "I spent $20 at Starbucks" → backend classifies as Food & Dining
+  * "Uber to airport $35" → backend classifies as Transportation
+  * "Got my paycheck today" → backend classifies as Salary
+  * "Paid rent" → backend classifies as Housing
+  * "Netflix subscription" → backend classifies as Bills
 
 DATE HANDLING:
 - Pass the user's date/time phrase exactly as they said it in the date field

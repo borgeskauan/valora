@@ -7,20 +7,24 @@ import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
 import { TransactionLookupService } from './TransactionLookupService';
 import { TransactionEmbeddingService } from '../ai/embedding/TransactionEmbeddingService';
+import { CategoryClassificationService } from './CategoryClassificationService';
 import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class RecurringTransactionService {
   private prisma: PrismaClient;
   private lookupService: TransactionLookupService;
   private embeddingService: TransactionEmbeddingService;
+  private categoryClassifier: CategoryClassificationService;
 
   constructor(
     embeddingService: TransactionEmbeddingService,
-    lookupService: TransactionLookupService
+    lookupService: TransactionLookupService,
+    categoryClassifier: CategoryClassificationService
   ) {
     this.prisma = PrismaClientManager.getClient();
     this.lookupService = lookupService;
     this.embeddingService = embeddingService;
+    this.categoryClassifier = categoryClassifier;
   }
 
   /**
@@ -75,6 +79,20 @@ export class RecurringTransactionService {
 
     // Store original category before normalization
     const originalCategory = data.category;
+
+    // Classify category if not provided
+    if (!data.category) {
+      const classificationResult = await this.categoryClassifier.classifyCategory(
+        data.description ?? undefined,
+        data.type,
+        undefined // no explicit category
+      );
+      data.category = classificationResult.category;
+      console.log(
+        `[RecurringTransactionService] Auto-classified category: ${classificationResult.category} ` +
+        `(confidence: ${classificationResult.confidence.toFixed(3)}, method: ${classificationResult.method})`
+      );
+    }
 
     // Validate basic transaction data (amount, startDate, category, type) using pure function
     const basicValidation = validateBasicTransactionData(

@@ -5,7 +5,7 @@ export interface Transaction {
   userId: string;
   date?: Date | string; // Optional, defaults to today if not specified
   amount: number;
-  category: string;
+  category?: string; // Optional, will be classified by backend if not provided
   description: string | null;
   type: TransactionType;
 }
@@ -42,7 +42,7 @@ export type TransactionResult = ServiceResult<TransactionData>;
 export interface RecurringTransactionInput {
   userId: string;
   amount: number;
-  category: string;
+  category?: string; // Optional, will be classified by backend if not provided
   description?: string;
   frequency: "daily" | "weekly" | "monthly" | "yearly";
   interval?: number; // default: 1

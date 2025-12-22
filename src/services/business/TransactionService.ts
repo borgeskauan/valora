@@ -6,20 +6,24 @@ import { PrismaClientManager } from '../../lib/PrismaClientManager';
 import { TransactionType } from '../../config/transactionTypes';
 import { TransactionLookupService } from './TransactionLookupService';
 import { TransactionEmbeddingService } from '../ai/embedding/TransactionEmbeddingService';
+import { CategoryClassificationService } from './CategoryClassificationService';
 import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class TransactionService {
   private prisma: PrismaClient;
   private lookupService: TransactionLookupService;
   private embeddingService: TransactionEmbeddingService;
+  private categoryClassifier: CategoryClassificationService;
 
   constructor(
     embeddingService: TransactionEmbeddingService,
-    lookupService: TransactionLookupService
+    lookupService: TransactionLookupService,
+    categoryClassifier: CategoryClassificationService
   ) {
     this.prisma = PrismaClientManager.getClient();
     this.lookupService = lookupService;
     this.embeddingService = embeddingService;
+    this.categoryClassifier = categoryClassifier;
   }
 
   /**
@@ -31,6 +35,20 @@ export class TransactionService {
     
     // Store original category before normalization
     const originalCategory = transactionData.category;
+    
+    // Classify category if not provided
+    if (!transactionData.category) {
+      const classificationResult = await this.categoryClassifier.classifyCategory(
+        transactionData.description ?? undefined,
+        transactionData.type,
+        undefined // no explicit category
+      );
+      transactionData.category = classificationResult.category;
+      console.log(
+        `[TransactionService] Auto-classified category: ${classificationResult.category} ` +
+        `(confidence: ${classificationResult.confidence.toFixed(3)}, method: ${classificationResult.method})`
+      );
+    }
     
     // Validate basic transaction data (amount, date, category, type) using pure function
     const validationResult = validateBasicTransactionData(

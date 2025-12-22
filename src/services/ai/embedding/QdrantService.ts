@@ -138,4 +138,58 @@ export class QdrantService {
       payload: p.payload as Payload,
     };
   }
+
+  /**
+   * List all collections in Qdrant
+   */
+  async listCollections(): Promise<string[]> {
+    const response = await this.client.getCollections();
+    return response.collections.map((c) => c.name);
+  }
+
+  /**
+   * Create a collection with specified vector dimension
+   */
+  async createCollection(collectionName: string, vectorSize: number): Promise<void> {
+    try {
+      await this.client.createCollection(collectionName, {
+        vectors: { size: vectorSize, distance: "Cosine" },
+      });
+    } catch (err) {
+      if (!isAlreadyExists(err)) throw err;
+    }
+  }
+
+  /**
+   * Batch upsert multiple points to a collection
+   */
+  async upsertBatch(
+    collectionName: string,
+    points: Array<{ id: number; vector: number[]; payload: Record<string, any> }>
+  ): Promise<void> {
+    await this.client.upsert(collectionName, {
+      points,
+    });
+  }
+
+  /**
+   * Search for similar vectors in a collection
+   */
+  async search(
+    collectionName: string,
+    vector: number[],
+    limit: number
+  ): Promise<Array<{ id: number; score: number; payload: Record<string, any> }>> {
+    const res = await this.client.search(collectionName, {
+      vector,
+      limit,
+      withPayload: true,
+    } as any);
+
+    return (res as any[]).map((h: any) => ({
+      id: h.id,
+      score: h.score,
+      payload: h.payload,
+    }));
+  }
 }
