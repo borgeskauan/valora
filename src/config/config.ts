@@ -13,5 +13,8 @@ export const config = {
   embeddingThreshold: parseFloat(process.env.EMBEDDING_THRESHOLD || '0.8'),
   whatsapp: {
     apiUrl: process.env.WHATSAPP_API_URL || 'http://localhost:3000'
+  },
+  deletion: {
+    confirmationWindowSeconds: parseInt(process.env.DELETION_CONFIRMATION_WINDOW || '120', 10)
   }
 };

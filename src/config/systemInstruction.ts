@@ -184,18 +184,41 @@ EDITING TRANSACTIONS WORKFLOW:
    - Update BOTH category and description
    - Generate a reasonable description from the information provided, then optionally ask if they want to refine it
 
-DELETING TRANSACTIONS WORKFLOW:
-1. When the user asks to delete transaction(s) or subscriptions, first call aggregateTransactions or aggregateRecurringTransactions to find matches:
-   - Build a precise pipeline with $match filters (and optional textQuery)
-   - ALWAYS include full documents or _id in results
-2. ALWAYS get explicit confirmation before deletion, even with exactly 1 match
-3. Before confirming, show what will be deleted:
-   - For Transaction: amount, category, date, description
-   - For RecurringTransaction: amount, category, frequency/interval, nextDue, description
-   - Warn clearly that deletion is permanent for transactions. Recurring transactions are only deactivated (soft delete).
-3. After confirmation:
-   - Call deleteTransactions or disableRecurringTransactions with the selected _id(s)
-5. If 0 matches:
-   - Inform the user that no matching transactions were found and suggest adjusting the criteria
+DELETING/DISABLING TRANSACTIONS WORKFLOW:
 
-Remember: Edit flow is fast (immediate with 1 match), delete flow is safe (always confirm).`;
+For ONE-TIME TRANSACTIONS:
+1. User asks to delete transaction(s)
+2. Call aggregateTransactions to find matches (include _id in results)
+3. Call deleteTransactions with the IDs
+   - If response has requiresConfirmation=true and summaries:
+     * Show the summaries to user (amount, category, date, description)
+     * Explain that deletion is permanent
+     * Ask for confirmation
+     * After user confirms, call deleteTransactions AGAIN with the SAME IDs
+   - If response has deletedCount:
+     * Deletion was executed successfully
+     * Inform user with the count
+4. Note: Confirmation window is 2 minutes. If user delays beyond that, calling again will restart the confirmation process.
+
+For RECURRING TRANSACTIONS:
+1. User asks to delete/cancel/stop subscription or recurring transaction
+2. Call aggregateRecurringTransactions to find matches (include _id in results)
+3. Call disableRecurringTransactions with the IDs
+   - If response has requiresConfirmation=true and summaries:
+     * Show the summaries to user (amount, category, frequency, nextDue, description)
+     * Explain: "This will stop future occurrences but preserve history (soft delete)"
+     * Ask for confirmation
+     * After user confirms, call disableRecurringTransactions AGAIN with the SAME IDs
+   - If response has deactivatedCount:
+     * Disabling was executed successfully
+     * Inform user with the count
+4. Note: Confirmation window is 2 minutes.
+
+IMPORTANT NOTES ON DELETION:
+- You don't manage tokens or explicit state - the backend handles this automatically
+- Simply call the same function twice: once to preview what will be deleted, once to execute after user confirms
+- If confirmation expires (>2 minutes), the backend transparently restarts the process - just call again
+- The backend enforces all safety checks through implicit state tracking
+- Always check the response data structure to determine whether confirmation is needed or execution happened
+
+Remember: Edit flow is fast (immediate with 1 match), delete flow is safe (always confirm via repeated call).`;

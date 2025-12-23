@@ -215,11 +215,11 @@ export const deleteTransactionsDeclaration = {
   name: "deleteTransactions",
   parameters: {
     type: Type.OBJECT,
-    description: `Delete one or multiple one-time transactions by their IDs. Permanently removes transactions (cannot be undone). Returns a structured result with 'success' field. On success, includes deletedCount and confirmation message. On failure, includes error details. All-or-nothing operation.`,
+    description: `Delete one or multiple one-time transactions by their IDs. Uses implicit two-step confirmation.`,
     properties: {
       ids: {
         type: Type.ARRAY,
-        description: "Array of transaction IDs to delete (typically obtained from aggregateTransactions results on the Transaction collection). Can be single ID ['123'] or multiple ['123', '456', '789'].",
+        description: "Array of transaction IDs to delete (obtained from aggregateTransactions results). Can be single ID ['123'] or multiple ['123', '456', '789'].",
         items: {
           type: Type.STRING,
           description: "Transaction ID",
@@ -234,11 +234,11 @@ export const disableRecurringTransactionsDeclaration = {
   name: "disableRecurringTransactions",
   parameters: {
     type: Type.OBJECT,
-    description: `Disable (deactivate) one or multiple recurring transactions by their IDs. Deactivates recurring transactions (soft delete) - stops future occurrences but preserves history. Returns a structured result with 'success' field. On success, includes deactivatedCount and confirmation message. On failure, includes error details. All-or-nothing operation.`,
+    description: `Disable (deactivate) one or multiple recurring transactions by their IDs. Uses implicit two-step confirmation.`,
     properties: {
       ids: {
         type: Type.ARRAY,
-        description: "Array of recurring transaction IDs to delete (typically obtained from aggregateRecurringTransactions results on the RecurringTransaction collection). Can be single ID ['12'] or multiple ['12', '34', '56'].",
+        description: "Array of recurring transaction IDs to disable (obtained from aggregateRecurringTransactions results). Can be single ID ['12'] or multiple ['12', '34', '56'].",
         items: {
           type: Type.STRING,
           description: "Recurring transaction ID",

@@ -14,6 +14,7 @@ import { MqlTransactionSearchService } from './infrastructure/database/MqlTransa
 import { TransactionLookupService } from './business/TransactionLookupService';
 import { Embedder } from './ai/embedding/Embedder';
 import { QdrantService } from './ai/embedding/QdrantService';
+import { DeletionStateService } from './infrastructure/DeletionStateService';
 
 export class DependencyService {
   private static instance: DependencyService;
@@ -58,6 +59,9 @@ export class DependencyService {
       const embedder = new Embedder();
       const qdrant = new QdrantService();
 
+      // Deletion state service
+      const deletionStateService = new DeletionStateService(config.deletion.confirmationWindowSeconds);
+
       // Business services - no longer need userId in constructor
       const transactionEmbeddingService = new TransactionEmbeddingService(embedder, qdrant);
       await transactionEmbeddingService.initialize(); // Initialize collections
@@ -66,8 +70,8 @@ export class DependencyService {
       const categoryClassifier = new CategoryClassificationService(embedder, qdrant);
       await categoryClassifier.initialize(); // Seed category exemplars
       
-      const transactionService = new TransactionService(transactionEmbeddingService, transactionLookupService, categoryClassifier);
-      const recurringTransactionService = new RecurringTransactionService(transactionEmbeddingService, transactionLookupService, categoryClassifier);
+      const transactionService = new TransactionService(transactionEmbeddingService, transactionLookupService, categoryClassifier, deletionStateService);
+      const recurringTransactionService = new RecurringTransactionService(transactionEmbeddingService, transactionLookupService, categoryClassifier, deletionStateService);
       
       // Orchestration layer
       const transactionSearchService = new FreeformTransactionSearchService(transactionQueryService, transactionEmbeddingService);

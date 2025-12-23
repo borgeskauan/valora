@@ -7,6 +7,7 @@ import { TransactionType } from '../../config/transactionTypes';
 import { TransactionLookupService } from './TransactionLookupService';
 import { TransactionEmbeddingService } from '../ai/embedding/TransactionEmbeddingService';
 import { CategoryClassificationService } from './CategoryClassificationService';
+import { DeletionStateService } from '../infrastructure/DeletionStateService';
 import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class TransactionService {
@@ -14,16 +15,19 @@ export class TransactionService {
   private lookupService: TransactionLookupService;
   private embeddingService: TransactionEmbeddingService;
   private categoryClassifier: CategoryClassificationService;
+  private deletionStateService: DeletionStateService;
 
   constructor(
     embeddingService: TransactionEmbeddingService,
     lookupService: TransactionLookupService,
-    categoryClassifier: CategoryClassificationService
+    categoryClassifier: CategoryClassificationService,
+    deletionStateService: DeletionStateService
   ) {
     this.prisma = PrismaClientManager.getClient();
     this.lookupService = lookupService;
     this.embeddingService = embeddingService;
     this.categoryClassifier = categoryClassifier;
+    this.deletionStateService = deletionStateService;
   }
 
   /**
@@ -319,14 +323,21 @@ export class TransactionService {
   }
 
   /**
-   * Delete one or multiple transactions by IDs
-   * @param ids - Array of transaction IDs to delete
-   * @returns ServiceResult with count of deleted transactions
+   * Delete one or multiple transactions by IDs with implicit two-step confirmation
+   * 
+   * BEHAVIOR:
+   * - First call: Creates pending deletion state, returns summaries + requiresConfirmation
+   * - Second call (same IDs, within time window): Executes deletion, returns deletedCount
+   * - If window expired: Restarts confirmation process
+   * 
+   * @param userId User ID
+   * @param ids Array of transaction IDs to delete
+   * @returns ServiceResult with either summaries (pending) or deletedCount (executed)
    */
   async deleteTransactions(
     userId: string,
     ids: string[]
-  ): Promise<ServiceResult<{ deletedCount: number }>> {
+  ): Promise<ServiceResult<{ deletedCount?: number; summaries?: any[]; requiresConfirmation?: boolean }>> {
     // Validate IDs array
     if (!ids || ids.length === 0) {
       return failure(
@@ -337,13 +348,65 @@ export class TransactionService {
     }
 
     try {
+      // Check if there's a pending deletion for these exact params
+      const pendingState = this.deletionStateService.checkPendingState(
+        userId,
+        'deleteTransactions',
+        ids
+      );
+
+      // CASE 1: Pending state exists and is valid → EXECUTE DELETION
+      if (pendingState.state === 'PENDING_VALID') {
+        console.log(`[TransactionService] Confirmed deletion for user ${userId}, executing...`);
+        
+        // Clear pending state
+        this.deletionStateService.clearPendingState(userId, 'deleteTransactions', ids);
+        
+        // Execute deletion
+        const result = await this.prisma.transaction.deleteMany({
+          where: {
+            id: { in: ids },
+            userId: userId // Extra safety
+          }
+        });
+
+        console.log(`Deleted ${result.count} transaction(s) for user ${userId}`);
+
+        // Build success message
+        const message = result.count === 1 
+          ? 'Deleted 1 transaction'
+          : `Deleted ${result.count} transactions`;
+
+        return success(
+          { deletedCount: result.count },
+          message
+        );
+      }
+
+      // CASE 2: Pending state expired → Clear and fall through to create new
+      if (pendingState.state === 'PENDING_EXPIRED') {
+        console.log(`[TransactionService] Pending deletion expired for user ${userId}, clearing...`);
+        this.deletionStateService.clearPendingState(userId, 'deleteTransactions', ids);
+        // Fall through to CASE 3
+      }
+
+      // CASE 3: No pending state (or expired) → CREATE PENDING STATE, RETURN SUMMARIES
+      console.log(`[TransactionService] Creating pending deletion for user ${userId}...`);
+
       // Step 1: Fetch all transactions matching IDs and userId
       const transactions = await this.prisma.transaction.findMany({
         where: {
           id: { in: ids },
           userId: userId
         },
-        select: { id: true }
+        select: { 
+          id: true,
+          amount: true,
+          category: true,
+          date: true,
+          description: true,
+          type: true
+        }
       });
 
       // Step 2: Check if all requested IDs were found
@@ -359,23 +422,33 @@ export class TransactionService {
         );
       }
 
-      // Step 4: Delete all transactions (ownership already validated)
-      const result = await this.prisma.transaction.deleteMany({
-        where: {
-          id: { in: ids },
-          userId: userId // Extra safety
-        }
-      });
+      // Step 4: Create summaries for display
+      const summaries = transactions.map(t => ({
+        id: t.id,
+        amount: t.amount,
+        category: t.category,
+        date: t.date,
+        description: t.description,
+        type: t.type as TransactionType
+      }));
 
-      console.log(`Deleted ${result.count} transaction(s) for user ${userId}`);
+      // Step 5: Store pending state
+      this.deletionStateService.createPendingState(
+        userId,
+        'deleteTransactions',
+        ids,
+        summaries
+      );
 
-      // Build success message
-      const message = result.count === 1 
-        ? 'Deleted 1 transaction'
-        : `Deleted ${result.count} transactions`;
+      const message = transactions.length === 1
+        ? 'Found 1 transaction to delete. Please confirm deletion.'
+        : `Found ${transactions.length} transactions to delete. Please confirm deletion.`;
 
       return success(
-        { deletedCount: result.count },
+        {
+          summaries,
+          requiresConfirmation: true
+        },
         message
       );
     } catch (error) {

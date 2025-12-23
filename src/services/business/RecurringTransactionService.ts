@@ -8,6 +8,7 @@ import { TransactionType } from '../../config/transactionTypes';
 import { TransactionLookupService } from './TransactionLookupService';
 import { TransactionEmbeddingService } from '../ai/embedding/TransactionEmbeddingService';
 import { CategoryClassificationService } from './CategoryClassificationService';
+import { DeletionStateService } from '../infrastructure/DeletionStateService';
 import { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';
 
 export class RecurringTransactionService {
@@ -15,16 +16,19 @@ export class RecurringTransactionService {
   private lookupService: TransactionLookupService;
   private embeddingService: TransactionEmbeddingService;
   private categoryClassifier: CategoryClassificationService;
+  private deletionStateService: DeletionStateService;
 
   constructor(
     embeddingService: TransactionEmbeddingService,
     lookupService: TransactionLookupService,
-    categoryClassifier: CategoryClassificationService
+    categoryClassifier: CategoryClassificationService,
+    deletionStateService: DeletionStateService
   ) {
     this.prisma = PrismaClientManager.getClient();
     this.lookupService = lookupService;
     this.embeddingService = embeddingService;
     this.categoryClassifier = categoryClassifier;
+    this.deletionStateService = deletionStateService;
   }
 
   /**
@@ -440,24 +444,80 @@ export class RecurringTransactionService {
   }
 
   /**
-   * Disable (deactivate) one or multiple recurring transactions by IDs
-   * @param ids - Array of recurring transaction IDs to disable
-   * @returns ServiceResult with count of deactivated recurring transactions
+   * Disable (deactivate) one or multiple recurring transactions by IDs with implicit two-step confirmation
+   * 
+   * BEHAVIOR:
+   * - First call: Creates pending disable state, returns summaries + requiresConfirmation
+   * - Second call (same IDs, within time window): Executes soft delete, returns deactivatedCount
+   * - If window expired: Restarts confirmation process
+   * 
+   * @param userId User ID
+   * @param ids Array of recurring transaction IDs to disable
+   * @returns ServiceResult with either summaries (pending) or deactivatedCount (executed)
    */
   async disableRecurringTransactions(
     userId: string,
     ids: string[]
-  ): Promise<ServiceResult<{ deactivatedCount: number }>> {
+  ): Promise<ServiceResult<{ deactivatedCount?: number; summaries?: any[]; requiresConfirmation?: boolean }>> {
     // Validate IDs array
     if (!ids || ids.length === 0) {
       return failure(
         'No recurring transaction IDs provided',
         'VALIDATION_ERROR',
-        'Please provide at least one recurring transaction ID to delete.'
+        'Please provide at least one recurring transaction ID to disable.'
       );
     }
     
     try {
+      // Check if there's a pending disable for these exact params
+      const pendingState = this.deletionStateService.checkPendingState(
+        userId,
+        'disableRecurringTransactions',
+        ids
+      );
+
+      // CASE 1: Pending state exists and is valid → EXECUTE DISABLE
+      if (pendingState.state === 'PENDING_VALID') {
+        console.log(`[RecurringTransactionService] Confirmed disabling for user ${userId}, executing...`);
+        
+        // Clear pending state
+        this.deletionStateService.clearPendingState(userId, 'disableRecurringTransactions', ids);
+        
+        // Execute soft delete - set isActive = false
+        const result = await this.prisma.recurringTransaction.updateMany({
+          where: {
+            id: { in: ids },
+            userId,  // Extra safety
+            isActive: true  // Only update active ones
+          },
+          data: {
+            isActive: false
+          }
+        });
+
+        console.log(`Deactivated ${result.count} recurring transaction(s) for user ${userId}`);
+
+        // Build success message
+        const message = result.count === 1 
+          ? 'Deactivated 1 recurring transaction'
+          : `Deactivated ${result.count} recurring transactions`;
+
+        return success(
+          { deactivatedCount: result.count },
+          message
+        );
+      }
+
+      // CASE 2: Pending state expired → Clear and fall through to create new
+      if (pendingState.state === 'PENDING_EXPIRED') {
+        console.log(`[RecurringTransactionService] Pending disable expired for user ${userId}, clearing...`);
+        this.deletionStateService.clearPendingState(userId, 'disableRecurringTransactions', ids);
+        // Fall through to CASE 3
+      }
+
+      // CASE 3: No pending state (or expired) → CREATE PENDING STATE, RETURN SUMMARIES
+      console.log(`[RecurringTransactionService] Creating pending disable for user ${userId}...`);
+
       // Step 1: Fetch all recurring transactions matching IDs, userId, and active status
       const recurringTransactions = await this.prisma.recurringTransaction.findMany({
         where: {
@@ -465,7 +525,21 @@ export class RecurringTransactionService {
           userId,
           isActive: true
         },
-        select: { id: true }
+        select: { 
+          id: true,
+          amount: true,
+          category: true,
+          description: true,
+          type: true,
+          frequency: true,
+          interval: true,
+          dayOfWeek: true,
+          dayOfMonth: true,
+          monthOfYear: true,
+          startDate: true,
+          nextDue: true,
+          isActive: true
+        }
       });
 
       // Step 2: Check if all requested IDs were found
@@ -481,30 +555,44 @@ export class RecurringTransactionService {
         );
       }
 
-      // Step 4: Soft delete - set isActive = false (ownership already validated)
-      const result = await this.prisma.recurringTransaction.updateMany({
-        where: {
-          id: { in: ids },
-          userId // Extra safety
-        },
-        data: {
-          isActive: false
-        }
-      });
+      // Step 4: Create summaries for display
+      const summaries = recurringTransactions.map(rt => ({
+        id: rt.id,
+        amount: rt.amount,
+        category: rt.category,
+        description: rt.description,
+        type: rt.type as TransactionType,
+        frequency: rt.frequency,
+        interval: rt.interval,
+        dayOfWeek: rt.dayOfWeek,
+        dayOfMonth: rt.dayOfMonth,
+        monthOfYear: rt.monthOfYear,
+        startDate: rt.startDate,
+        nextDue: rt.nextDue,
+        isActive: rt.isActive
+      }));
 
-      console.log(`Deactivated ${result.count} recurring transaction(s) for user ${userId}`);
+      // Step 5: Store pending state
+      this.deletionStateService.createPendingState(
+        userId,
+        'disableRecurringTransactions',
+        ids,
+        summaries
+      );
 
-      // Build success message
-      const message = result.count === 1 
-        ? 'Deactivated 1 recurring transaction'
-        : `Deactivated ${result.count} recurring transactions`;
+      const message = recurringTransactions.length === 1
+        ? 'Found 1 recurring transaction to disable. Please confirm.'
+        : `Found ${recurringTransactions.length} recurring transactions to disable. Please confirm.`;
 
       return success(
-        { deactivatedCount: result.count },
+        {
+          summaries,
+          requiresConfirmation: true
+        },
         message
       );
     } catch (error) {
-      return handleDatabaseError(error, 'deleting recurring transaction(s)');
+      return handleDatabaseError(error, 'disabling recurring transaction(s)');
     }
   }
 }
