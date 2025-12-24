@@ -36,9 +36,9 @@ export class RecurrencePattern {
 
   /**
    * Create a RecurrencePattern with validation and defaults
+   * Uses current date for defaulting day fields when not provided
    * 
    * @param frequency - The recurrence frequency
-   * @param startDate - The start date (used for defaulting day fields)
    * @param interval - The interval (default: 1)
    * @param dayOfWeek - Day of week for weekly recurrence (0-6)
    * @param dayOfMonth - Day of month for monthly recurrence (1-31)
@@ -48,14 +48,13 @@ export class RecurrencePattern {
    */
   static create(
     frequency: string,
-    startDate: Date | string,
     interval?: number,
     dayOfWeek?: number,
     dayOfMonth?: number,
     monthOfYear?: number
   ): RecurrencePattern {
-    // Convert string date to Date object for calculations
-    const startDateObj = startDate instanceof Date ? startDate : new Date(startDate);
+    // Use current date for defaulting day fields
+    const now = new Date();
     
     // Validate frequency
     if (!isValidFrequency(frequency)) {
@@ -76,11 +75,11 @@ export class RecurrencePattern {
 
     // Validate and apply defaults for frequency-specific fields
     if (frequency === 'weekly') {
-      // Default dayOfWeek to the day of week of startDate if not provided
+      // Default dayOfWeek to current day of week if not provided
       if (validDayOfWeek === undefined) {
-        validDayOfWeek = startDateObj.getDay(); // 0-6 (Sunday-Saturday)
+        validDayOfWeek = now.getDay(); // 0-6 (Sunday-Saturday)
         console.log(
-          `dayOfWeek not provided for weekly frequency, defaulting to ${validDayOfWeek} (${startDateObj.toLocaleDateString('en-US', { weekday: 'long' })})`
+          `dayOfWeek not provided for weekly frequency, defaulting to ${validDayOfWeek} (${now.toLocaleDateString('en-US', { weekday: 'long' })})`
         );
       }
       if (!isValidDayOfWeek(validDayOfWeek)) {
@@ -89,9 +88,9 @@ export class RecurrencePattern {
     }
 
     if (frequency === 'monthly') {
-      // Default dayOfMonth to the day of month of startDate if not provided
+      // Default dayOfMonth to current day of month if not provided
       if (validDayOfMonth === undefined) {
-        validDayOfMonth = startDateObj.getDate(); // 1-31
+        validDayOfMonth = now.getDate(); // 1-31
         console.log(
           `dayOfMonth not provided for monthly frequency, defaulting to ${validDayOfMonth}`
         );
@@ -102,11 +101,11 @@ export class RecurrencePattern {
     }
 
     if (frequency === 'yearly') {
-      // Default monthOfYear to the month of startDate if not provided
+      // Default monthOfYear to current month if not provided
       if (validMonthOfYear === undefined) {
-        validMonthOfYear = startDateObj.getMonth(); // 0-11 (January-December)
+        validMonthOfYear = now.getMonth(); // 0-11 (January-December)
         console.log(
-          `monthOfYear not provided for yearly frequency, defaulting to ${validMonthOfYear} (${startDateObj.toLocaleDateString('en-US', { month: 'long' })})`
+          `monthOfYear not provided for yearly frequency, defaulting to ${validMonthOfYear} (${now.toLocaleDateString('en-US', { month: 'long' })})`
         );
       }
       if (!isValidMonthOfYear(validMonthOfYear)) {
@@ -125,16 +124,16 @@ export class RecurrencePattern {
 
   /**
    * Calculate the next due date based on this recurrence pattern
+   * Uses current date as the starting point
    * 
-   * @param startDate - The start date for calculation
    * @returns The next due date
    */
-  calculateNextDueDate(startDate: Date | string): string {
-    // Convert string to Date for calculations
-    const startDateObj = startDate instanceof Date ? startDate : new Date(startDate);
+  calculateNextDueDate(): string {
+    // Use current date for calculation
+    const now = new Date();
     
     const nextDue = calculateNextDueDate(
-      startDateObj,
+      now,
       this.frequency,
       this.interval,
       this.dayOfWeek,

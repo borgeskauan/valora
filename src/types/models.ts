@@ -49,7 +49,6 @@ export interface RecurringTransactionInput {
   dayOfWeek?: number; // 0-6, for weekly
   dayOfMonth?: number; // 1-31, for monthly
   monthOfYear?: number; // 0-11, for yearly
-  startDate: Date;
   type: TransactionType;
 }
 
@@ -67,7 +66,6 @@ export interface RecurringTransactionData {
   dayOfMonth: number | null;
   monthOfYear: number | null;
   nextDue: string; // ISO-8601 DateTime string
-  startDate: string; // ISO-8601 DateTime string
   type: TransactionType;
 }
 

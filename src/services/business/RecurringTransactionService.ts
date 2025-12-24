@@ -38,7 +38,6 @@ export class RecurringTransactionService {
   private validateRecurrencePattern(
     amount: number,
     frequency: string,
-    startDate: string,
     type: TransactionType,
     interval?: number | null,
     dayOfWeek?: number | null,
@@ -49,7 +48,6 @@ export class RecurringTransactionService {
     const recurrenceValidation = RecurringTransactionValidator.validate(
       amount,
       frequency as any,
-      startDate,
       type,
       interval,
       dayOfWeek,
@@ -65,7 +63,7 @@ export class RecurringTransactionService {
     }
 
     const recurrencePattern = recurrenceValidation.recurrencePattern;
-    const nextDue = recurrencePattern.calculateNextDueDate(startDate);
+    const nextDue = recurrencePattern.calculateNextDueDate();
 
     return {
       isValid: true,
@@ -98,12 +96,12 @@ export class RecurringTransactionService {
       );
     }
 
-    // Validate basic transaction data (amount, startDate, category, type) using pure function
+    // Validate basic transaction data (amount, category, type) using pure function
     const basicValidation = validateBasicTransactionData(
       data.amount,
       data.category,
       data.type,
-      data.startDate
+      undefined // No date for recurring transactions
     );
 
     if (!basicValidation.isValid) {
@@ -117,13 +115,11 @@ export class RecurringTransactionService {
 
     // Use validated and normalized data
     data.category = basicValidation.normalizedCategory;
-    const startDate = basicValidation.normalizedDate;
 
     // Validate recurrence pattern (domain-specific)
     const recurrenceValidation = this.validateRecurrencePattern(
       data.amount,
       data.frequency,
-      startDate,
       data.type,
       data.interval,
       data.dayOfWeek,
@@ -159,7 +155,6 @@ export class RecurringTransactionService {
           dayOfWeek: patternData.dayOfWeek,
           dayOfMonth: patternData.dayOfMonth,
           monthOfYear: patternData.monthOfYear,
-          startDate: startDate,
           nextDue: nextDue,
           isActive: true,
           type: data.type,
@@ -176,7 +171,7 @@ export class RecurringTransactionService {
         kind: 'recurring',
         amount: recurringTransaction.amount,
         category: recurringTransaction.category,
-        date: recurringTransaction.startDate,
+        date: recurringTransaction.nextDue,
         userId: recurringTransaction.userId,
       });
 
@@ -209,7 +204,6 @@ export class RecurringTransactionService {
           dayOfMonth: recurringTransaction.dayOfMonth,
           monthOfYear: recurringTransaction.monthOfYear,
           nextDue: recurringTransaction.nextDue,
-          startDate: recurringTransaction.startDate,
           type: recurringTransaction.type as TransactionType
         },
         message,
@@ -234,8 +228,7 @@ export class RecurringTransactionService {
     // Use pure function to handle basic fields validation (amount, category, description, type)
     const basicUpdateResult = buildBasicUpdateData(
       updates,
-      existingData,
-      'startDate'
+      existingData
     );
 
     if (!basicUpdateResult.isValid) {
@@ -269,17 +262,12 @@ export class RecurringTransactionService {
       const monthOfYear = updates.monthOfYear !== undefined ? updates.monthOfYear : existingData.monthOfYear;
       
       // Validate the new recurrence pattern (validator handles null conversion)
-      // existingData.startDate could be Date or string depending on Prisma schema
-      const startDate = typeof existingData.startDate === 'string' 
-        ? existingData.startDate 
-        : new Date(existingData.startDate).toISOString().split('T')[0];
       const finalType = (updates.type || existingData.type) as TransactionType;
       const mergedAmount = updates.amount !== undefined ? updates.amount : existingData.amount;
       
       const recurrenceValidation = this.validateRecurrencePattern(
         mergedAmount,
         frequency,
-        startDate,
         finalType,
         interval,
         dayOfWeek,
@@ -355,7 +343,7 @@ export class RecurringTransactionService {
         kind: 'recurring',
         amount: updatedRecurringTransaction.amount,
         category: updatedRecurringTransaction.category,
-        date: updatedRecurringTransaction.startDate,
+        date: updatedRecurringTransaction.nextDue,
         userId: updatedRecurringTransaction.userId,
       });
 
@@ -379,7 +367,6 @@ export class RecurringTransactionService {
           dayOfMonth: updatedRecurringTransaction.dayOfMonth,
           monthOfYear: updatedRecurringTransaction.monthOfYear,
           nextDue: updatedRecurringTransaction.nextDue,
-          startDate: updatedRecurringTransaction.startDate,
           type: updatedRecurringTransaction.type as TransactionType,
         },
         message,
@@ -536,7 +523,6 @@ export class RecurringTransactionService {
           dayOfWeek: true,
           dayOfMonth: true,
           monthOfYear: true,
-          startDate: true,
           nextDue: true,
           isActive: true
         }
@@ -567,7 +553,6 @@ export class RecurringTransactionService {
         dayOfWeek: rt.dayOfWeek,
         dayOfMonth: rt.dayOfMonth,
         monthOfYear: rt.monthOfYear,
-        startDate: rt.startDate,
         nextDue: rt.nextDue,
         isActive: rt.isActive
       }));

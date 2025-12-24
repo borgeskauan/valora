@@ -37,7 +37,6 @@ export interface RecurringTransactionDoc {
   dayOfMonth?: number | null;  // 1–31
   monthOfYear?: number | null; // 0–11
 
-  startDate: string;           // ISO-8601 string
   nextDue: string;             // ISO-8601 string
 
   isActive: boolean;

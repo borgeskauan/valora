@@ -100,7 +100,7 @@ function buildCategoryWarnings(
  * 
  * @param updates - Partial update data containing fields to change
  * @param existingData - Existing transaction data
- * @param dateField - The date field to use from existing data (e.g., 'date' or 'startDate')
+ * @param dateField - Optional date field to use from existing data for validation (e.g., 'date')
  * @returns Object with validation results, update data, and warnings
  */
 export function buildBasicUpdateData<TUpdates extends { 
@@ -111,7 +111,7 @@ export function buildBasicUpdateData<TUpdates extends {
 }>(
   updates: TUpdates,
   existingData: { amount: number; category: string; type: string; [key: string]: any },
-  dateField: string
+  dateField?: string
 ): UpdateDataResult {
   const originalCategory = updates.category;
   const finalType = (updates.type || existingData.type) as TransactionType;
@@ -128,7 +128,7 @@ export function buildBasicUpdateData<TUpdates extends {
     mergedData.amount,
     mergedData.category,
     mergedData.type,
-    existingData[dateField]
+    dateField ? existingData[dateField] : undefined
   );
 
   if (!validationResult.isValid) {

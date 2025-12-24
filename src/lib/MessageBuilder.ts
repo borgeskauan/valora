@@ -126,7 +126,7 @@ export class MessageBuilder {
       message += ` - ${recurringTransaction.description}`;
     }
 
-    message += ` ${frequencyDesc}, starting ${MessageBuilder.formatDate(recurringTransaction.startDate)}`;
+    message += ` ${frequencyDesc}`;
 
     return message;
   }

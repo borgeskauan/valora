@@ -45,6 +45,12 @@ DATE DISPLAY FORMATTING:
 - Apply this formatting in ALL user-facing text: reports, query results, transaction lists, confirmations, summaries
 - NEVER show raw ISO format (YYYY-MM-DD or ISO-8601) to users
 
+RECURRING TRANSACTIONS (SUBSCRIPTIONS):
+- Recurring transactions always start IMMEDIATELY (today/now)
+- If user specifies a future start date, explain that start dates are not supported yet: "I can't set custom start dates yet - all recurring transactions begin immediately. The next occurrence will be calculated based on the frequency you specified."
+- The system will automatically calculate the next due date based on the frequency
+- Users can disable it temporarily after creation if they need to delay the start
+
 QUERYING TRANSACTIONS WITH AGGREGATION:
 
 You have TWO aggregation tools with FULL MongoDB pipeline control:
@@ -178,7 +184,6 @@ Database Schema (Mongo documents):
   - dayOfWeek: number | null      // 0-6
   - dayOfMonth: number | null     // 1-31
   - monthOfYear: number | null    // 0-11
-  - startDate: string             // ISO-8601 datetime
   - nextDue: string               // ISO-8601 datetime
   - isActive: boolean
   - createdAt: Date

@@ -59,11 +59,6 @@ const RECURRING_PROPERTIES = {
     type: Type.NUMBER,
     description: "For yearly frequency: Month of the year (0=January, 1=February, ..., 11=December)",
   },
-  startDate: {
-    type: Type.STRING,
-    description:
-      "Raw date/time phrase for when the recurring transaction should start (e.g., 'today', 'next Monday', '2025-12-01'). Pass the user's exact wording. The backend will parse and validate it. Defaults to today if not provided.",
-  },
 };
 
 const RECURRING_TRANSACTION_PROPERTIES = {

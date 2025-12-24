@@ -49,7 +49,6 @@ model RecurringTransaction {
   monthOfYear Int?     // For yearly: 0-11 (January-December)
   
   // Lifecycle dates
-  startDate   String   // ISO-8601 DateTime string for SQLite strftime compatibility
   nextDue     String   // ISO-8601 DateTime string for SQLite strftime compatibility
   
   // Status

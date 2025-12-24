@@ -25,7 +25,6 @@ export class RecurringTransactionValidator {
    * Create and validate a RecurrencePattern
    * 
    * @param frequency - The recurrence frequency
-   * @param startDate - The start date (for defaulting day fields)
    * @param interval - The interval
    * @param dayOfWeek - Day of week for weekly
    * @param dayOfMonth - Day of month for monthly
@@ -35,7 +34,6 @@ export class RecurringTransactionValidator {
    */
   static createRecurrencePattern(
     frequency: string,
-    startDate: Date | string,
     interval?: number,
     dayOfWeek?: number,
     dayOfMonth?: number,
@@ -43,7 +41,6 @@ export class RecurringTransactionValidator {
   ): RecurrencePattern {
     return RecurrencePattern.create(
       frequency,
-      startDate,
       interval,
       dayOfWeek,
       dayOfMonth,
@@ -56,7 +53,6 @@ export class RecurringTransactionValidator {
    * 
    * @param amount - The transaction amount
    * @param frequency - The recurrence frequency
-   * @param startDate - The start date
    * @param type - The transaction type
    * @param interval - The interval (accepts null and converts to undefined)
    * @param dayOfWeek - Day of week for weekly (accepts null and converts to undefined)
@@ -67,7 +63,6 @@ export class RecurringTransactionValidator {
   static validate(
     amount: number,
     frequency: string,
-    startDate: Date | string,
     type: TransactionType,
     interval?: number | null,
     dayOfWeek?: number | null,
@@ -99,7 +94,6 @@ export class RecurringTransactionValidator {
     try {
       recurrencePattern = RecurringTransactionValidator.createRecurrencePattern(
         frequency,
-        startDate,
         normalizedInterval,
         normalizedDayOfWeek,
         normalizedDayOfMonth,

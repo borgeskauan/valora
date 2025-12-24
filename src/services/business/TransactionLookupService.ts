@@ -142,7 +142,6 @@ export class TransactionLookupService {
           dayOfMonth: recurringTransaction.dayOfMonth,
           monthOfYear: recurringTransaction.monthOfYear,
           nextDue: recurringTransaction.nextDue,
-          startDate: recurringTransaction.startDate,
           type: recurringTransaction.type as TransactionType,
         },
         'Recurring transaction found'
@@ -193,7 +192,6 @@ export class TransactionLookupService {
           dayOfMonth: recurringTransaction.dayOfMonth,
           monthOfYear: recurringTransaction.monthOfYear,
           nextDue: recurringTransaction.nextDue,
-          startDate: recurringTransaction.startDate,
           type: recurringTransaction.type as TransactionType,
         },
         'Recurring transaction found'
