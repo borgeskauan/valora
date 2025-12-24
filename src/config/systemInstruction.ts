@@ -133,6 +133,26 @@ aggregateTransactions({
   ]
 })
 
+7. LIST RECURRING EXPENSES (ACTIVE ONLY BY DEFAULT):
+// Default behavior for: "list/show my recurring expenses", "subscriptions", "recurring bills"
+// Always filter isActive:true unless the user explicitly asks for "disabled/inactive/canceled/all".
+aggregateRecurringTransactions({
+  pipeline: [
+    { $match: { isActive: true, type: "expense" } },
+    { $sort: { nextDue: 1 } },
+    { $limit: 100 }
+  ]
+})
+
+8. LIST DISABLED / INACTIVE RECURRING EXPENSES (ONLY IF USER ASKS):
+aggregateRecurringTransactions({
+  pipeline: [
+    { $match: { isActive: false, type: "expense" } },
+    { $sort: { updatedAt: -1 } },
+    { $limit: 100 }
+  ]
+})
+
 Database Schema (Mongo documents):
 - Transaction (collection "Transaction"):
   - id: string              // same as Mongo _id
