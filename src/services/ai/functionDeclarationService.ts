@@ -1,6 +1,6 @@
 import { Transaction, RecurringTransactionInput, TransactionUpdateData, RecurringTransactionUpdateData } from "../../types/models";
-import { TransactionService } from "../business/TransactionService";
-import { RecurringTransactionService } from "../business/RecurringTransactionService";
+import { TransactionCommandService } from "../business/transaction/TransactionCommandService";
+import { RecurringTransactionCommandService } from "../business/recurring/RecurringTransactionCommandService";
 import { TransactionType } from "../../config/transactionTypes";
 import { FUNCTION_DECLARATIONS } from "./functionDeclarations";
 import { FreeformTransactionSearchService } from "../business/search/FreeformTransactionSearchService";
@@ -10,8 +10,8 @@ import { FreeformTransactionSearchService } from "../business/search/FreeformTra
  * Handles mapping of function declarations to actual service implementations
  */
 export class FunctionDeclarationService {
-  private readonly transactionService: TransactionService;
-  private readonly recurringTransactionService: RecurringTransactionService;
+  private readonly transactionCommandService: TransactionCommandService;
+  private readonly recurringTransactionCommandService: RecurringTransactionCommandService;
   private readonly searchService: FreeformTransactionSearchService;
 
   private readonly functionMapping = new Map<string, Function>([
@@ -37,7 +37,7 @@ export class FunctionDeclarationService {
       "addTransaction",
       async (userId: string, params: { transactionData: Transaction }) => {
         console.log("Executing addTransaction with params:", JSON.stringify(params, null, 2));
-        return await this.transactionService.addTransaction(userId, params.transactionData);
+        return await this.transactionCommandService.add(userId, params.transactionData);
       }
     ],
     // Recurring transaction function (async) - handles both expense and income
@@ -45,7 +45,7 @@ export class FunctionDeclarationService {
       "createRecurringTransaction",
       async (userId: string, params: { recurringTransactionData: RecurringTransactionInput }) => {
         console.log("Executing createRecurringTransaction with params:", JSON.stringify(params, null, 2));
-        return await this.recurringTransactionService.createRecurringTransaction(userId, params.recurringTransactionData);
+        return await this.recurringTransactionCommandService.create(userId, params.recurringTransactionData);
       }
     ],
     // Edit last transaction (async)
@@ -53,7 +53,7 @@ export class FunctionDeclarationService {
       "editLastTransaction",
       async (userId: string, params: { updates: TransactionUpdateData, transactionType?: TransactionType }) => {
         console.log("Executing editLastTransaction with params:", JSON.stringify(params, null, 2));
-        return await this.transactionService.editLastTransaction(userId, params.updates, params.transactionType);
+        return await this.transactionCommandService.updateLast(userId, params.updates, params.transactionType);
       }
     ],
     // Edit last recurring transaction (async)
@@ -61,7 +61,7 @@ export class FunctionDeclarationService {
       "editLastRecurringTransaction",
       async (userId: string, params: { updates: RecurringTransactionUpdateData, transactionType?: TransactionType }) => {
         console.log("Executing editLastRecurringTransaction with params:", JSON.stringify(params, null, 2));
-        return await this.recurringTransactionService.editLastRecurringTransaction(userId, params.updates, params.transactionType);
+        return await this.recurringTransactionCommandService.updateLast(userId, params.updates, params.transactionType);
       }
     ],
     // Edit transaction by ID (async)
@@ -69,7 +69,7 @@ export class FunctionDeclarationService {
       "editTransactionById",
       async (userId: string, params: { id: string, updates: TransactionUpdateData }) => {
         console.log("Executing editTransactionById with params:", JSON.stringify(params, null, 2));
-        return await this.transactionService.editTransactionById(userId, params.id, params.updates);
+        return await this.transactionCommandService.updateById(userId, params.id, params.updates);
       }
     ],
     // Edit recurring transaction by ID (async)
@@ -77,7 +77,7 @@ export class FunctionDeclarationService {
       "editRecurringTransactionById",
       async (userId: string, params: { id: string, updates: RecurringTransactionUpdateData }) => {
         console.log("Executing editRecurringTransactionById with params:", JSON.stringify(params, null, 2));
-        return await this.recurringTransactionService.editRecurringTransactionById(userId, params.id, params.updates);
+        return await this.recurringTransactionCommandService.updateById(userId, params.id, params.updates);
       }
     ],
     // Delete transactions (async)
@@ -85,7 +85,7 @@ export class FunctionDeclarationService {
       "deleteTransactions",
       async (userId: string, params: { ids: string[] }) => {
         console.log("Executing deleteTransactions with params:", JSON.stringify(params, null, 2));
-        return await this.transactionService.deleteTransactions(userId, params.ids);
+        return await this.transactionCommandService.delete(userId, params.ids);
       }
     ],
     // Disable recurring transactions (async)
@@ -93,7 +93,7 @@ export class FunctionDeclarationService {
       "disableRecurringTransactions",
       async (userId: string, params: { ids: string[] }) => {
         console.log("Executing disableRecurringTransactions with params:", JSON.stringify(params, null, 2));
-        return await this.recurringTransactionService.disableRecurringTransactions(userId, params.ids);
+        return await this.recurringTransactionCommandService.disable(userId, params.ids);
       }
     ],
     // Aggregation functions (async)
@@ -120,12 +120,12 @@ export class FunctionDeclarationService {
   ]);
 
   constructor(
-    transactionService: TransactionService, 
-    recurringTransactionService: RecurringTransactionService,
+    transactionCommandService: TransactionCommandService, 
+    recurringTransactionCommandService: RecurringTransactionCommandService,
     searchService: FreeformTransactionSearchService
   ) {
-    this.transactionService = transactionService;
-    this.recurringTransactionService = recurringTransactionService;
+    this.transactionCommandService = transactionCommandService;
+    this.recurringTransactionCommandService = recurringTransactionCommandService;
     this.searchService = searchService;
   }
 

@@ -4,8 +4,6 @@ import { config } from '../config/config';
 import { FunctionDeclarationService } from './ai/functionDeclarationService';
 import { WhatsAppService } from './infrastructure/whatsappService';
 import { ConversationService } from './infrastructure/conversationService';
-import { TransactionService } from './business/TransactionService';
-import { RecurringTransactionService } from './business/RecurringTransactionService';
 import { CategoryClassificationService } from './business/CategoryClassificationService';
 import { TransactionEmbeddingService } from './ai/embedding/TransactionEmbeddingService';
 import { FreeformTransactionSearchService } from './business/search/FreeformTransactionSearchService';
@@ -15,6 +13,16 @@ import { TransactionLookupService } from './business/TransactionLookupService';
 import { Embedder } from './ai/embedding/Embedder';
 import { QdrantService } from './ai/embedding/QdrantService';
 import { DeletionStateService } from './infrastructure/DeletionStateService';
+
+// New service imports
+import { RecurrencePatternService } from './business/recurring/RecurrencePatternService';
+import { RecurringTransactionQueryService } from './business/recurring/RecurringTransactionQueryService';
+import { RecurringTransactionSyncService } from './business/recurring/RecurringTransactionSyncService';
+import { RecurringTransactionCommandService } from './business/recurring/RecurringTransactionCommandService';
+import { TransactionQueryService } from './business/transaction/TransactionQueryService';
+import { TransactionSyncService } from './business/transaction/TransactionSyncService';
+import { TransactionCommandService } from './business/transaction/TransactionCommandService';
+import { CategoryExemplarSeeder } from './business/category/CategoryExemplarSeeder';
 
 export class DependencyService {
   private static instance: DependencyService;
@@ -52,7 +60,7 @@ export class DependencyService {
       ]);
 
       // Data access layer
-      const transactionQueryService = new MqlTransactionSearchService(transactionCollection, recurringCollection);
+      const mqlTransactionQueryService = new MqlTransactionSearchService(transactionCollection, recurringCollection);
       const transactionLookupService = new TransactionLookupService();
 
       // Embedding dependencies
@@ -66,19 +74,39 @@ export class DependencyService {
       const transactionEmbeddingService = new TransactionEmbeddingService(embedder, qdrant);
       await transactionEmbeddingService.initialize(); // Initialize collections
       
-      // Initialize category classifier
-      const categoryClassifier = new CategoryClassificationService(embedder, qdrant);
+      // Initialize category seeder and classifier
+      const categorySeeder = new CategoryExemplarSeeder(embedder, qdrant);
+      const categoryClassifier = new CategoryClassificationService(embedder, qdrant, categorySeeder);
       await categoryClassifier.initialize(); // Seed category exemplars
       
-      const transactionService = new TransactionService(transactionEmbeddingService, transactionLookupService, categoryClassifier, deletionStateService);
-      const recurringTransactionService = new RecurringTransactionService(transactionEmbeddingService, transactionLookupService, categoryClassifier, deletionStateService);
+      // Transaction services (new architecture)
+      const transactionQueryService = new TransactionQueryService(transactionLookupService);
+      const transactionSyncService = new TransactionSyncService(transactionEmbeddingService);
+      const transactionCommandService = new TransactionCommandService(
+        transactionQueryService,
+        transactionSyncService,
+        categoryClassifier,
+        deletionStateService
+      );
+      
+      // Recurring transaction services (new architecture)
+      const recurrencePatternService = new RecurrencePatternService();
+      const recurringTransactionQueryService = new RecurringTransactionQueryService(transactionLookupService);
+      const recurringTransactionSyncService = new RecurringTransactionSyncService(transactionEmbeddingService);
+      const recurringTransactionCommandService = new RecurringTransactionCommandService(
+        recurrencePatternService,
+        recurringTransactionQueryService,
+        recurringTransactionSyncService,
+        categoryClassifier,
+        deletionStateService
+      );
       
       // Orchestration layer
-      const transactionSearchService = new FreeformTransactionSearchService(transactionQueryService, transactionEmbeddingService);
+      const transactionSearchService = new FreeformTransactionSearchService(mqlTransactionQueryService, transactionEmbeddingService);
 
       const functionDeclarationService = new FunctionDeclarationService(
-        transactionService,
-        recurringTransactionService,
+        transactionCommandService,
+        recurringTransactionCommandService,
         transactionSearchService
       );
 
@@ -97,7 +125,7 @@ export class DependencyService {
       this.services.set('MongoConnectionManager', mongoConnectionManager);
       this.services.set('WhatsAppService', whatsappService);
       this.services.set('ConversationService', conversationService);
-      this.services.set('TransactionQueryService', transactionQueryService);
+      this.services.set('MqlTransactionQueryService', mqlTransactionQueryService);
       this.services.set('TransactionSearchService', transactionSearchService);
       this.services.set('GeminiService', geminiService);
       this.services.set('AIMessageService', aiMessageService);

@@ -1,0 +1,1257 @@
+{
+  "statistics": {
+    "detectionDate": "2025-12-24T20:00:23.663Z",
+    "formats": {
+      "typescript": {
+        "sources": {
+          "src/services/infrastructure/database/schemas.ts": {
+            "lines": 47,
+            "tokens": 282,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/infrastructure/database/MqlTransactionSearchService.ts": {
+            "lines": 92,
+            "tokens": 682,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/infrastructure/database/MongoConnectionManager.ts": {
+            "lines": 123,
+            "tokens": 653,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/business/search/searchTypes.ts": {
+            "lines": 24,
+            "tokens": 130,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/business/search/FreeformTransactionSearchService.ts": {
+            "lines": 111,
+            "tokens": 740,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 38,
+            "duplicatedTokens": 236,
+            "percentage": 34.23,
+            "percentageTokens": 31.89,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/ai/embedding/TransactionEmbeddingService.ts": {
+            "lines": 214,
+            "tokens": 1871,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 22,
+            "duplicatedTokens": 216,
+            "percentage": 10.28,
+            "percentageTokens": 11.54,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/ai/embedding/QdrantService.ts": {
+            "lines": 194,
+            "tokens": 1633,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/ai/embedding/Embedder.ts": {
+            "lines": 59,
+            "tokens": 524,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/ai/conversational/geminiService.ts": {
+            "lines": 51,
+            "tokens": 418,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/ai/conversational/aiMessageService.ts": {
+            "lines": 139,
+            "tokens": 1179,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/generated/prisma/runtime/index-browser.d.ts": {
+            "lines": 369,
+            "tokens": 4152,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/infrastructure/whatsappService.ts": {
+            "lines": 68,
+            "tokens": 487,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/infrastructure/conversationService.ts": {
+            "lines": 75,
+            "tokens": 510,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/infrastructure/DeletionStateService.ts": {
+            "lines": 148,
+            "tokens": 1039,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/business/TransactionService.ts": {
+            "lines": 457,
+            "tokens": 3145,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 34,
+            "duplicatedTokens": 273,
+            "percentage": 7.44,
+            "percentageTokens": 8.68,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/business/TransactionLookupService.ts": {
+            "lines": 207,
+            "tokens": 1337,
+            "sources": 1,
+            "clones": 5,
+            "duplicatedLines": 83,
+            "duplicatedTokens": 605,
+            "percentage": 40.1,
+            "percentageTokens": 45.25,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/business/RecurringTransactionService.ts": {
+            "lines": 582,
+            "tokens": 4156,
+            "sources": 1,
+            "clones": 3,
+            "duplicatedLines": 47,
+            "duplicatedTokens": 384,
+            "percentage": 8.08,
+            "percentageTokens": 9.24,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/business/CategoryClassificationService.ts": {
+            "lines": 500,
+            "tokens": 2704,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/ai/functionDeclarations.ts": {
+            "lines": 301,
+            "tokens": 1764,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/ai/functionDeclarationService.ts": {
+            "lines": 155,
+            "tokens": 1489,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/validators/TransactionValidator.ts": {
+            "lines": 117,
+            "tokens": 725,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/validators/RecurringTransactionValidator.ts": {
+            "lines": 111,
+            "tokens": 619,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/types/serviceResult.ts": {
+            "lines": 82,
+            "tokens": 344,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/types/models.ts": {
+            "lines": 111,
+            "tokens": 657,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/types/embedding.ts": {
+            "lines": 42,
+            "tokens": 212,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/types/ai.ts": {
+            "lines": 36,
+            "tokens": 254,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/services/dependencyService.ts": {
+            "lines": 147,
+            "tokens": 1264,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/routes/whatsapp.ts": {
+            "lines": 21,
+            "tokens": 170,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/lib/transactionValidation.ts": {
+            "lines": 184,
+            "tokens": 1125,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/lib/naturalDateParser.ts": {
+            "lines": 40,
+            "tokens": 232,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/lib/WhatsAppPostProcessor.ts": {
+            "lines": 85,
+            "tokens": 584,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/lib/TransactionEmbeddingHelpers.ts": {
+            "lines": 45,
+            "tokens": 270,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/lib/PrismaClientManager.ts": {
+            "lines": 18,
+            "tokens": 86,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/lib/MessageBuilder.ts": {
+            "lines": 219,
+            "tokens": 1578,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/lib/DateNormalizer.ts": {
+            "lines": 107,
+            "tokens": 443,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/lib/CategoryNormalizer.ts": {
+            "lines": 71,
+            "tokens": 336,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/domain/RecurrencePattern.ts": {
+            "lines": 203,
+            "tokens": 1220,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/controllers/whatsappController.ts": {
+            "lines": 153,
+            "tokens": 1072,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/config/transactionTypes.ts": {
+            "lines": 24,
+            "tokens": 122,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/config/systemInstruction.ts": {
+            "lines": 227,
+            "tokens": 11,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/config/incomeCategories.ts": {
+            "lines": 70,
+            "tokens": 365,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/config/frequencies.ts": {
+            "lines": 192,
+            "tokens": 1504,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/config/expenseCategories.ts": {
+            "lines": 105,
+            "tokens": 538,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/config/config.ts": {
+            "lines": 19,
+            "tokens": 187,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/index.ts": {
+            "lines": 42,
+            "tokens": 312,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 6387,
+          "tokens": 43125,
+          "sources": 45,
+          "clones": 7,
+          "duplicatedLines": 112,
+          "duplicatedTokens": 857,
+          "percentage": 1.75,
+          "percentageTokens": 1.99,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      },
+      "javascript": {
+        "sources": {
+          "src/generated/prisma/runtime/index-browser.js": {
+            "lines": 15,
+            "tokens": 20583,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/generated/prisma/wasm.js": {
+            "lines": 228,
+            "tokens": 1377,
+            "sources": 1,
+            "clones": 7,
+            "duplicatedLines": 505,
+            "duplicatedTokens": 2804,
+            "percentage": 221.49,
+            "percentageTokens": 203.63,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/generated/prisma/index.js": {
+            "lines": 243,
+            "tokens": 1424,
+            "sources": 1,
+            "clones": 3,
+            "duplicatedLines": 202,
+            "duplicatedTokens": 1051,
+            "percentage": 83.13,
+            "percentageTokens": 73.81,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/generated/prisma/index-browser.js": {
+            "lines": 208,
+            "tokens": 1256,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 85,
+            "duplicatedTokens": 473,
+            "percentage": 40.87,
+            "percentageTokens": 37.66,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "src/generated/prisma/edge.js": {
+            "lines": 221,
+            "tokens": 1304,
+            "sources": 1,
+            "clones": 3,
+            "duplicatedLines": 218,
+            "duplicatedTokens": 1280,
+            "percentage": 98.64,
+            "percentageTokens": 98.16,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 915,
+          "tokens": 25944,
+          "sources": 5,
+          "clones": 7,
+          "duplicatedLines": 505,
+          "duplicatedTokens": 2804,
+          "percentage": 55.19,
+          "percentageTokens": 10.81,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      },
+      "json": {
+        "sources": {
+          "src/generated/prisma/package.json": {
+            "lines": 182,
+            "tokens": 1113,
+            "sources": 1,
+            "clones": 4,
+            "duplicatedLines": 76,
+            "duplicatedTokens": 466,
+            "percentage": 41.76,
+            "percentageTokens": 41.87,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 182,
+          "tokens": 1113,
+          "sources": 1,
+          "clones": 2,
+          "duplicatedLines": 38,
+          "duplicatedTokens": 233,
+          "percentage": 20.88,
+          "percentageTokens": 20.93,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      }
+    },
+    "total": {
+      "lines": 7484,
+      "tokens": 70182,
+      "sources": 51,
+      "clones": 16,
+      "duplicatedLines": 655,
+      "duplicatedTokens": 3894,
+      "percentage": 8.75,
+      "percentageTokens": 5.55,
+      "newDuplicatedLines": 0,
+      "newClones": 0
+    }
+  },
+  "duplicates": [
+    {
+      "format": "typescript",
+      "lines": 20,
+      "fragment": "(\n      userId,\n      textQuery,\n      SEMANTIC_TOP_K\n    );\n\n    if (!semanticRes.success || !semanticRes.data) {\n      return failure(\n        \"Failed to run semantic search for aggregation\",\n        \"SEMANTIC_SEARCH_ERROR\",\n        semanticRes.error?.details\n      );\n    }\n\n    const ids = semanticRes.data.map(m => m.id);\n\n    if (ids.length === 0) {\n      return success(\n        [],\n        \"No recurring transactions matched semantic query\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/services/business/search/FreeformTransactionSearchService.ts",
+        "start": 82,
+        "end": 101,
+        "startLoc": {
+          "line": 82,
+          "column": 41,
+          "position": 549
+        },
+        "endLoc": {
+          "line": 101,
+          "column": 51,
+          "position": 667
+        }
+      },
+      "secondFile": {
+        "name": "src/services/business/search/FreeformTransactionSearchService.ts",
+        "start": 36,
+        "end": 55,
+        "startLoc": {
+          "line": 36,
+          "column": 32,
+          "position": 235
+        },
+        "endLoc": {
+          "line": 55,
+          "column": 41,
+          "position": 353
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 12,
+      "fragment": "(\n    input: TransactionEmbeddingInput\n  ): Promise<ServiceResult<EmbeddingOperationResult>> {\n    try {\n      const collection = input.kind === 'recurring' \n        ? this.RECURRING_TRANSACTIONS_COLLECTION \n        : this.TRANSACTIONS_COLLECTION;\n      \n      const description = TransactionEmbeddingHelpers.generateDescription(input);\n      const metadata = TransactionEmbeddingHelpers.buildMetadata(input.id, input.type, input.userId);\n\n      console.log(`[TransactionEmbedding] Updating ",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/services/ai/embedding/TransactionEmbeddingService.ts",
+        "start": 85,
+        "end": 96,
+        "startLoc": {
+          "line": 85,
+          "column": 27,
+          "position": 724
+        },
+        "endLoc": {
+          "line": 96,
+          "column": 34,
+          "position": 832
+        }
+      },
+      "secondFile": {
+        "name": "src/services/ai/embedding/TransactionEmbeddingService.ts",
+        "start": 41,
+        "end": 52,
+        "startLoc": {
+          "line": 41,
+          "column": 17,
+          "position": 318
+        },
+        "endLoc": {
+          "line": 52,
+          "column": 35,
+          "position": 426
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 16,
+      "fragment": ");\n      }\n\n      return success(\n        {\n          id: transaction.id,\n          amount: transaction.amount,\n          category: transaction.category,\n          description: transaction.description,\n          date: transaction.date,\n          type: transaction.type as TransactionType,\n        },\n        'Transaction found'\n      );\n    } catch (error) {\n      console.error('Error fetching transaction by ID:'",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/services/business/TransactionLookupService.ts",
+        "start": 82,
+        "end": 97,
+        "startLoc": {
+          "line": 82,
+          "column": 9,
+          "position": 541
+        },
+        "endLoc": {
+          "line": 97,
+          "column": 36,
+          "position": 642
+        }
+      },
+      "secondFile": {
+        "name": "src/services/business/TransactionLookupService.ts",
+        "start": 38,
+        "end": 53,
+        "startLoc": {
+          "line": 38,
+          "column": 9,
+          "position": 299
+        },
+        "endLoc": {
+          "line": 53,
+          "column": 35,
+          "position": 400
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 21,
+      "fragment": ");\n      }\n\n      return success(\n        {\n          id: recurringTransaction.id,\n          amount: recurringTransaction.amount,\n          category: recurringTransaction.category,\n          description: recurringTransaction.description,\n          frequency: recurringTransaction.frequency,\n          interval: recurringTransaction.interval,\n          dayOfWeek: recurringTransaction.dayOfWeek,\n          dayOfMonth: recurringTransaction.dayOfMonth,\n          monthOfYear: recurringTransaction.monthOfYear,\n          nextDue: recurringTransaction.nextDue,\n          type: recurringTransaction.type as TransactionType,\n        },\n        'Recurring transaction found'\n      );\n    } catch (error) {\n      console.error('Error fetching recurring transaction by ID:'",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/services/business/TransactionLookupService.ts",
+        "start": 180,
+        "end": 200,
+        "startLoc": {
+          "line": 180,
+          "column": 9,
+          "position": 1157
+        },
+        "endLoc": {
+          "line": 200,
+          "column": 46,
+          "position": 1303
+        }
+      },
+      "secondFile": {
+        "name": "src/services/business/TransactionLookupService.ts",
+        "start": 130,
+        "end": 150,
+        "startLoc": {
+          "line": 130,
+          "column": 9,
+          "position": 861
+        },
+        "endLoc": {
+          "line": 150,
+          "column": 45,
+          "position": 1007
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 12,
+      "fragment": ";\nimport { PrismaClient } from '../../generated/prisma';\nimport { MessageBuilder } from '../../lib/MessageBuilder';\nimport { PrismaClientManager } from '../../lib/PrismaClientManager';\nimport { TransactionType } from '../../config/transactionTypes';\nimport { TransactionLookupService } from './TransactionLookupService';\nimport { TransactionEmbeddingService } from '../ai/embedding/TransactionEmbeddingService';\nimport { CategoryClassificationService } from './CategoryClassificationService';\nimport { DeletionStateService } from '../infrastructure/DeletionStateService';\nimport { validateBasicTransactionData, buildBasicUpdateData, handleDatabaseError } from '../../lib/transactionValidation';\n\nexport class RecurringTransactionService",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/services/business/RecurringTransactionService.ts",
+        "start": 3,
+        "end": 14,
+        "startLoc": {
+          "line": 3,
+          "column": 49,
+          "position": 52
+        },
+        "endLoc": {
+          "line": 14,
+          "column": 28,
+          "position": 182
+        }
+      },
+      "secondFile": {
+        "name": "src/services/business/TransactionService.ts",
+        "start": 2,
+        "end": 13,
+        "startLoc": {
+          "line": 2,
+          "column": 28,
+          "position": 39
+        },
+        "endLoc": {
+          "line": 13,
+          "column": 19,
+          "position": 169
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 24,
+      "fragment": "{\n  private prisma: PrismaClient;\n  private lookupService: TransactionLookupService;\n  private embeddingService: TransactionEmbeddingService;\n  private categoryClassifier: CategoryClassificationService;\n  private deletionStateService: DeletionStateService;\n\n  constructor(\n    embeddingService: TransactionEmbeddingService,\n    lookupService: TransactionLookupService,\n    categoryClassifier: CategoryClassificationService,\n    deletionStateService: DeletionStateService\n  ) {\n    this.prisma = PrismaClientManager.getClient();\n    this.lookupService = lookupService;\n    this.embeddingService = embeddingService;\n    this.categoryClassifier = categoryClassifier;\n    this.deletionStateService = deletionStateService;\n  }\n\n  /**\n   * Validate and create recurrence pattern with next due date calculation\n   * Shared validation logic for both creation and updates\n   */",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/services/business/RecurringTransactionService.ts",
+        "start": 14,
+        "end": 37,
+        "startLoc": {
+          "line": 14,
+          "column": 2,
+          "position": 184
+        },
+        "endLoc": {
+          "line": 37,
+          "column": 6,
+          "position": 327
+        }
+      },
+      "secondFile": {
+        "name": "src/services/business/TransactionService.ts",
+        "start": 13,
+        "end": 35,
+        "startLoc": {
+          "line": 13,
+          "column": 2,
+          "position": 171
+        },
+        "endLoc": {
+          "line": 35,
+          "column": 6,
+          "position": 314
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 14,
+      "fragment": "return success(\n        {\n          id: recurringTransaction.id,\n          amount: recurringTransaction.amount,\n          category: recurringTransaction.category,\n          description: recurringTransaction.description,\n          frequency: recurringTransaction.frequency,\n          interval: recurringTransaction.interval,\n          dayOfWeek: recurringTransaction.dayOfWeek,\n          dayOfMonth: recurringTransaction.dayOfMonth,\n          monthOfYear: recurringTransaction.monthOfYear,\n          nextDue: recurringTransaction.nextDue,\n          type: recurringTransaction.type as TransactionType\n        }",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/services/business/RecurringTransactionService.ts",
+        "start": 195,
+        "end": 208,
+        "startLoc": {
+          "line": 195,
+          "column": 7,
+          "position": 1441
+        },
+        "endLoc": {
+          "line": 208,
+          "column": 2,
+          "position": 1552
+        }
+      },
+      "secondFile": {
+        "name": "src/services/business/TransactionLookupService.ts",
+        "start": 133,
+        "end": 145,
+        "startLoc": {
+          "line": 133,
+          "column": 7,
+          "position": 869
+        },
+        "endLoc": {
+          "line": 145,
+          "column": 2,
+          "position": 978
+        }
+      }
+    },
+    {
+      "format": "json",
+      "lines": 20,
+      "fragment": ": {\n      \"require\": {\n        \"node\": \"./index.js\",\n        \"edge-light\": \"./wasm.js\",\n        \"workerd\": \"./wasm.js\",\n        \"worker\": \"./wasm.js\",\n        \"browser\": \"./index-browser.js\",\n        \"default\": \"./index.js\"\n      },\n      \"import\": {\n        \"node\": \"./index.js\",\n        \"edge-light\": \"./wasm.js\",\n        \"workerd\": \"./wasm.js\",\n        \"worker\": \"./wasm.js\",\n        \"browser\": \"./index-browser.js\",\n        \"default\": \"./index.js\"\n      },\n      \"default\": \"./index.js\"\n    },\n    \"./edge\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/generated/prisma/package.json",
+        "start": 27,
+        "end": 46,
+        "startLoc": {
+          "line": 27,
+          "column": 4,
+          "position": 163
+        },
+        "endLoc": {
+          "line": 46,
+          "column": 9,
+          "position": 280
+        }
+      },
+      "secondFile": {
+        "name": "src/generated/prisma/package.json",
+        "start": 7,
+        "end": 26,
+        "startLoc": {
+          "line": 7,
+          "column": 11,
+          "position": 38
+        },
+        "endLoc": {
+          "line": 26,
+          "column": 17,
+          "position": 155
+        }
+      }
+    },
+    {
+      "format": "json",
+      "lines": 20,
+      "fragment": ": {\n      \"require\": {\n        \"node\": \"./index.js\",\n        \"edge-light\": \"./wasm.js\",\n        \"workerd\": \"./wasm.js\",\n        \"worker\": \"./wasm.js\",\n        \"browser\": \"./index-browser.js\",\n        \"default\": \"./index.js\"\n      },\n      \"import\": {\n        \"node\": \"./index.js\",\n        \"edge-light\": \"./wasm.js\",\n        \"workerd\": \"./wasm.js\",\n        \"worker\": \"./wasm.js\",\n        \"browser\": \"./index-browser.js\",\n        \"default\": \"./index.js\"\n      },\n      \"default\": \"./index.js\"\n    }\n  }",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/generated/prisma/package.json",
+        "start": 163,
+        "end": 182,
+        "startLoc": {
+          "line": 163,
+          "column": 20,
+          "position": 995
+        },
+        "endLoc": {
+          "line": 182,
+          "column": 2,
+          "position": 1111
+        }
+      },
+      "secondFile": {
+        "name": "src/generated/prisma/package.json",
+        "start": 7,
+        "end": 25,
+        "startLoc": {
+          "line": 7,
+          "column": 11,
+          "position": 38
+        },
+        "endLoc": {
+          "line": 25,
+          "column": 2,
+          "position": 152
+        }
+      }
+    },
+    {
+      "format": "javascript",
+      "lines": 29,
+      "fragment": "/* !!! This is code generated by Prisma. Do not edit directly. !!!\n/* eslint-disable */\n// biome-ignore-all lint: generated file\n\nObject.defineProperty(exports, \"__esModule\", { value: true });\n\nconst {\n  PrismaClientKnownRequestError,\n  PrismaClientUnknownRequestError,\n  PrismaClientRustPanicError,\n  PrismaClientInitializationError,\n  PrismaClientValidationError,\n  getPrismaClient,\n  sqltag,\n  empty,\n  join,\n  raw,\n  skip,\n  Decimal,\n  Debug,\n  objectEnumValues,\n  makeStrictEnum,\n  Extensions,\n  warnOnce,\n  defineDmmfProperty,\n  Public,\n  getRuntime,\n  createParam,\n} = require('./runtime/library.js'",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/generated/prisma/index.js",
+        "start": 2,
+        "end": 30,
+        "startLoc": {
+          "line": 2,
+          "column": 1,
+          "position": 1
+        },
+        "endLoc": {
+          "line": 30,
+          "column": 23,
+          "position": 122
+        }
+      },
+      "secondFile": {
+        "name": "src/generated/prisma/wasm.js",
+        "start": 2,
+        "end": 30,
+        "startLoc": {
+          "line": 2,
+          "column": 1,
+          "position": 1
+        },
+        "endLoc": {
+          "line": 30,
+          "column": 32,
+          "position": 122
+        }
+      }
+    },
+    {
+      "format": "javascript",
+      "lines": 56,
+      "fragment": ")\n\n\nconst Prisma = {}\n\nexports.Prisma = Prisma\nexports.$Enums = {}\n\n/**\n * Prisma Client JS version: 6.19.0\n * Query Engine version: 2ba551f319ab1df4bc874a89965d8b3641056773\n */\nPrisma.prismaVersion = {\n  client: \"6.19.0\",\n  engine: \"2ba551f319ab1df4bc874a89965d8b3641056773\"\n}\n\nPrisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;\nPrisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError\nPrisma.PrismaClientRustPanicError = PrismaClientRustPanicError\nPrisma.PrismaClientInitializationError = PrismaClientInitializationError\nPrisma.PrismaClientValidationError = PrismaClientValidationError\nPrisma.Decimal = Decimal\n\n/**\n * Re-export of sql-template-tag\n */\nPrisma.sql = sqltag\nPrisma.empty = empty\nPrisma.join = join\nPrisma.raw = raw\nPrisma.validator = Public.validator\n\n/**\n* Extensions\n*/\nPrisma.getExtensionContext = Extensions.getExtensionContext\nPrisma.defineExtension = Extensions.defineExtension\n\n/**\n * Shorthand utilities for JSON filtering\n */\nPrisma.DbNull = objectEnumValues.instances.DbNull\nPrisma.JsonNull = objectEnumValues.instances.JsonNull\nPrisma.AnyNull = objectEnumValues.instances.AnyNull\n\nPrisma.NullTypes = {\n  DbNull: objectEnumValues.classes.DbNull,\n  JsonNull: objectEnumValues.classes.JsonNull,\n  AnyNull: objectEnumValues.classes.AnyNull\n}\n\n\n\n\n  const",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/generated/prisma/index.js",
+        "start": 30,
+        "end": 85,
+        "startLoc": {
+          "line": 30,
+          "column": 23,
+          "position": 123
+        },
+        "endLoc": {
+          "line": 85,
+          "column": 6,
+          "position": 385
+        }
+      },
+      "secondFile": {
+        "name": "src/generated/prisma/wasm.js",
+        "start": 30,
+        "end": 88,
+        "startLoc": {
+          "line": 30,
+          "column": 32,
+          "position": 123
+        },
+        "endLoc": {
+          "line": 88,
+          "column": 4,
+          "position": 385
+        }
+      }
+    },
+    {
+      "format": "javascript",
+      "lines": 120,
+      "fragment": "/**\n * Enums\n */\nexports.Prisma.TransactionScalarFieldEnum = {\n  id: 'id',\n  userId: 'userId',\n  date: 'date',\n  amount: 'amount',\n  category: 'category',\n  description: 'description',\n  type: 'type',\n  recurringTransactionId: 'recurringTransactionId',\n  createdAt: 'createdAt',\n  updatedAt: 'updatedAt'\n};\n\nexports.Prisma.RecurringTransactionScalarFieldEnum = {\n  id: 'id',\n  userId: 'userId',\n  amount: 'amount',\n  category: 'category',\n  description: 'description',\n  type: 'type',\n  frequency: 'frequency',\n  interval: 'interval',\n  dayOfWeek: 'dayOfWeek',\n  dayOfMonth: 'dayOfMonth',\n  monthOfYear: 'monthOfYear',\n  nextDue: 'nextDue',\n  isActive: 'isActive',\n  createdAt: 'createdAt',\n  updatedAt: 'updatedAt'\n};\n\nexports.Prisma.ConversationScalarFieldEnum = {\n  id: 'id',\n  userId: 'userId',\n  createdAt: 'createdAt',\n  updatedAt: 'updatedAt'\n};\n\nexports.Prisma.MessageScalarFieldEnum = {\n  id: 'id',\n  conversationId: 'conversationId',\n  role: 'role',\n  content: 'content',\n  createdAt: 'createdAt'\n};\n\nexports.Prisma.SortOrder = {\n  asc: 'asc',\n  desc: 'desc'\n};\n\nexports.Prisma.QueryMode = {\n  default: 'default',\n  insensitive: 'insensitive'\n};\n\n\nexports.Prisma.ModelName = {\n  Transaction: 'Transaction',\n  RecurringTransaction: 'RecurringTransaction',\n  Conversation: 'Conversation',\n  Message: 'Message'\n};\n/**\n * Create the Client\n */\nconst config = {\n  \"generator\": {\n    \"name\": \"client\",\n    \"provider\": {\n      \"fromEnvVar\": null,\n      \"value\": \"prisma-client-js\"\n    },\n    \"output\": {\n      \"value\": \"/home/orion/CentralHub/Studies/NodeJS/expense-tracker-bot/src/generated/prisma\",\n      \"fromEnvVar\": null\n    },\n    \"config\": {\n      \"engineType\": \"library\"\n    },\n    \"binaryTargets\": [\n      {\n        \"fromEnvVar\": null,\n        \"value\": \"debian-openssl-3.0.x\",\n        \"native\": true\n      }\n    ],\n    \"previewFeatures\": [],\n    \"sourceFilePath\": \"/home/orion/CentralHub/Studies/NodeJS/expense-tracker-bot/prisma/schema.prisma\",\n    \"isCustomOutput\": true\n  },\n  \"relativeEnvPaths\": {\n    \"rootEnvPath\": null,\n    \"schemaEnvPath\": \"../../../.env\"\n  },\n  \"relativePath\": \"../../../prisma\",\n  \"clientVersion\": \"6.19.0\",\n  \"engineVersion\": \"2ba551f319ab1df4bc874a89965d8b3641056773\",\n  \"datasourceNames\": [\n    \"db\"\n  ],\n  \"activeProvider\": \"mongodb\",\n  \"postinstall\": true,\n  \"inlineDatasources\": {\n    \"db\": {\n      \"url\": {\n        \"fromEnvVar\": \"DATABASE_URL\",\n        \"value\": null\n      }\n    }\n  },\n  \"inlineSchema\": \"// This is your Prisma schema file,\\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\\n\\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\\n\\ngenerator client {\\n  provider = \\\"prisma-client-js\\\"\\n  output   = \\\"../src/generated/prisma\\\"\\n}\\n\\ndatasource db {\\n  provider = \\\"mongodb\\\"\\n  url      = env(\\\"DATABASE_URL\\\")\\n}\\n\\nmodel Transaction {\\n  id          String  @id @default(uuid()) @map(\\\"_id\\\")\\n  userId      String\\n  date        String // ISO-8601 DateTime string for SQLite strftime compatibility\\n  amount      Float\\n  category    String\\n  description String?\\n  type        String  @default(\\\"expense\\\") // \\\"expense\\\" or \\\"income\\\"\\n\\n  recurringTransactionId String?\\n  recurringTransaction   RecurringTransaction? @relation(fields: [recurringTransactionId], references: [id])\\n\\n  createdAt DateTime @default(now())\\n  updatedAt DateTime @default(now()) @updatedAt\\n\\n  @@index([userId])\\n  @@index([recurringTransactionId])\\n}\\n\\nmodel RecurringTransaction {\\n  id          String  @id @default(uuid()) @map(\\\"_id\\\")\\n  userId      String\\n  amount      Float\\n  category    String\\n  description String?\\n  type        String  @default(\\\"expense\\\") // \\\"expense\\\" or \\\"income\\\"\\n\\n  // Recurrence pattern\\n  frequency   String // \\\"daily\\\", \\\"weekly\\\", \\\"monthly\\\", \\\"yearly\\\"\\n  interval    Int    @default(1) // Every X units\\n  dayOfWeek   Int? // For weekly: 0-6 (Sunday-Saturday)\\n  dayOfMonth  Int? // For monthly: 1-31\\n  monthOfYear Int? // For yearly: 0-11 (January-December)\\n\\n  // Lifecycle dates\\n  nextDue String // ISO-8601 DateTime string for SQLite strftime compatibility\\n\\n  // Status\\n  isActive Boolean @default(true)\\n\\n  // Metadata\\n  createdAt DateTime @default(now())\\n  updatedAt DateTime @updatedAt\\n\\n  // Optional: back relation for convenience\\n  transactions Transaction[]\\n\\n  @@index([userId])\\n  @@index([nextDue])\\n}\\n\\nmodel Conversation {\\n  id        String    @id @default(uuid()) @map(\\\"_id\\\")\\n  userId    String // WhatsApp JID\\n  createdAt DateTime  @default(now())\\n  updatedAt DateTime  @updatedAt\\n  messages  Message[]\\n\\n  @@index([userId])\\n}\\n\\nmodel Message {\\n  id             String       @id @default(uuid()) @map(\\\"_id\\\")\\n  conversationId String\\n  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)\\n  role           String // 'user' or 'model'\\n  content        String // JSON stringified content\\n  createdAt      DateTime     @default(now())\\n\\n  @@index([conversationId])\\n}\\n\",\n  \"inlineSchemaHash\": \"ffc97c73f2aed29a4d95bb58f5d692dea7eac8ea8095021a40e3ac76144bd979\",\n  \"copyEngine\": true\n}\n\nconst",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/generated/prisma/index.js",
+        "start": 87,
+        "end": 206,
+        "startLoc": {
+          "line": 87,
+          "column": 1,
+          "position": 397
+        },
+        "endLoc": {
+          "line": 206,
+          "column": 6,
+          "position": 1065
+        }
+      },
+      "secondFile": {
+        "name": "src/generated/prisma/wasm.js",
+        "start": 86,
+        "end": 204,
+        "startLoc": {
+          "line": 86,
+          "column": 1,
+          "position": 385
+        },
+        "endLoc": {
+          "line": 204,
+          "column": 7,
+          "position": 1052
+        }
+      }
+    },
+    {
+      "format": "javascript",
+      "lines": 86,
+      "fragment": "/**\n * Shorthand utilities for JSON filtering\n */\nPrisma.DbNull = objectEnumValues.instances.DbNull\nPrisma.JsonNull = objectEnumValues.instances.JsonNull\nPrisma.AnyNull = objectEnumValues.instances.AnyNull\n\nPrisma.NullTypes = {\n  DbNull: objectEnumValues.classes.DbNull,\n  JsonNull: objectEnumValues.classes.JsonNull,\n  AnyNull: objectEnumValues.classes.AnyNull\n}\n\n\n\n/**\n * Enums\n */\n\nexports.Prisma.TransactionScalarFieldEnum = {\n  id: 'id',\n  userId: 'userId',\n  date: 'date',\n  amount: 'amount',\n  category: 'category',\n  description: 'description',\n  type: 'type',\n  recurringTransactionId: 'recurringTransactionId',\n  createdAt: 'createdAt',\n  updatedAt: 'updatedAt'\n};\n\nexports.Prisma.RecurringTransactionScalarFieldEnum = {\n  id: 'id',\n  userId: 'userId',\n  amount: 'amount',\n  category: 'category',\n  description: 'description',\n  type: 'type',\n  frequency: 'frequency',\n  interval: 'interval',\n  dayOfWeek: 'dayOfWeek',\n  dayOfMonth: 'dayOfMonth',\n  monthOfYear: 'monthOfYear',\n  nextDue: 'nextDue',\n  isActive: 'isActive',\n  createdAt: 'createdAt',\n  updatedAt: 'updatedAt'\n};\n\nexports.Prisma.ConversationScalarFieldEnum = {\n  id: 'id',\n  userId: 'userId',\n  createdAt: 'createdAt',\n  updatedAt: 'updatedAt'\n};\n\nexports.Prisma.MessageScalarFieldEnum = {\n  id: 'id',\n  conversationId: 'conversationId',\n  role: 'role',\n  content: 'content',\n  createdAt: 'createdAt'\n};\n\nexports.Prisma.SortOrder = {\n  asc: 'asc',\n  desc: 'desc'\n};\n\nexports.Prisma.QueryMode = {\n  default: 'default',\n  insensitive: 'insensitive'\n};\n\n\nexports.Prisma.ModelName = {\n  Transaction: 'Transaction',\n  RecurringTransaction: 'RecurringTransaction',\n  Conversation: 'Conversation',\n  Message: 'Message'\n};\n\n/**\n * This is a stub Prisma Client that will error at runtime if called.\n */",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/generated/prisma/index-browser.js",
+        "start": 98,
+        "end": 183,
+        "startLoc": {
+          "line": 98,
+          "column": 1,
+          "position": 630
+        },
+        "endLoc": {
+          "line": 183,
+          "column": 4,
+          "position": 1103
+        }
+      },
+      "secondFile": {
+        "name": "src/generated/prisma/wasm.js",
+        "start": 69,
+        "end": 154,
+        "startLoc": {
+          "line": 69,
+          "column": 1,
+          "position": 299
+        },
+        "endLoc": {
+          "line": 154,
+          "column": 4,
+          "position": 772
+        }
+      }
+    },
+    {
+      "format": "javascript",
+      "lines": 29,
+      "fragment": "/* !!! This is code generated by Prisma. Do not edit directly. !!!\n/* eslint-disable */\n// biome-ignore-all lint: generated file\n\nObject.defineProperty(exports, \"__esModule\", { value: true });\n\nconst {\n  PrismaClientKnownRequestError,\n  PrismaClientUnknownRequestError,\n  PrismaClientRustPanicError,\n  PrismaClientInitializationError,\n  PrismaClientValidationError,\n  getPrismaClient,\n  sqltag,\n  empty,\n  join,\n  raw,\n  skip,\n  Decimal,\n  Debug,\n  objectEnumValues,\n  makeStrictEnum,\n  Extensions,\n  warnOnce,\n  defineDmmfProperty,\n  Public,\n  getRuntime,\n  createParam,\n} = require('./runtime/edge.js'",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/generated/prisma/edge.js",
+        "start": 2,
+        "end": 30,
+        "startLoc": {
+          "line": 2,
+          "column": 1,
+          "position": 1
+        },
+        "endLoc": {
+          "line": 30,
+          "column": 20,
+          "position": 122
+        }
+      },
+      "secondFile": {
+        "name": "src/generated/prisma/wasm.js",
+        "start": 2,
+        "end": 30,
+        "startLoc": {
+          "line": 2,
+          "column": 1,
+          "position": 1
+        },
+        "endLoc": {
+          "line": 30,
+          "column": 32,
+          "position": 122
+        }
+      }
+    },
+    {
+      "format": "javascript",
+      "lines": 177,
+      "fragment": ")\n\n\nconst Prisma = {}\n\nexports.Prisma = Prisma\nexports.$Enums = {}\n\n/**\n * Prisma Client JS version: 6.19.0\n * Query Engine version: 2ba551f319ab1df4bc874a89965d8b3641056773\n */\nPrisma.prismaVersion = {\n  client: \"6.19.0\",\n  engine: \"2ba551f319ab1df4bc874a89965d8b3641056773\"\n}\n\nPrisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;\nPrisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError\nPrisma.PrismaClientRustPanicError = PrismaClientRustPanicError\nPrisma.PrismaClientInitializationError = PrismaClientInitializationError\nPrisma.PrismaClientValidationError = PrismaClientValidationError\nPrisma.Decimal = Decimal\n\n/**\n * Re-export of sql-template-tag\n */\nPrisma.sql = sqltag\nPrisma.empty = empty\nPrisma.join = join\nPrisma.raw = raw\nPrisma.validator = Public.validator\n\n/**\n* Extensions\n*/\nPrisma.getExtensionContext = Extensions.getExtensionContext\nPrisma.defineExtension = Extensions.defineExtension\n\n/**\n * Shorthand utilities for JSON filtering\n */\nPrisma.DbNull = objectEnumValues.instances.DbNull\nPrisma.JsonNull = objectEnumValues.instances.JsonNull\nPrisma.AnyNull = objectEnumValues.instances.AnyNull\n\nPrisma.NullTypes = {\n  DbNull: objectEnumValues.classes.DbNull,\n  JsonNull: objectEnumValues.classes.JsonNull,\n  AnyNull: objectEnumValues.classes.AnyNull\n}\n\n\n\n\n\n/**\n * Enums\n */\nexports.Prisma.TransactionScalarFieldEnum = {\n  id: 'id',\n  userId: 'userId',\n  date: 'date',\n  amount: 'amount',\n  category: 'category',\n  description: 'description',\n  type: 'type',\n  recurringTransactionId: 'recurringTransactionId',\n  createdAt: 'createdAt',\n  updatedAt: 'updatedAt'\n};\n\nexports.Prisma.RecurringTransactionScalarFieldEnum = {\n  id: 'id',\n  userId: 'userId',\n  amount: 'amount',\n  category: 'category',\n  description: 'description',\n  type: 'type',\n  frequency: 'frequency',\n  interval: 'interval',\n  dayOfWeek: 'dayOfWeek',\n  dayOfMonth: 'dayOfMonth',\n  monthOfYear: 'monthOfYear',\n  nextDue: 'nextDue',\n  isActive: 'isActive',\n  createdAt: 'createdAt',\n  updatedAt: 'updatedAt'\n};\n\nexports.Prisma.ConversationScalarFieldEnum = {\n  id: 'id',\n  userId: 'userId',\n  createdAt: 'createdAt',\n  updatedAt: 'updatedAt'\n};\n\nexports.Prisma.MessageScalarFieldEnum = {\n  id: 'id',\n  conversationId: 'conversationId',\n  role: 'role',\n  content: 'content',\n  createdAt: 'createdAt'\n};\n\nexports.Prisma.SortOrder = {\n  asc: 'asc',\n  desc: 'desc'\n};\n\nexports.Prisma.QueryMode = {\n  default: 'default',\n  insensitive: 'insensitive'\n};\n\n\nexports.Prisma.ModelName = {\n  Transaction: 'Transaction',\n  RecurringTransaction: 'RecurringTransaction',\n  Conversation: 'Conversation',\n  Message: 'Message'\n};\n/**\n * Create the Client\n */\nconst config = {\n  \"generator\": {\n    \"name\": \"client\",\n    \"provider\": {\n      \"fromEnvVar\": null,\n      \"value\": \"prisma-client-js\"\n    },\n    \"output\": {\n      \"value\": \"/home/orion/CentralHub/Studies/NodeJS/expense-tracker-bot/src/generated/prisma\",\n      \"fromEnvVar\": null\n    },\n    \"config\": {\n      \"engineType\": \"library\"\n    },\n    \"binaryTargets\": [\n      {\n        \"fromEnvVar\": null,\n        \"value\": \"debian-openssl-3.0.x\",\n        \"native\": true\n      }\n    ],\n    \"previewFeatures\": [],\n    \"sourceFilePath\": \"/home/orion/CentralHub/Studies/NodeJS/expense-tracker-bot/prisma/schema.prisma\",\n    \"isCustomOutput\": true\n  },\n  \"relativeEnvPaths\": {\n    \"rootEnvPath\": null,\n    \"schemaEnvPath\": \"../../../.env\"\n  },\n  \"relativePath\": \"../../../prisma\",\n  \"clientVersion\": \"6.19.0\",\n  \"engineVersion\": \"2ba551f319ab1df4bc874a89965d8b3641056773\",\n  \"datasourceNames\": [\n    \"db\"\n  ],\n  \"activeProvider\": \"mongodb\",\n  \"postinstall\": true,\n  \"inlineDatasources\": {\n    \"db\": {\n      \"url\": {\n        \"fromEnvVar\": \"DATABASE_URL\",\n        \"value\": null\n      }\n    }\n  },\n  \"inlineSchema\": \"// This is your Prisma schema file,\\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\\n\\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\\n\\ngenerator client {\\n  provider = \\\"prisma-client-js\\\"\\n  output   = \\\"../src/generated/prisma\\\"\\n}\\n\\ndatasource db {\\n  provider = \\\"mongodb\\\"\\n  url      = env(\\\"DATABASE_URL\\\")\\n}\\n\\nmodel Transaction {\\n  id          String  @id @default(uuid()) @map(\\\"_id\\\")\\n  userId      String\\n  date        String // ISO-8601 DateTime string for SQLite strftime compatibility\\n  amount      Float\\n  category    String\\n  description String?\\n  type        String  @default(\\\"expense\\\") // \\\"expense\\\" or \\\"income\\\"\\n\\n  recurringTransactionId String?\\n  recurringTransaction   RecurringTransaction? @relation(fields: [recurringTransactionId], references: [id])\\n\\n  createdAt DateTime @default(now())\\n  updatedAt DateTime @default(now()) @updatedAt\\n\\n  @@index([userId])\\n  @@index([recurringTransactionId])\\n}\\n\\nmodel RecurringTransaction {\\n  id          String  @id @default(uuid()) @map(\\\"_id\\\")\\n  userId      String\\n  amount      Float\\n  category    String\\n  description String?\\n  type        String  @default(\\\"expense\\\") // \\\"expense\\\" or \\\"income\\\"\\n\\n  // Recurrence pattern\\n  frequency   String // \\\"daily\\\", \\\"weekly\\\", \\\"monthly\\\", \\\"yearly\\\"\\n  interval    Int    @default(1) // Every X units\\n  dayOfWeek   Int? // For weekly: 0-6 (Sunday-Saturday)\\n  dayOfMonth  Int? // For monthly: 1-31\\n  monthOfYear Int? // For yearly: 0-11 (January-December)\\n\\n  // Lifecycle dates\\n  nextDue String // ISO-8601 DateTime string for SQLite strftime compatibility\\n\\n  // Status\\n  isActive Boolean @default(true)\\n\\n  // Metadata\\n  createdAt DateTime @default(now())\\n  updatedAt DateTime @updatedAt\\n\\n  // Optional: back relation for convenience\\n  transactions Transaction[]\\n\\n  @@index([userId])\\n  @@index([nextDue])\\n}\\n\\nmodel Conversation {\\n  id        String    @id @default(uuid()) @map(\\\"_id\\\")\\n  userId    String // WhatsApp JID\\n  createdAt DateTime  @default(now())\\n  updatedAt DateTime  @updatedAt\\n  messages  Message[]\\n\\n  @@index([userId])\\n}\\n\\nmodel Message {\\n  id             String       @id @default(uuid()) @map(\\\"_id\\\")\\n  conversationId String\\n  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)\\n  role           String // 'user' or 'model'\\n  content        String // JSON stringified content\\n  createdAt      DateTime     @default(now())\\n\\n  @@index([conversationId])\\n}\\n\",\n  \"inlineSchemaHash\": \"ffc97c73f2aed29a4d95bb58f5d692dea7eac8ea8095021a40e3ac76144bd979\",\n  \"copyEngine\": true\n}\nconfig.dirname = '/'\n\nconfig.runtimeDataModel = JSON.parse(\"{\\\"models\\\":{\\\"Transaction\\\":{\\\"dbName\\\":null,\\\"schema\\\":null,\\\"fields\\\":[{\\\"name\\\":\\\"id\\\",\\\"dbName\\\":\\\"_id\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":true,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"default\\\":{\\\"name\\\":\\\"uuid\\\",\\\"args\\\":[4]},\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"userId\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"date\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"amount\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"Float\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"category\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"description\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":false,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"type\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"default\\\":\\\"expense\\\",\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"recurringTransactionId\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":false,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":true,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"recurringTransaction\\\",\\\"kind\\\":\\\"object\\\",\\\"isList\\\":false,\\\"isRequired\\\":false,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"RecurringTransaction\\\",\\\"nativeType\\\":null,\\\"relationName\\\":\\\"RecurringTransactionToTransaction\\\",\\\"relationFromFields\\\":[\\\"recurringTransactionId\\\"],\\\"relationToFields\\\":[\\\"id\\\"],\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"createdAt\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"DateTime\\\",\\\"nativeType\\\":null,\\\"default\\\":{\\\"name\\\":\\\"now\\\",\\\"args\\\":[]},\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"updatedAt\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"DateTime\\\",\\\"nativeType\\\":null,\\\"default\\\":{\\\"name\\\":\\\"now\\\",\\\"args\\\":[]},\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":true}],\\\"primaryKey\\\":null,\\\"uniqueFields\\\":[],\\\"uniqueIndexes\\\":[],\\\"isGenerated\\\":false},\\\"RecurringTransaction\\\":{\\\"dbName\\\":null,\\\"schema\\\":null,\\\"fields\\\":[{\\\"name\\\":\\\"id\\\",\\\"dbName\\\":\\\"_id\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":true,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"default\\\":{\\\"name\\\":\\\"uuid\\\",\\\"args\\\":[4]},\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"userId\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"amount\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"Float\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"category\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"description\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":false,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"type\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"default\\\":\\\"expense\\\",\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"frequency\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"interval\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"Int\\\",\\\"nativeType\\\":null,\\\"default\\\":1,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"dayOfWeek\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":false,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"Int\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"dayOfMonth\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":false,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"Int\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"monthOfYear\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":false,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"Int\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"nextDue\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"isActive\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"Boolean\\\",\\\"nativeType\\\":null,\\\"default\\\":true,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"createdAt\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"DateTime\\\",\\\"nativeType\\\":null,\\\"default\\\":{\\\"name\\\":\\\"now\\\",\\\"args\\\":[]},\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"updatedAt\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"DateTime\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":true},{\\\"name\\\":\\\"transactions\\\",\\\"kind\\\":\\\"object\\\",\\\"isList\\\":true,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"Transaction\\\",\\\"nativeType\\\":null,\\\"relationName\\\":\\\"RecurringTransactionToTransaction\\\",\\\"relationFromFields\\\":[],\\\"relationToFields\\\":[],\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false}],\\\"primaryKey\\\":null,\\\"uniqueFields\\\":[],\\\"uniqueIndexes\\\":[],\\\"isGenerated\\\":false},\\\"Conversation\\\":{\\\"dbName\\\":null,\\\"schema\\\":null,\\\"fields\\\":[{\\\"name\\\":\\\"id\\\",\\\"dbName\\\":\\\"_id\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":true,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"default\\\":{\\\"name\\\":\\\"uuid\\\",\\\"args\\\":[4]},\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"userId\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"createdAt\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"DateTime\\\",\\\"nativeType\\\":null,\\\"default\\\":{\\\"name\\\":\\\"now\\\",\\\"args\\\":[]},\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"updatedAt\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"DateTime\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":true},{\\\"name\\\":\\\"messages\\\",\\\"kind\\\":\\\"object\\\",\\\"isList\\\":true,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"Message\\\",\\\"nativeType\\\":null,\\\"relationName\\\":\\\"ConversationToMessage\\\",\\\"relationFromFields\\\":[],\\\"relationToFields\\\":[],\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false}],\\\"primaryKey\\\":null,\\\"uniqueFields\\\":[],\\\"uniqueIndexes\\\":[],\\\"isGenerated\\\":false},\\\"Message\\\":{\\\"dbName\\\":null,\\\"schema\\\":null,\\\"fields\\\":[{\\\"name\\\":\\\"id\\\",\\\"dbName\\\":\\\"_id\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":true,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"default\\\":{\\\"name\\\":\\\"uuid\\\",\\\"args\\\":[4]},\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"conversationId\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":true,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"conversation\\\",\\\"kind\\\":\\\"object\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"Conversation\\\",\\\"nativeType\\\":null,\\\"relationName\\\":\\\"ConversationToMessage\\\",\\\"relationFromFields\\\":[\\\"conversationId\\\"],\\\"relationToFields\\\":[\\\"id\\\"],\\\"relationOnDelete\\\":\\\"Cascade\\\",\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"role\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"content\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":false,\\\"type\\\":\\\"String\\\",\\\"nativeType\\\":null,\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false},{\\\"name\\\":\\\"createdAt\\\",\\\"kind\\\":\\\"scalar\\\",\\\"isList\\\":false,\\\"isRequired\\\":true,\\\"isUnique\\\":false,\\\"isId\\\":false,\\\"isReadOnly\\\":false,\\\"hasDefaultValue\\\":true,\\\"type\\\":\\\"DateTime\\\",\\\"nativeType\\\":null,\\\"default\\\":{\\\"name\\\":\\\"now\\\",\\\"args\\\":[]},\\\"isGenerated\\\":false,\\\"isUpdatedAt\\\":false}],\\\"primaryKey\\\":null,\\\"uniqueFields\\\":[],\\\"uniqueIndexes\\\":[],\\\"isGenerated\\\":false}},\\\"enums\\\":{},\\\"types\\\":{}}\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/generated/prisma/edge.js",
+        "start": 30,
+        "end": 206,
+        "startLoc": {
+          "line": 30,
+          "column": 20,
+          "position": 123
+        },
+        "endLoc": {
+          "line": 206,
+          "column": 11034,
+          "position": 1071
+        }
+      },
+      "secondFile": {
+        "name": "src/generated/prisma/wasm.js",
+        "start": 30,
+        "end": 206,
+        "startLoc": {
+          "line": 30,
+          "column": 32,
+          "position": 123
+        },
+        "endLoc": {
+          "line": 206,
+          "column": 2976,
+          "position": 1071
+        }
+      }
+    },
+    {
+      "format": "javascript",
+      "lines": 15,
+      "fragment": "config.compilerWasm = undefined\n\nconfig.injectableEdgeEnv = () => ({\n  parsed: {\n    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined\n  }\n})\n\nif (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {\n  Debug.enable(typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined)\n}\n\nconst PrismaClient = getPrismaClient(config)\nexports.PrismaClient = PrismaClient\nObject.assign(exports, Prisma)",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/generated/prisma/edge.js",
+        "start": 209,
+        "end": 223,
+        "startLoc": {
+          "line": 209,
+          "column": 1,
+          "position": 1094
+        },
+        "endLoc": {
+          "line": 223,
+          "column": 2,
+          "position": 1305
+        }
+      },
+      "secondFile": {
+        "name": "src/generated/prisma/wasm.js",
+        "start": 216,
+        "end": 230,
+        "startLoc": {
+          "line": 216,
+          "column": 1,
+          "position": 1167
+        },
+        "endLoc": {
+          "line": 230,
+          "column": 2,
+          "position": 1378
+        }
+      }
+    }
+  ]
+}
