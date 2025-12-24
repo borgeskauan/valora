@@ -7,11 +7,6 @@ const COMMON_PROPERTIES = {
     type: Type.NUMBER,
     description: "The amount of the transaction, must be positive",
   },
-  category: {
-    type: Type.STRING,
-    description:
-      "OPTIONAL. Category will be automatically classified by backend using semantic analysis of the description. Only provide if user explicitly specifies a category (e.g., 'add $50 in Transportation').",
-  },
   description: {
     type: Type.STRING,
     description: "Optional description of the transaction",
@@ -31,7 +26,6 @@ const COMMON_PROPERTIES = {
 // Common for recurring should NOT include `date`
 const COMMON_RECURRING_PROPERTIES = {
   amount: COMMON_PROPERTIES.amount,
-  category: COMMON_PROPERTIES.category,
   description: COMMON_PROPERTIES.description,
   type: COMMON_PROPERTIES.type,
 };
@@ -85,7 +79,7 @@ export const addTransactionDeclaration = {
   name: "addTransaction",
   parameters: {
     type: Type.OBJECT,
-    description: "Add a new transaction (expense or income) for a user. This function returns a structured result with a 'success' field. On success (success=true), it includes a formatted message and transaction details. On failure (success=false), it includes validation errors in the 'error' object with 'validationErrors' array. IMPORTANT: Always check the 'success' field and handle both cases. If validation fails, explain the errors to the user in a friendly way and ask for the missing or corrected information.",
+    description: "Add a new transaction (expense or income) for a user.",
     properties: {
       transactionData: {
         type: Type.OBJECT,
@@ -105,7 +99,7 @@ export const addRecurringTransactionDeclaration = {
   name: "createRecurringTransaction",
   parameters: {
     type: Type.OBJECT,
-    description: "Create a new recurring transaction (expense or income) that repeats on a regular schedule (daily, weekly, monthly, or yearly). This function returns a structured result with a 'success' field. On success (success=true), it includes a formatted message and recurring transaction details including when the next transaction is due. On failure (success=false), it includes validation errors in the 'error' object with 'validationErrors' array. IMPORTANT: Always check the 'success' field and handle both cases. If validation fails, explain the errors to the user in a friendly way and ask for the missing or corrected information.",
+    description: "Create a new recurring transaction (expense or income) that repeats on a regular schedule (daily, weekly, monthly, or yearly).",
     properties: {
       recurringTransactionData: {
         type: Type.OBJECT,
@@ -125,7 +119,7 @@ export const editLastTransactionDeclaration = {
   name: "editLastTransaction",
   parameters: {
     type: Type.OBJECT,
-    description: "Edit the most recently added transaction (expense or income). Use this when user wants to modify their last transaction - change amount, category, description, date, or type. This function returns a structured result with a 'success' field. On success (success=true), it includes updated transaction details with a message highlighting what changed. On failure (success=false), it includes validation errors. IMPORTANT: Always check the 'success' field. If no transactions exist, inform the user they need to add one first.",
+    description: "Edit the most recently added transaction (expense or income). Use this when user wants to modify their last transaction - change amount, description, date, or type. If no transactions exist, inform the user they need to add one first.",
     properties: {
       updates: {
         type: Type.OBJECT,
@@ -149,7 +143,7 @@ export const editLastRecurringTransactionDeclaration = {
   name: "editLastRecurringTransaction",
   parameters: {
     type: Type.OBJECT,
-    description: "Edit the most recently added recurring transaction (expense or income). Use this when user wants to modify their last recurring/subscription transaction - change amount, category, description, frequency, interval, or type. This function returns a structured result with a 'success' field. On success (success=true), it includes updated recurring transaction details. On failure (success=false), it includes validation errors. IMPORTANT: Always check the 'success' field. If no recurring transactions exist, inform the user they need to create one first.",
+    description: "Edit the most recently added recurring transaction (expense or income). Use this when user wants to modify their last recurring/subscription transaction - change amount, description, frequency, interval, or type. If no recurring transactions exist, inform the user they need to create one first.",
     properties: {
       updates: {
         type: Type.OBJECT,
@@ -170,7 +164,7 @@ export const editTransactionByIdDeclaration = {
   name: "editTransactionById",
   parameters: {
     type: Type.OBJECT,
-    description: `Edit a specific transaction by its ID. Returns a structured result with 'success' field. On success, includes updated transaction data and confirmation message. On failure, includes error details.`,
+    description: `Edit a specific transaction by its ID.`,
     properties: {
       id: {
         type: Type.STRING,
@@ -190,7 +184,7 @@ export const editRecurringTransactionByIdDeclaration = {
   name: "editRecurringTransactionById",
   parameters: {
     type: Type.OBJECT,
-    description: `Edit a specific recurring transaction by its ID. Returns a structured result with 'success' field. On success, includes updated recurring transaction data (with recalculated nextDue if frequency changed) and confirmation message. On failure, includes error details.`,
+    description: `Edit a specific recurring transaction by its ID.`,
     properties: {
       id: {
         type: Type.STRING,
@@ -248,7 +242,7 @@ export const aggregateTransactionsDeclaration = {
   name: "aggregateTransactions",
   parameters: {
     type: Type.OBJECT,
-    description: "Execute a MongoDB aggregation pipeline on the Transaction collection. Use for ALL queries: finding transactions to edit/delete, generating reports, analytics, filtering, sorting. You control the entire pipeline. Returns ServiceResult with document array.",
+    description: "Execute a MongoDB aggregation pipeline on the Transaction collection. Use for ALL queries: finding transactions to edit/delete, generating reports, analytics, filtering, sorting. You control the entire pipeline.",
     properties: {
       pipeline: {
         type: Type.ARRAY,
@@ -271,7 +265,7 @@ export const aggregateRecurringTransactionsDeclaration = {
   name: "aggregateRecurringTransactions",
   parameters: {
     type: Type.OBJECT,
-    description: "Execute a MongoDB aggregation pipeline on the RecurringTransaction collection. Use for ALL recurring transaction queries: finding to edit/delete, analyzing subscriptions, upcoming bills, calculating totals. Returns ServiceResult with document array.",
+    description: "Execute a MongoDB aggregation pipeline on the RecurringTransaction collection. Use for ALL recurring transaction queries: finding to edit/delete, analyzing subscriptions, upcoming bills, calculating totals.",
     properties: {
       pipeline: {
         type: Type.ARRAY,
