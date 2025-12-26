@@ -22,8 +22,7 @@ Users send conversational messages to add expenses or income. The AI extracts am
 - Supports both expenses and income transactions
 - Automatic date parsing (relative dates like "yesterday", "last Friday")
 
-![Natural Language Entry UI](docs/screenshots/transaction-entry-ui.png)
-![Natural Language Entry API](docs/screenshots/transaction-entry-api.png)
+![Adding expense](docs/screenshots/adding_expense.jpg)
 
 ### Recurring Transaction Management
 Create and manage recurring expenses/income (subscriptions, bills, salaries).
@@ -32,8 +31,7 @@ Create and manage recurring expenses/income (subscriptions, bills, salaries).
 - Automatic scheduling with next due date calculation
 - Enable/disable recurring transactions
 
-![Recurring Transactions UI](docs/screenshots/recurring-transactions-ui.png)
-![Recurring Transactions API](docs/screenshots/recurring-transactions-api.png)
+![Adding recurring expense](docs/screenshots/adding_recurring_expense.jpg)
 
 ### AI-Powered Category Classification
 Automatic category assignment based on transaction descriptions using Google Gemini AI.
@@ -42,7 +40,9 @@ Automatic category assignment based on transaction descriptions using Google Gem
 - Fuzzy matching and normalization for user-provided categories
 - Fallback to "Other" when classification is uncertain
 
-![Category Classification API](docs/screenshots/category-classification-api.png)
+![Asking for categories](docs/screenshots/categories_asking.jpg)
+![Expense in the database](docs/screenshots/database_expense.png)
+![Recurring expense in the database](docs/screenshots/database_recurring.png)
 
 ### Semantic Transaction Search
 Vector-based search using Qdrant for finding transactions by natural language queries.
@@ -51,16 +51,8 @@ Vector-based search using Qdrant for finding transactions by natural language qu
 - Configurable similarity threshold (default: 0.8)
 - Supports up to 200 results per query
 
-![Semantic Search API](docs/screenshots/semantic-search-api.png)
-
-### Conversation History & Context
-Maintains persistent conversation history per user for context-aware responses.
-- Stored in MongoDB via Prisma
-- Supports multi-turn conversations
-- Clear conversation endpoint available
-- Function call history tracking
-
-![Conversation History API](docs/screenshots/conversation-history-api.png)
+![Adding girlfriend transaction](docs/screenshots/adding_girlfriend_transaction.jpg)
+![Searching for girlfriend transaction](docs/screenshots/semantic_transaction_search.jpg)
 
 ### Transaction Editing & Deletion
 Edit or delete transactions by ID or by querying (e.g., "edit my last coffee purchase").
@@ -69,62 +61,38 @@ Edit or delete transactions by ID or by querying (e.g., "edit my last coffee pur
 - Soft delete for recurring transactions (disable via isActive flag)
 - Deletion confirmation window (default: 120 seconds)
 
-![Transaction Editing API](docs/screenshots/transaction-editing-api.png)
+![Deleting groceries expense](docs/screenshots/deleting_expense.jpg)
 
-### SQL Query Generation
-AI generates and executes SQL-like MongoDB aggregation queries for custom reports.
+### Flexible Search with MongoDB Aggregation
+AI generates and executes MongoDB aggregation queries for custom reports.
 - Natural language to MongoDB aggregation pipeline
 - Supports filtering, grouping, sorting, limiting
 - Automatic userId injection for security
 - Optional semantic pre-filtering for text-based queries
 
-![Query Generation API](docs/screenshots/query-generation-api.png)
-
-### AI Function Calling Pipeline
-Iterative function calling loop allows AI to execute multiple operations in sequence.
-- Functions: `getCurrentDate`, `addTransaction`, `createRecurringTransaction`, `editTransaction`, `deleteTransactions`, `queryTransactions`, etc.
-- Maximum iteration limit to prevent infinite loops
-- Structured `ServiceResult` pattern for success/failure handling
-- Validation errors returned to AI for user-friendly messaging
-
-![Function Calling API](docs/screenshots/function-calling-api.png)
+![Basic analytics](docs/screenshots/basic_analytics.jpg)
 
 ## Running the Project
 
-This project uses Docker Compose for orchestration with three services:
+This project uses Docker Compose for orchestration with dependent services:
 - **MongoDB** (replica set enabled for transactions)
 - **Qdrant** (vector database)
-- **expense-tracker-bot** (Node.js application)
 
-The application is containerized using a multi-stage Dockerfile that builds TypeScript code and runs in production mode.
+The application is supposed to run alongside an external WhatsApp service that handles message sending/receiving.
 
-## Configuration
-
-Required environment variables (create `.env.docker` for Docker or `.env` for local development):
+As of now, the application is not containerized itself, but can be run locally with Node.js.
 
 ```bash
-# Database
-DATABASE_URL="mongodb://mongodb:27017/expense-tracker"  # Use localhost:27017 for local dev
-
-# Gemini AI
-GEMINI_API_KEY="your-google-gemini-api-key"
-GEMINI_MODEL="gemini-2.0-flash"  # Optional, defaults to gemini-2.0-flash
-
-# Qdrant Vector Database
-QDRANT_URL="http://qdrant:6333"  # Use http://localhost:6333 for local dev
-EMBEDDING_THRESHOLD="0.8"  # Optional, similarity threshold for semantic search
-
-# WhatsApp Integration
-WHATSAPP_API_URL="http://localhost:3000"  # External WhatsApp service endpoint
-
-# Server
-PORT="3001"  # Optional, defaults to 3001
-
-# Deletion Confirmation
-DELETION_CONFIRMATION_WINDOW="120"  # Optional, seconds before deletion is permanent
+npm install          # Install dependencies
+npm run dev          # Start with hot reload (nodemon + ts-node)
+npm run build        # Compile TypeScript to dist/
+npm start            # Run compiled production build
 ```
 
-**Note**: `SYSTEM_INSTRUCTION` is defined in `src/config/systemInstruction.ts` and not configured via environment variables.
+## Configuration
+Take note of the `.env.example` file for required environment variables:
+
+Beware that the `SYSTEM_INSTRUCTION` is defined in `src/config/systemInstruction.ts` and not configured via environment variables.
 
 ### Prisma Configuration
 Prisma client is generated to a custom output path: `src/generated/prisma`. After schema changes, run:
@@ -164,14 +132,6 @@ The bot exposes a webhook endpoint at `POST /whatsapp` that receives messages fr
 - `POST /whatsapp/conversation/clear/:userId` - Clear conversation history for a user
 
 **Note**: WhatsApp message sending is handled by an external service configured via `WHATSAPP_API_URL`.
-
-### Local Development
-```bash
-npm install          # Install dependencies
-npm run dev          # Start with hot reload (nodemon + ts-node)
-npm run build        # Compile TypeScript to dist/
-npm start            # Run compiled production build
-```
 
 ## Architecture
 
@@ -272,12 +232,3 @@ graph TB
 
 **Message**: Individual message in conversation
 - Fields: id, conversationId, role (user/model), content (JSON stringified)
-
-### Error Handling
-
-Custom error hierarchy in `src/errors/ApplicationError.ts`:
-- `ApplicationError`: Base class with code, statusCode, details, timestamp
-- `ValidationError` (400): Input validation failures
-- `DatabaseError` (500): Prisma/MongoDB errors
-
-TODO: Confirm if error classes are fully implemented and used consistently across services.
