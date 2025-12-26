@@ -22,7 +22,7 @@ Users send conversational messages to add expenses or income. The AI extracts am
 - Supports both expenses and income transactions
 - Automatic date parsing (relative dates like "yesterday", "last Friday")
 
-![Adding expense](adding_expense.jpg)
+![Adding expense](docs/screenshots/adding_expense.jpg)
 
 ### Recurring Transaction Management
 Create and manage recurring expenses/income (subscriptions, bills, salaries).
@@ -31,7 +31,7 @@ Create and manage recurring expenses/income (subscriptions, bills, salaries).
 - Automatic scheduling with next due date calculation
 - Enable/disable recurring transactions
 
-![Adding recurring expense](adding_recurring_expense.jpg)
+![Adding recurring expense](docs/screenshots/adding_recurring_expense.jpg)
 
 ### AI-Powered Category Classification
 Automatic category assignment based on transaction descriptions using Google Gemini AI.
@@ -40,9 +40,9 @@ Automatic category assignment based on transaction descriptions using Google Gem
 - Fuzzy matching and normalization for user-provided categories
 - Fallback to "Other" when classification is uncertain
 
-![Asking for categories](categories_asking.jpg)
-![Expense in the database](database_expense.png)
-![Recurring expense in the database](database_recurring.png)
+![Asking for categories](docs/screenshots/categories_asking.jpg)
+![Expense in the database](docs/screenshots/database_expense.png)
+![Recurring expense in the database](docs/screenshots/database_recurring.png)
 
 ### Semantic Transaction Search
 Vector-based search using Qdrant for finding transactions by natural language queries.
@@ -51,8 +51,8 @@ Vector-based search using Qdrant for finding transactions by natural language qu
 - Configurable similarity threshold (default: 0.8)
 - Supports up to 200 results per query
 
-![Adding girlfriend transaction](adding_girlfriend_transaction.jpg)
-![Searching for girlfriend transaction](semantic_transaction_search.jpg)
+![Adding girlfriend transaction](docs/screenshots/adding_girlfriend_transaction.jpg)
+![Searching for girlfriend transaction](docs/screenshots/semantic_transaction_search.jpg)
 
 ### Transaction Editing & Deletion
 Edit or delete transactions by ID or by querying (e.g., "edit my last coffee purchase").
@@ -61,7 +61,7 @@ Edit or delete transactions by ID or by querying (e.g., "edit my last coffee pur
 - Soft delete for recurring transactions (disable via isActive flag)
 - Deletion confirmation window (default: 120 seconds)
 
-![Deleting groceries expense](deleting_expense.jpg)
+![Deleting groceries expense](docs/screenshots/deleting_expense.jpg)
 
 ### Flexible Search with MongoDB Aggregation
 AI generates and executes MongoDB aggregation queries for custom reports.
@@ -70,7 +70,7 @@ AI generates and executes MongoDB aggregation queries for custom reports.
 - Automatic userId injection for security
 - Optional semantic pre-filtering for text-based queries
 
-![Basic analytics](basic_analytics.jpg)
+![Basic analytics](docs/screenshots/basic_analytics.jpg)
 
 ## Running the Project
 
