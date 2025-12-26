@@ -23,11 +23,6 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage # <- use named volume
       - qdrant_snapshots:/qdrant/snapshots # <- use named volume
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:6333/ready || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 6
 
 volumes:
   mongodb_data:

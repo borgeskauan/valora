@@ -22,8 +22,7 @@ Users send conversational messages to add expenses or income. The AI extracts am
 - Supports both expenses and income transactions
 - Automatic date parsing (relative dates like "yesterday", "last Friday")
 
-![Natural Language Entry UI](docs/screenshots/transaction-entry-ui.png)
-![Natural Language Entry API](docs/screenshots/transaction-entry-api.png)
+![Adding expense](adding_expense.jpg)
 
 ### Recurring Transaction Management
 Create and manage recurring expenses/income (subscriptions, bills, salaries).
@@ -32,8 +31,7 @@ Create and manage recurring expenses/income (subscriptions, bills, salaries).
 - Automatic scheduling with next due date calculation
 - Enable/disable recurring transactions
 
-![Recurring Transactions UI](docs/screenshots/recurring-transactions-ui.png)
-![Recurring Transactions API](docs/screenshots/recurring-transactions-api.png)
+![Adding recurring expense](adding_recurring_expense.jpg)
 
 ### AI-Powered Category Classification
 Automatic category assignment based on transaction descriptions using Google Gemini AI.
@@ -42,7 +40,9 @@ Automatic category assignment based on transaction descriptions using Google Gem
 - Fuzzy matching and normalization for user-provided categories
 - Fallback to "Other" when classification is uncertain
 
-![Category Classification API](docs/screenshots/category-classification-api.png)
+![Asking for categories](categories_asking.jpg)
+![Expense in the database](database_expense.png)
+![Recurring expense in the database](database_recurring.png)
 
 ### Semantic Transaction Search
 Vector-based search using Qdrant for finding transactions by natural language queries.
@@ -51,16 +51,8 @@ Vector-based search using Qdrant for finding transactions by natural language qu
 - Configurable similarity threshold (default: 0.8)
 - Supports up to 200 results per query
 
-![Semantic Search API](docs/screenshots/semantic-search-api.png)
-
-### Conversation History & Context
-Maintains persistent conversation history per user for context-aware responses.
-- Stored in MongoDB via Prisma
-- Supports multi-turn conversations
-- Clear conversation endpoint available
-- Function call history tracking
-
-![Conversation History API](docs/screenshots/conversation-history-api.png)
+![Adding girlfriend transaction](adding_girlfriend_transaction.jpg)
+![Searching for girlfriend transaction](semantic_transaction_search.jpg)
 
 ### Transaction Editing & Deletion
 Edit or delete transactions by ID or by querying (e.g., "edit my last coffee purchase").
@@ -69,25 +61,16 @@ Edit or delete transactions by ID or by querying (e.g., "edit my last coffee pur
 - Soft delete for recurring transactions (disable via isActive flag)
 - Deletion confirmation window (default: 120 seconds)
 
-![Transaction Editing API](docs/screenshots/transaction-editing-api.png)
+![Deleting groceries expense](deleting_expense.jpg)
 
-### SQL Query Generation
-AI generates and executes SQL-like MongoDB aggregation queries for custom reports.
+### Flexible Search with MongoDB Aggregation
+AI generates and executes MongoDB aggregation queries for custom reports.
 - Natural language to MongoDB aggregation pipeline
 - Supports filtering, grouping, sorting, limiting
 - Automatic userId injection for security
 - Optional semantic pre-filtering for text-based queries
 
-![Query Generation API](docs/screenshots/query-generation-api.png)
-
-### AI Function Calling Pipeline
-Iterative function calling loop allows AI to execute multiple operations in sequence.
-- Functions: `getCurrentDate`, `addTransaction`, `createRecurringTransaction`, `editTransaction`, `deleteTransactions`, `queryTransactions`, etc.
-- Maximum iteration limit to prevent infinite loops
-- Structured `ServiceResult` pattern for success/failure handling
-- Validation errors returned to AI for user-friendly messaging
-
-![Function Calling API](docs/screenshots/function-calling-api.png)
+![Basic analytics](basic_analytics.jpg)
 
 ## Running the Project
 
